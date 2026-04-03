@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Proxy Database</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #ffb000;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-shadow: 0 0 5px #ffb000;
+            overflow: hidden;
+        }
+
+        #output {
+            flex-grow: 1;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #ffb000 #000;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+
+        .prompt {
+            margin-right: 10px;
+            user-select: none;
+            font-weight: bold;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #ffb000;
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex-grow: 1;
+            text-shadow: 0 0 5px #ffb000;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="output">SYSTEM READY...
+TYPE 'proxylist' TO VIEW DIRECTORY.
+TYPE A NAME TO RETRIEVE LINKS.</div>
+
+    <div class="input-line">
+        <span class="prompt">guest@terminal:~$</span>
+        <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false">
+    </div>
+
+    <script>
+        const input = document.getElementById('commandInput');
+        const output = document.getElementById('output');
+
+        // Database of proxies and their links
+        const database = {
+            "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+            "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+            "void.network": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+            "quasar": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+            "vapour": ["https://watervapor.space/", "https://education-live.com/"],
+            "boredom": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+            "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
+            "nebula": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+            "afilite": ["https://readinghelpforelementary.online/"],
+            "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+        };
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const rawVal = input.value.trim();
+                const cmd = rawVal.toLowerCase();
+                
+                printLine(`guest@terminal:~$ ${rawVal}`);
+
+                if (cmd === 'proxylist') {
+                    printLine("\n[ DIRECTORY ]");
+                    Object.keys(database).forEach(key => printLine(`- ${key.toUpperCase()}`));
+                    printLine(" ");
+                } 
+                else if (database[cmd]) {
+                    printLine(`\nRETRIEVING ENDPOINTS FOR [${cmd.toUpperCase()}]...`);
+                    database[cmd].forEach(link => {
+                        printLink(link);
+                    });
+                    printLine(" ");
+                }
+                else if (cmd === 'clear') {
+                    output.innerHTML = '';
+                }
+                else if (cmd === '') {
+                    // Do nothing
+                }
+                else {
+                    printLine(`ERR: Object '${rawVal}' not found in local directory.`);
+                }
+
+                input.value = '';
+                output.scrollTop = output.scrollHeight;
+            }
+        });
+
+        function printLine(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            output.appendChild(div);
+        }
+
+        function printLink(url) {
+            const div = document.createElement('div');
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = "_blank";
+            a.textContent = `> ${url}`;
+            div.appendChild(a);
+            output.appendChild(div);
+        }
+    </script>
+</body>
+</html>
