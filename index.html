@@ -1,3 +1,17 @@
+
+Gemini 
+
+About GeminiOpens in a new window Gemini AppOpens in a new window SubscriptionsOpens in a new window For BusinessOpens in a new window 
+
+
+Conversation with Gemini 
+You said 
+Write me code for a GitHub website that looks terminally or whatever, with a black background and orange characters, make there be a command bar where we can type “proxylist” and after we hit enter make it show a list of these AWP, Rosin, Truffled, Void.Network, Quasar, Vapour, Boredom, Lucide, Koopbin, Nebula, Afilite, Splash 
+Gemini said 
+Building a terminal-themed site is a classic aesthetic. To get this working on GitHub Pages, you'll want a single index.html file that combines HTML, CSS for that "amber monitor" glow, and a bit of JavaScript to handle the logic.
+The Code
+You can copy this entire block into a file named index.html in your GitHub repository.
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,3 +124,601 @@
     </script>
 </body>
 </html>
+ 
+How to use this:
+1.	Create a Repository: Name it something like my-terminal.
+2.	Upload the file: Save the code above as index.html and upload it to the main branch.
+3.	Enable GitHub Pages:
+•	Go to Settings > Pages.
+•	Under "Build and deployment", set the Source to Deploy from a branch.
+•	Select your main branch and click Save.
+4.	Wait a minute: Your site will be live at [https://yourusername.github.io/my-terminal/](https://yourusername.github.io/my-terminal/).
+Cool features added:
+•	Scanline Effect: I added a CSS overlay that gives it those old-school CRT monitor lines.
+•	Amber Glow: Used text-shadow to make the orange characters look like they're actually glowing.
+•	Auto-focus: The cursor stays in the input box so you don't have to keep clicking it.
+You said 
+And once they type one of those things from the list into the command bar make it show these links correlating to the proxy name (the urls under the name belong to that proxy) AWP 
+https://lessons.axsetubal.pt/ 
+https://useawp.developer.li// 
+https://api.incatel.cl/ 
+https://useawp.7s.com.tr/ 
+  
+TRUFFLED 
+https://edu.sciencecomputers.lat/ 
+https://truffled.lol/ 
+https://ee.rxtech.cl/ 
+https://infoo.infotechnology.com/ 
+VOID NETWORK 
+https://awesome.martinwguy.net/?/ 
+https://strange.martinwguy.net/?/ 
+QUASAR 
+https://epic.tomaszu.com/ 
+https://eglobaleducation.com/ 
+VAPOUR 
+https://watervapor.space/ 
+https://education-live.com/ 
+  
+BOREDOM 
+https://pn.boredom.apertura.com/ 
+https://doxwind.xyz/ 
+https://wispserver.dev/ 
+  
+KOOPBIN 
+  
+https://koopbin.site/ 
+https://learnster.online/ 
+  
+NEBULA 
+  
+https://math.school.dovereducation.org/ 
+http://clever.com.elmhoneyheath.recepist.com/ 
+  
+AFILITE 
+  
+https://readinghelpforelementary.online/ 
+  
+SPLASH 
+  
+https://cullinary-schools.ks11.ru/ 
+https://darkn.ks11.ru/ 
+https://splashstudy.b-cdn.net/ 
+https://94a80745.splashcli.pages.dev/ 
+https://splsh.paladinmining.net/ 
+Gemini said 
+That is a solid list. To make this work, we need to map those names to their specific URLs within the JavaScript logic.
+I’ve updated the code so that when a user types a specific name (like "AWP" or "Splash"), the terminal "resolves" the request and prints the associated links. I also added a bit of formatting so the links look clean in the terminal output.
+Updated index.html
+HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Proxy Database</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #ffb000;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-shadow: 0 0 5px #ffb000;
+            overflow: hidden;
+        }
+
+        #output {
+            flex-grow: 1;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #ffb000 #000;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+
+        .prompt {
+            margin-right: 10px;
+            user-select: none;
+            font-weight: bold;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #ffb000;
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex-grow: 1;
+            text-shadow: 0 0 5px #ffb000;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="output">SYSTEM READY...
+TYPE 'proxylist' TO VIEW DIRECTORY.
+TYPE A NAME TO RETRIEVE LINKS.</div>
+
+    <div class="input-line">
+        <span class="prompt">guest@terminal:~$</span>
+        <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false">
+    </div>
+
+    <script>
+        const input = document.getElementById('commandInput');
+        const output = document.getElementById('output');
+
+        // Database of proxies and their links
+        const database = {
+            "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+            "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+            "void.network": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+            "quasar": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+            "vapour": ["https://watervapor.space/", "https://education-live.com/"],
+            "boredom": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+            "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
+            "nebula": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+            "afilite": ["https://readinghelpforelementary.online/"],
+            "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+        };
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const rawVal = input.value.trim();
+                const cmd = rawVal.toLowerCase();
+                
+                printLine(`guest@terminal:~$ ${rawVal}`);
+
+                if (cmd === 'proxylist') {
+                    printLine("\n[ DIRECTORY ]");
+                    Object.keys(database).forEach(key => printLine(`- ${key.toUpperCase()}`));
+                    printLine(" ");
+                } 
+                else if (database[cmd]) {
+                    printLine(`\nRETRIEVING ENDPOINTS FOR [${cmd.toUpperCase()}]...`);
+                    database[cmd].forEach(link => {
+                        printLink(link);
+                    });
+                    printLine(" ");
+                }
+                else if (cmd === 'clear') {
+                    output.innerHTML = '';
+                }
+                else if (cmd === '') {
+                    // Do nothing
+                }
+                else {
+                    printLine(`ERR: Object '${rawVal}' not found in local directory.`);
+                }
+
+                input.value = '';
+                output.scrollTop = output.scrollHeight;
+            }
+        });
+
+        function printLine(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            output.appendChild(div);
+        }
+
+        function printLink(url) {
+            const div = document.createElement('div');
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = "_blank";
+            a.textContent = `> ${url}`;
+            div.appendChild(a);
+            output.appendChild(div);
+        }
+    </script>
+</body>
+</html>
+Key Updates:
+1.	Dynamic Lookup: I created a database object. When you type a name, the script checks if that name exists in the list. If it does, it loops through and prints all associated URLs.
+2.	Clickable Links: Since this is a terminal on a browser, I made the output URLs actual clickable <a> tags so you can open them instantly.
+3.	Case Insensitivity: You can type "AWP", "awp", or "AwP"—the code converts it to lowercase automatically so it always finds the match.
+4.	Error Handling: If someone types something that isn't in your list, it returns a "not found" error message to keep the terminal vibe authentic.
+You said 
+And do i put this all under “index.html” ? 
+Gemini said 
+Yes, exactly! You put everything (the HTML, the CSS between the <style> tags, and the JavaScript between the <script> tags) into that one index.html file.
+In web development, this is called an "all-in-one" file. It’s the easiest way to host a simple site on GitHub Pages because GitHub automatically looks for index.html as the "front door" to your website.
+How to set it up on GitHub:
+1.	Create a New Repository: Give it a name (e.g., proxy-terminal).
+2.	Create a New File: Click "Add file" -> "Create new file".
+3.	Name it: Type index.html in the name box.
+4.	Paste the Code: Paste the entire block of code I gave you in the previous message.
+5.	Commit Changes: Click "Commit changes" at the top right.
+6.	Activate the Site:
+•	Go to the Settings tab of your repo.
+•	Click Pages on the left sidebar.
+•	Under "Branch", change it from "None" to main (or master) and click Save.
+Why it works this way:
+•	The <style> section: Acts as your CSS file, telling the browser to make the background black and text orange.
+•	The <body> section: Defines the visual terminal and the input bar.
+•	The <script> section: Acts as your "brain," telling the computer what to do when you type "proxylist" or "AWP."
+Once you save and wait about 30–60 seconds, your terminal will be live at https://yourusername.github.io/proxy-terminal/.
+You said 
+And will there be any issues making this work 
+Gemini said 
+Since the code is self-contained in a single file, it's pretty hard to break, but there are three "gotchas" you should keep in mind to ensure it runs smoothly on GitHub:
+1. The File Naming
+GitHub is case-sensitive. You must name the file exactly index.html (all lowercase). If you name it Index.html or home.html, GitHub Pages won't automatically recognize it as your homepage, and you’ll just see a 404 error or a list of files.
+2. HTTPS vs. HTTP Links
+In the code, I included several links (like the http://clever.com... one for Nebula).
+•	The Issue: Since GitHub Pages uses HTTPS (secure), some browsers might block "Mixed Content" (trying to open an insecure http link from a secure https site).
+•	The Fix: I set the links to target="_blank", which opens them in a new tab. This usually bypasses the security block, but if a link doesn't open, it’s likely because the destination site is down or the browser is being extra protective.
+3. Case Sensitivity in Commands
+In the JavaScript I wrote:
+JavaScript
+const cmd = rawVal.toLowerCase().trim();
+I specifically added .toLowerCase() so that whether you type AWP, awp, or Awp, it will work. However, if you add new proxies to the list later, make sure you add the names to the "database" section in all lowercase, otherwise the search won't find them.
+4. Deployment Delay
+When you first hit "Save" on GitHub Pages, it isn't instant.
+•	It usually takes 1 to 2 minutes for GitHub to build the site.
+•	If you see a "404 Not Found" right away, don't panic! Just refresh after a minute. You can track the progress under the "Actions" tab in your repository; look for a workflow called "pages-build-deployment."
+Quick Troubleshooting Table
+Issue	Likely Cause	Fix
+Blank Screen	Syntax error in code	Ensure you copied the entireblock, including the final </html> tag.
+404 Error	Site hasn't built yet	Wait 60 seconds and refresh.
+Command doesn't work	Typo in the input	Check the database section in the code to ensure the key matches what you're typing.
+Other than those minor things, you're good to go! It’s a very lightweight script, so it should run perfectly on any modern browser.
+You said 
+Can you move the command bar to be under the last line with a message 
+Gemini said 
+To do this, we need to move the input bar inside the scrolling output area so that it stays anchored right beneath the last message, rather than being stuck at the bottom of the screen.
+Here is the revised code. I've also added a "blink" effect to the cursor to make it feel even more like a real terminal.
+The Updated index.html
+HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Proxy Database</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #ffb000;
+            font-family: 'Courier New', Courier, monospace;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-shadow: 0 0 5px #ffb000;
+            overflow: hidden; /* Prevents double scrollbars */
+        }
+
+        #terminal {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        #terminal::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+        #output {
+            white-space: pre-wrap;
+            margin-bottom: 5px;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #ffb000;
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex-grow: 1;
+            text-shadow: 0 0 5px #ffb000;
+            caret-color: #ffb000; /* Makes the cursor orange */
+        }
+
+        a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* Retro Scanline Overlay */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body onclick="document.getElementById('commandInput').focus()">
+
+    <div class="scanlines"></div>
+
+    <div id="terminal">
+        <div id="output">SYSTEM READY...
+TYPE 'proxylist' TO VIEW DIRECTORY.
+TYPE A NAME TO RETRIEVE LINKS.</div>
+
+        <div class="input-line">
+            <span class="prompt">guest@terminal:~$</span>
+            <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('commandInput');
+        const output = document.getElementById('output');
+        const terminal = document.getElementById('terminal');
+
+        const database = {
+            "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+            "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+            "void.network": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+            "quasar": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+            "vapour": ["https://watervapor.space/", "https://education-live.com/"],
+            "boredom": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+            "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
+            "nebula": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+            "afilite": ["https://readinghelpforelementary.online/"],
+            "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+        };
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const rawVal = input.value.trim();
+                const cmd = rawVal.toLowerCase();
+                
+                // Add the command to history
+                printLine(`guest@terminal:~$ ${rawVal}`);
+
+                if (cmd === 'proxylist') {
+                    printLine("\n[ DIRECTORY ]");
+                    Object.keys(database).forEach(key => printLine(`- ${key.toUpperCase()}`));
+                    printLine(" ");
+                } 
+                else if (database[cmd]) {
+                    printLine(`\nRETRIEVING ENDPOINTS FOR [${cmd.toUpperCase()}]...`);
+                    database[cmd].forEach(link => printLink(link));
+                    printLine(" ");
+                }
+                else if (cmd === 'clear') {
+                    output.innerHTML = '';
+                }
+                else if (cmd !== '') {
+                    printLine(`ERR: Object '${rawVal}' not found.`);
+                }
+
+                input.value = '';
+                // Auto-scroll to bottom so input stays visible
+                terminal.scrollTo(0, terminal.scrollHeight);
+            }
+        });
+
+        function printLine(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            output.appendChild(div);
+        }
+
+        function printLink(url) {
+            const div = document.createElement('div');
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = "_blank";
+            a.textContent = `> ${url}`;
+            div.appendChild(a);
+            output.appendChild(div);
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Panel Terminal</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #ffb000;
+            font-family: 'Courier New', Courier, monospace;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-shadow: 0 0 5px #ffb000;
+            overflow: hidden;
+        }
+
+        #terminal {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        #terminal::-webkit-scrollbar { display: none; }
+
+        pre {
+            margin: 0;
+            line-height: 1.2;
+            color: #ffb000;
+            font-weight: bold;
+        }
+
+        #output {
+            white-space: pre-wrap;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #ffb000;
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex-grow: 1;
+            text-shadow: 0 0 5px #ffb000;
+            caret-color: #ffb000;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body onclick="document.getElementById('commandInput').focus()">
+
+    <div class="scanlines"></div>
+
+    <div id="terminal">
+        <pre>
+ ____                                ____                         ___      
+/\  _`\                             /\  _`\                      /\_ \     
+\ \ \L\ \_ __   ___   __  _  __  __\ \ \L\ \ __      ___      __\//\ \    
+ \ \ ,__/\`'__\/ __`\/\ \/'\/\ \/\ \\ \ ,__/'__`\  /' _ `\  /'__`\\ \ \   
+  \ \ \/\ \ \//\ \L\ \/>  </\ \ \_\ \\ \ \/\ \L\.\_/\ \/\ \/\  __/ \_\ \_ 
+   \ \_\ \ \_\\ \____//\_/\_\\/`____ \\ \_\ \__/.\_\ \_\ \_\ \____\/\____\
+    \/_/  \/_/ \/___/ \//\/_/ `/___/> \\/_/\/__/\/_/\/_/\/_/\/____/\/____/
+                                  /\___/                                   
+                                  \/__/                                    
+        </pre>
+
+        <div id="output">SYSTEM ONLINE...
+TYPE 'proxylist' TO START.</div>
+
+        <div class="input-line">
+            <span class="prompt">guest@terminal:~$</span>
+            <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('commandInput');
+        const output = document.getElementById('output');
+        const terminal = document.getElementById('terminal');
+
+        const database = {
+            "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+            "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+            "void.network": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+            "quasar": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+            "vapour": ["https://watervapor.space/", "https://education-live.com/"],
+            "boredom": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+            "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
+            "nebula": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+            "afilite": ["https://readinghelpforelementary.online/"],
+            "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+        };
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const rawVal = input.value.trim();
+                const cmd = rawVal.toLowerCase();
+                
+                printLine(`guest@terminal:~$ ${rawVal}`);
+
+                if (cmd === 'proxylist') {
+                    printLine("\n[ DIRECTORY ]");
+                    Object.keys(database).forEach(key => printLine(`- ${key.toUpperCase()}`));
+                    printLine(" ");
+                } 
+                else if (database[cmd]) {
+                    printLine(`\nRETRIEVING ENDPOINTS FOR [${cmd.toUpperCase()}]...`);
+                    database[cmd].forEach(link => printLink(link));
+                    printLine(" ");
+                }
+                else if (cmd === 'clear') {
+                    output.innerHTML = '';
+                }
+                else if (cmd !== '') {
+                    printLine(`ERR: Object '${rawVal}' not found.`);
+                }
+
+                input.value = '';
+                terminal.scrollTo(0, terminal.scrollHeight);
+            }
+        });
+
+        function printLine(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            output.appendChild(div);
+        }
+
+        function printLink(url) {
+            const div = document.createElement('div');
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = "_blank";
+            a.textContent = `> ${url}`;
+            div.appendChild(a);
+            output.appendChild(div);
+        }
+    </script>
+</body>
+</html>
+
