@@ -3,82 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Interface</title>
+    <title>yxonsProxyPanel | RED_EDITION</title>
     <style>
+        :root {
+            --bg-black: #050505;
+            --panel-black: #0d0d0d;
+            --accent-red: #ff0000;
+            --dim-red: #800000;
+            --text-gray: #cccccc;
+            --border-style: 1px solid #1a1a1a;
+        }
+
         body {
-            background-color: #000;
-            color: #ffb000;
-            font-family: 'Courier New', Courier, monospace;
-            height: 100vh;
+            background-color: var(--bg-black);
+            color: var(--text-gray);
+            font-family: 'Consolas', 'Monaco', monospace;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            text-shadow: 0 0 5px #ffb000;
+            display: flex;
+            height: 100vh;
             overflow: hidden;
         }
-        #terminal {
-            height: 100%;
-            overflow-y: auto;
-            scrollbar-width: none;
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: 260px;
+            background-color: var(--panel-black);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--accent-red);
+            box-shadow: 2px 0 10px rgba(255, 0, 0, 0.1);
         }
-        #terminal::-webkit-scrollbar {
-            display: none;
+
+        .header {
+            padding: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: var(--border-style);
+            text-shadow: 0 0 8px var(--accent-red);
         }
+
+        #nav-list {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 2px;
+            cursor: pointer;
+            color: var(--dim-red);
+            transition: 0.3s;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 0, 0, 0.05);
+            color: var(--accent-red);
+            border-left: 3px solid var(--accent-red);
+        }
+
+        /* Main Console Styling */
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-black);
+        }
+
         #output {
-            white-space: pre-wrap;
-            margin-bottom: 40px;
+            flex-grow: 1;
+            padding: 25px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.5;
+            background-image: radial-gradient(circle at center, #110000 0%, #050505 100%);
         }
-        .input-line {
+
+        .system-msg { 
+            color: var(--accent-red); 
+            font-weight: bold; 
+            margin-top: 15px; 
+            text-transform: uppercase;
+        }
+        
+        .log-entry { 
+            color: #ffffff;
+            margin-bottom: 5px; 
+        }
+        
+        a {
+            color: var(--accent-red);
+            text-decoration: none;
+            opacity: 0.8;
+        }
+        a:hover { 
+            opacity: 1;
+            text-decoration: underline;
+            text-shadow: 0 0 5px var(--accent-red);
+        }
+
+        /* Bottom Input Bar */
+        .input-container {
+            padding: 20px;
+            background-color: var(--panel-black);
+            border-top: 1px solid var(--dim-red);
+        }
+
+        .input-wrapper {
+            background-color: #000;
+            border: 1px solid var(--dim-red);
+            border-radius: 4px;
+            padding: 12px 15px;
             display: flex;
             align-items: center;
         }
-        .prompt {
-            margin-right: 10px;
-            white-space: nowrap;
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
         }
+
         input {
             background: transparent;
             border: none;
-            color: #ffb000;
-            font-family: inherit;
-            font-size: inherit;
-            outline: none;
-            flex-grow: 1;
-            text-shadow: 0 0 5px #ffb000;
-            caret-color: #ffb000;
-        }
-        a {
             color: #fff;
-            text-decoration: underline;
-        }
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 10;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
         }
+
+        input::placeholder { color: #444; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: var(--dim-red); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-red); }
+
     </style>
 </head>
-<body onclick="document.getElementById('commandInput').focus()">
-    <div class="scanlines"></div>
-    <div id="terminal">
-        <div id="output">SYSTEM ONLINE... TYPE 'proxylist' TO VIEW DIRECTORY. TYPE 'help' FOR COMMANDS.</div>
-        <div class="input-line">
-            <span class="prompt">guest@terminal:~$</span>
-            <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false">
+<body>
+
+    <div id="sidebar">
+        <div class="header">yxonsProxyPanel</div>
+        <div id="nav-list">
+            <div class="nav-item" onclick="handleCommand('proxylist')">[ VIEW DIRECTORY ]</div>
+            <div class="nav-item" onclick="handleCommand('help')">[ SHOW COMMANDS ]</div>
+            <div class="nav-item" onclick="handleCommand('clear')">[ PURGE LOGS ]</div>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div id="output">
+            <div class="system-msg">// INITIALIZING RED_EDITION PROTOCOL...</div>
+            <div class="log-entry">Waiting for user input. Select a module or type command.</div>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" id="commandInput" placeholder="root@yxons:~#" autofocus autocomplete="off">
+            </div>
         </div>
     </div>
 
     <script>
         const input = document.getElementById('commandInput');
         const output = document.getElementById('output');
-        const terminal = document.getElementById('terminal');
 
         const database = {
             "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
@@ -93,50 +189,45 @@
             "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
         };
 
-        input.addEventListener('keydown', function(e) {
+        input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const rawVal = input.value.trim();
-                const cmd = rawVal.toLowerCase();
-
-                // Corrected with backticks (`)
-                printLine(`guest@terminal:~$ ${rawVal}`);
-
-                if (cmd === 'proxylist') {
-                    printLine("\n[ DIRECTORY ]");
-                    Object.keys(database).forEach(key => printLine(`- ${key.toUpperCase()}`));
-                } else if (database[cmd]) {
-                    printLine(`\nRETRIEVING ENDPOINTS FOR [${cmd.toUpperCase()}]...`);
-                    database[cmd].forEach(link => printLink(link));
-                } else if (cmd === 'help' || cmd === 'about') {
-                    printLine("\n[ SYSTEM INFO ]\nCommands: proxylist, clear, help, about\nType a name from the list to get links.\n");
-                } else if (cmd === 'clear') {
-                    output.innerHTML = '';
-                } else if (cmd !== '') {
-                    printLine(`ERR: Object '${rawVal}' not found.`);
-                }
-
+                handleCommand(input.value);
                 input.value = '';
-                
-                // Keep terminal scrolled to bottom
-                setTimeout(() => {
-                    terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' });
-                }, 10);
             }
         });
 
-        function printLine(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            output.appendChild(div);
+        function handleCommand(rawVal) {
+            const cmd = rawVal.trim().toLowerCase();
+            if (!cmd) return;
+
+            printLine(`> ${rawVal}`, "log-entry");
+
+            if (cmd === 'proxylist') {
+                printLine("NETWORK NODES DETECTED:", "system-msg");
+                Object.keys(database).forEach(key => printLine(`:: ${key.toUpperCase()}`));
+            } else if (database[cmd]) {
+                printLine(`EXFILTRATING ENDPOINTS: [${cmd.toUpperCase()}]`, "system-msg");
+                database[cmd].forEach(link => {
+                    const div = document.createElement('div');
+                    div.style.margin = "3px 0";
+                    div.innerHTML = `<a href="${link}" target="_blank">[ACCESS_NODE] -> ${link}</a>`;
+                    output.appendChild(div);
+                });
+            } else if (cmd === 'help') {
+                printLine("ACCESS PRIVILEGES: proxylist, clear, help, [node_name]", "system-msg");
+            } else if (cmd === 'clear') {
+                output.innerHTML = '<div class="system-msg">// LOGS PURGED.</div>';
+            } else {
+                printLine(`FATAL ERR: '${rawVal}' NOT FOUND IN DATABASE.`, "system-msg");
+            }
+
+            output.scrollTop = output.scrollHeight;
         }
 
-        function printLink(url) {
+        function printLine(text, className = "") {
             const div = document.createElement('div');
-            const a = document.createElement('a');
-            a.href = url;
-            a.target = "_blank";
-            a.textContent = `> ${url}`; // Corrected with backticks
-            div.appendChild(a);
+            if (className) div.className = className;
+            div.innerHTML = text;
             output.appendChild(div);
         }
     </script>
