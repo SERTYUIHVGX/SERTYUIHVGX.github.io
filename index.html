@@ -26,7 +26,7 @@
             overflow: hidden;
         }
 
-        /* --- ULTRAKILL GIF LOADING SCREEN --- */
+        /* --- 1:1 CSS ULTRAKILL SKULL LOADING --- */
         .ultrakill-load {
             position: fixed;
             inset: 0;
@@ -36,99 +36,152 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            animation: fadeOut 0.6s ease-in forwards 5s; /* Extended to 5s to see the animation */
+            animation: fadeOut 0.5s ease-in forwards 4s;
         }
 
-        .skull-gif {
-            width: 320px;
-            height: auto;
-            display: block;
-            image-rendering: pixelated; 
-            border: none;
+        .skull-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
         }
+
+        /* The Skull Main Head */
+        .skull-head {
+            position: absolute;
+            width: 120px;
+            height: 100px;
+            background: #fff;
+            left: 40px;
+            top: 20px;
+            border-radius: 50% 50% 20% 20%;
+            z-index: 2;
+        }
+
+        /* Eyes */
+        .skull-head::before, .skull-head::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 35px;
+            background: #000;
+            top: 35px;
+            border-radius: 50%;
+        }
+        .skull-head::before { left: 20px; transform: rotate(15deg); }
+        .skull-head::after { right: 20px; transform: rotate(-15deg); }
+
+        /* The Chatter Jaw */
+        .skull-jaw {
+            position: absolute;
+            width: 80px;
+            height: 50px;
+            background: #fff;
+            left: 60px;
+            top: 100px;
+            border-radius: 0 0 20px 20px;
+            z-index: 1;
+            animation: chatter 0.15s infinite;
+            display: flex;
+            justify-content: space-around;
+            padding-top: 10px;
+        }
+
+        /* Teeth Detail */
+        .skull-jaw::before {
+            content: '';
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(90deg, transparent, transparent 10px, #000 10px, #000 14px);
+        }
+
+        /* Crossbones */
+        .bone {
+            position: absolute;
+            width: 200px;
+            height: 25px;
+            background: #fff;
+            top: 80px;
+            border-radius: 12px;
+            z-index: 0;
+        }
+        .bone-1 { transform: rotate(45deg); }
+        .bone-2 { transform: rotate(-45deg); }
 
         .loading-text {
-            margin-top: 10px;
-            font-family: 'Consolas', monospace;
+            margin-top: 40px;
             color: var(--blood-red);
-            font-size: 20px;
+            font-family: 'Consolas', monospace;
+            font-size: 24px;
+            letter-spacing: 10px;
             text-transform: uppercase;
-            letter-spacing: 8px;
-            text-shadow: 0 0 10px var(--blood-red);
-            animation: pulse 0.2s infinite;
+            animation: textFlicker 0.05s infinite;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.02); }
-            100% { opacity: 1; transform: scale(1); }
+        @keyframes chatter {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(12px); }
+        }
+
+        @keyframes textFlicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 0.8; }
         }
 
         @keyframes fadeOut {
             to { opacity: 0; visibility: hidden; }
         }
 
-        /* --- DESKTOP STYLING --- */
+        /* --- DESKTOP --- */
         .desktop {
             height: calc(100vh - 48px);
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
         }
 
         .icon {
-            width: 70px;
+            width: 80px;
             text-align: center;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.2s;
         }
 
         .icon:hover { background: rgba(88, 101, 242, 0.2); }
 
-        .icon-symbol {
-            font-size: 28px;
-            color: var(--accent-blurple);
-            margin-bottom: 4px;
-        }
+        .icon-symbol { font-size: 32px; color: var(--accent-blurple); }
 
-        /* --- WINDOW STYLING --- */
+        /* --- WINDOW --- */
         .window {
             position: absolute;
             background: var(--discord-body);
             border: 1px solid #1e1f22;
             border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            width: 500px;
+            height: 300px;
+            top: 100px;
+            left: 200px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .title-bar {
             background: var(--discord-dark);
-            padding: 10px 14px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            cursor: move;
-            font-size: 13px;
             color: #949ba4;
+            font-size: 13px;
         }
 
         .window-body {
             flex-grow: 1;
             padding: 15px;
             font-family: 'Consolas', monospace;
-            background: #2b2d31;
-            overflow: hidden;
-        }
-
-        .terminal-text {
             color: var(--terminal-green);
-            line-height: 1.5;
-            text-shadow: 0 0 5px rgba(0,255,65,0.3);
+            background: #2b2d31;
         }
 
         /* --- TASKBAR & NEWS --- */
@@ -140,118 +193,111 @@
             width: 100%;
             display: flex;
             align-items: center;
-            padding: 0 12px;
+            padding: 0 10px;
             border-top: 1px solid #2b2d31;
-            z-index: 1000;
         }
 
-        .news-trigger {
+        .news-btn {
             background: transparent;
             border: none;
             color: white;
-            padding: 8px 12px;
             cursor: pointer;
-            border-radius: 4px;
+            padding: 5px 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-
-        .news-trigger:hover { background: #35373c; }
 
         .news-panel {
             position: fixed;
-            bottom: 56px;
-            left: 12px;
-            width: 380px;
-            height: 500px;
+            bottom: 55px;
+            left: 10px;
+            width: 350px;
+            height: 450px;
             background: var(--win11-glass);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
             padding: 20px;
-            z-index: 2000;
-            overflow-y: auto;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .widget {
             background: rgba(255,255,255,0.05);
+            padding: 10px;
             border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 12px;
-            border-left: 3px solid var(--accent-blurple);
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent-blurple);
         }
 
-        .cursor-blink {
+        .cursor {
             display: inline-block;
-            width: 8px;
-            height: 15px;
+            width: 10px;
+            height: 18px;
             background: var(--terminal-green);
             animation: blink 1s step-end infinite;
         }
-
         @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
-<body x-data="{ newsOpen: false, yxonOpen: true }">
+<body x-data="{ newsOpen: false, terminalOpen: true }">
 
+    <!-- ULTRAKILL RECREATED 1:1 -->
     <div class="ultrakill-load">
-        <img src="https://media.tenor.com/7S8GqV9W6k8AAAAC/ultrakill-death.gif" 
-             alt="ULTRAKILL SKULL" 
-             class="skull-gif"
-             onerror="this.src='https://c.tenor.com/7S8GqV9W6k8AAAAC/ultrakill-death.gif'">
+        <div class="skull-wrapper">
+            <div class="bone bone-1"></div>
+            <div class="bone bone-2"></div>
+            <div class="skull-head"></div>
+            <div class="skull-jaw"></div>
+        </div>
         <div class="loading-text">loading...</div>
     </div>
 
     <div class="desktop">
-        <div class="icon" @click="yxonOpen = true">
+        <div class="icon" @click="terminalOpen = true">
             <div class="icon-symbol">#</div>
-            <span style="font-size: 11px; font-weight: bold;">YXON_OS</span>
+            <div style="font-size: 11px;">CORE_LINK</div>
         </div>
     </div>
 
-    <div class="window" x-show="yxonOpen" style="width: 550px; height: 350px; top: 100px; left: 200px;">
+    <div class="window" x-show="terminalOpen">
         <div class="title-bar">
-            <span># terminal-main</span>
-            <button @click="yxonOpen = false" style="background:none; border:none; color:#949ba4; cursor:pointer; font-size: 16px;">✕</button>
+            <span># yxon-terminal</span>
+            <button @click="terminalOpen = false" style="background:none; border:none; color:inherit; cursor:pointer;">✕</button>
         </div>
         <div class="window-body">
-            <div class="terminal-text">
-                [SYSTEM]: YXON OS TERMINAL v7.0<br>
-                [LINK]: SECURE_SHELL ESTABLISHED<br>
-                [MODE]: DISCORD_DARK_UI<br><br>
-                C:\USER\ROOT> status<br>
-                > Skull_Loader: SUCCESS<br>
-                > News_Protocol: ONLINE<br>
-                > Terminal_Theme: APPLIED<br><br>
-                C:\USER\ROOT> <span class="cursor-blink"></span>
-            </div>
+            <div>YXON_OS [Version 10.0.2026]</div>
+            <div>(c) Yxon Corp. Terminal Access.</div>
+            <br>
+            <div>> Initializing CSS_Skull... OK</div>
+            <div>> Purging Win98_Assets... OK</div>
+            <div>> Loading Win11_News_Protocol... OK</div>
+            <br>
+            <div>C:\YXON> <span class="cursor"></span></div>
         </div>
     </div>
 
+    <!-- NEWS PANEL -->
     <div class="news-panel" x-show="newsOpen" x-transition @click.away="newsOpen = false">
-        <h3 style="margin-top:0;">Widgets</h3>
+        <h3 style="margin: 0 0 15px 0;">Widgets</h3>
         <div class="widget">
-            <small style="color:var(--accent-blurple);">BREAKING</small>
-            <h4 style="margin:5px 0;">OS Aesthetic Stabilized</h4>
-            <p style="font-size:12px; margin:0; opacity:0.8;">Win98 assets purged. Discord-Terminal hybrid now running as primary shell.</p>
+            <small style="color:var(--accent-blurple)">SYSTEM</small>
+            <h4 style="margin:5px 0">Skull Recreated 1:1</h4>
+            <p style="font-size: 12px; margin:0">No external GIFs needed. Pure CSS chatter animation active.</p>
         </div>
         <div class="widget">
-            <small style="color:var(--accent-blurple);">TECH</small>
-            <h4 style="margin:5px 0;">ULTRAKILL Logic</h4>
-            <p style="font-size:12px; margin:0; opacity:0.8;">Animated skull sequence verified. Loading text flicker implemented.</p>
+            <small style="color:var(--accent-blurple)">MARKET</small>
+            <h4 style="margin:5px 0">Blood is Fuel</h4>
+            <p style="font-size: 12px; margin:0">Current levels: OPTIMAL.</p>
         </div>
     </div>
 
     <div class="taskbar">
-        <button class="news-trigger" @click="newsOpen = !newsOpen">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2z"></path><polyline points="7 8 12 8"></polyline><polyline points="7 12 17 12"></polyline><polyline points="7 16 17 16"></polyline></svg>
-            <span style="font-weight: 600; font-size: 13px;">News</span>
+        <button class="news-btn" @click="newsOpen = !newsOpen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2zm0 8H7v-2h10v2z"/></svg>
+            <span style="font-weight: 600;">News</span>
         </button>
-        
-        <div style="margin-left: auto; font-size: 12px; color: #949ba4; padding-right: 15px;">
-            16:20 | 06-04-2026
+        <div style="margin-left: auto; font-size: 12px; color: #949ba4; padding-right: 10px;">
+            4:20 PM
         </div>
     </div>
 
