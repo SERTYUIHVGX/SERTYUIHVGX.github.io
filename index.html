@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS - Fully Functional</title>
+    <title>Yxon6 OS - CST Edition</title>
     <style>
         /* CORE DESKTOP STYLING */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", "Segoe UI", sans-serif; background: #000; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", sans-serif; background: #000; }
 
         .desktop {
             background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/7/70/Windows_XP_Bliss.jpg') no-repeat center center;
@@ -15,9 +15,6 @@
             height: calc(100vh - 35px);
             width: 100vw;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
             padding: 20px;
         }
 
@@ -30,22 +27,24 @@
             justify-content: center;
             color: white;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            margin-bottom: 20px;
             cursor: pointer;
             border: 1px solid transparent;
             font-size: 11px;
             text-align: center;
+            transition: 0.1s;
         }
         .icon:hover { background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 3px; }
-        .icon img { width: 40px; height: 40px; margin-bottom: 5px; }
+        .icon img { width: 42px; height: 42px; margin-bottom: 5px; }
 
-        /* WINDOW LOGIC */
+        /* WINDOW STYLING */
         .window {
             position: absolute;
-            top: 10%;
-            left: 10%;
-            width: 80%;
-            height: 70%;
+            top: 15%;
+            left: 15%;
+            width: 70%;
+            height: 60%;
+            min-width: 300px;
+            min-height: 200px;
             background: #ece9d8;
             border: 3px solid #0054e3;
             border-radius: 8px 8px 0 0;
@@ -63,28 +62,26 @@
             justify-content: space-between;
             align-items: center;
             font-weight: bold;
-            font-size: 14px;
-            height: 32px;
-            cursor: move;
+            font-size: 13px;
+            height: 30px;
         }
 
         .close-btn {
             background: #c72c2c;
             color: white;
             border: 1px solid white;
-            width: 22px;
-            height: 22px;
+            width: 21px;
+            height: 21px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 3px;
+            border-radius: 2px;
             cursor: pointer;
-            font-family: sans-serif;
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: bold;
         }
-        .close-btn:hover { background: #ff0000; }
 
-        .window-body { flex-grow: 1; background: white; margin: 2px; position: relative; border: 1px solid #7f9db9; }
+        .window-body { flex-grow: 1; background: black; margin: 2px; position: relative; border: 1px solid #1a1a1a; }
         iframe { width: 100%; height: 100%; border: none; }
 
         /* TASKBAR */
@@ -106,7 +103,7 @@
             height: 100%;
             display: flex;
             align-items: center;
-            padding: 0 12px;
+            padding: 0 15px;
             font-size: 12px;
             border-left: 1px solid #10b5fc;
         }
@@ -115,35 +112,18 @@
 <body>
 
 <div class="desktop">
-    <div class="icon" onclick="openWindow('terminal-win')">
-        <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" alt="Terminal">
+    <div class="icon" onclick="openOS()">
+        <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" alt="Yxon6 OS">
         <span>Yxon6 OS</span>
     </div>
 
-    <div class="icon" onclick="openWindow('bing-win')">
-        <img src="https://www.bing.com/favicon.ico" alt="Bing">
-        <span>Bing</span>
-    </div>
-
-    <!-- TERMINAL WINDOW -->
-    <div id="terminal-win" class="window">
+    <div id="os-window" class="window">
         <div class="window-header">
-            <span>Terminal - Yxon6 OS</span>
-            <div class="close-btn" onclick="closeWindow('terminal-win')">X</div>
-        </div>
-        <div class="window-body" style="background: black;">
-            <iframe id="term-frame"></iframe>
-        </div>
-    </div>
-
-    <!-- BING WINDOW -->
-    <div id="bing-win" class="window">
-        <div class="window-header">
-            <span>Bing Search</span>
-            <div class="close-btn" onclick="closeWindow('bing-win')">X</div>
+            <span>Yxon6 OS - Terminal Session</span>
+            <div class="close-btn" onclick="closeOS()">X</div>
         </div>
         <div class="window-body">
-            <iframe id="bing-frame"></iframe>
+            <iframe id="os-frame"></iframe>
         </div>
     </div>
 </div>
@@ -151,14 +131,106 @@
 <div class="taskbar">
     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" style="height:100%; cursor: pointer;">
     <div class="system-tray">
-        <div id="clock" style="font-weight: bold;">00:00</div>
+        <div id="clock" style="font-weight: bold; letter-spacing: 0.5px;">--:--:--</div>
     </div>
 </div>
 
 <script>
-    // THE TERMINAL SYSTEM SOURCE
-    const terminalSource = `
+    const osContent = `
     <html>
     <head>
         <style>
-            body { background: black; color: #ff0000; font-family: 'Courier New', monospace; margin
+            body { background: black; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; padding: 15px; }
+            #logo { color: #ff0000; white-space: pre; font-size: 7px; line-height: 1.1; margin-bottom: 20px; }
+            .line { margin-bottom: 5px; word-break: break-all; }
+            .prompt { color: #fff; margin-right: 5px; }
+            input { background: transparent; border: none; color: #00ff00; font-family: inherit; font-size: 14px; outline: none; width: 70%; caret-color: white; }
+            a { color: #00ffff; text-decoration: none; border-bottom: 1px dashed; }
+        </style>
+    </head>
+    <body onclick="document.getElementById('cmd').focus()">
+        <div id="logo">
+██╗   ██╗██╗   ██╗ ██████╗ ███╗   ██╗ ██████╗ 
+╚██╗ ██╔╝╚██╗ ██╔╝██╔═══██╗████╗  ██║██╔════╝ 
+ ╚████╔╝  ╚███╔╝  ██║   ██║██╔██╗ ██║███████╗ 
+  ╚██╔╝   ██╔██╗  ██║   ██║██║╚██╗██║██╔═══██╗
+   ██║   ██╔╝ ██╗╚██████╔╝██║ ╚████║╚██████╔╝
+   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ 
+        </div>
+        <div id="out">
+            <div class="line">YXON6 OS KERNEL LOADED...</div>
+            <div class="line">Clock synchronized to Central Standard Time (CST).</div>
+        </div>
+        <div style="display:flex; align-items:center;">
+            <span class="prompt">guest@yxon6:~$</span>
+            <input type="text" id="cmd" autofocus autocomplete="off">
+        </div>
+
+        <script>
+            const out = document.getElementById('out');
+            const cmdInput = document.getElementById('cmd');
+            const sites = {
+                'awp': 'https://lessons.axsetubal.pt/',
+                'truffled': 'https://truffled.lol/',
+                'nebula': 'https://math.school.dovereducation.org/'
+            };
+
+            cmdInput.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') {
+                    const val = cmdInput.value;
+                    const cmd = val.toLowerCase().trim();
+                    const div = document.createElement('div');
+                    div.className = 'line';
+                    div.innerHTML = '<span class="prompt">guest@yxon6:~$</span> ' + val;
+                    out.appendChild(div);
+                    cmdInput.value = '';
+                    if(cmd === 'help') {
+                        out.innerHTML += '<div>Available: help, clear, proxylist, speedtest</div>';
+                    } else if(cmd === 'proxylist') {
+                        out.innerHTML += '<div>Directories: ' + Object.keys(sites).join(', ').toUpperCase() + '</div>';
+                    } else if(sites[cmd]) {
+                        out.innerHTML += '<div>> Opening: <a href="'+sites[cmd]+'" target="_blank">'+sites[cmd]+'</a></div>';
+                    } else if(cmd === 'clear') {
+                        out.innerHTML = '';
+                    } else if(cmd !== '') {
+                        out.innerHTML += '<div>Unknown command.</div>';
+                    }
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
+            });
+        <\/script>
+    </body>
+    </html>`;
+
+    function openOS() {
+        const win = document.getElementById('os-window');
+        const frame = document.getElementById('os-frame');
+        win.style.display = 'flex';
+        if(!frame.srcdoc) frame.srcdoc = osContent;
+    }
+
+    function closeOS() {
+        document.getElementById('os-window').style.display = 'none';
+    }
+
+    // UPDATED CST CLOCK LOGIC
+    function updateClock() {
+        const options = {
+            timeZone: 'America/Chicago', // Central Standard Time (CST/CDT)
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        
+        const cstTime = new Date().toLocaleTimeString('en-US', options);
+        document.getElementById('clock').innerText = cstTime;
+    }
+
+    // Update every second
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+
+</body>
+</html>
