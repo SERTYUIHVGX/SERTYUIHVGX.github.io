@@ -22,6 +22,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            flex-wrap: wrap;
         }
         .icon {
             width: 75px;
@@ -37,6 +38,52 @@
         .icon img { width: 32px; height: 32px; margin-bottom: 4px; }
         .icon:active img { filter: brightness(0.5); }
 
+        .window {
+            position: absolute;
+            z-index: 10;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff;
+        }
+        .title-bar { cursor: move; }
+        .window-body { flex-grow: 1; padding: 0; margin: 0; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* Fears to Fathom Map Styling */
+        .map-container {
+            background: #2a2a24;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Grain/CRT Overlay Effect */
+        .map-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .louisiana-map {
+            width: 90%;
+            filter: sepia(0.8) contrast(1.2) brightness(0.7) grayscale(0.3);
+            border: 1px solid #444;
+        }
+        .map-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #d4d4bc;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
         .taskbar {
             height: 30px;
             background: #c0c0c0;
@@ -50,60 +97,19 @@
             border-top: 2px solid #fff;
             z-index: 1000;
         }
-        .start-button {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: bold;
-            height: 22px;
-            padding: 2px 6px;
-        }
-        .window {
-            position: absolute;
-            z-index: 10;
-            user-select: none;
-            display: flex;
-            flex-direction: column;
-            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff;
-        }
-        .title-bar { cursor: move; }
-        .window-body {
-            flex-grow: 1;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* 98 Terminal Menu Bar */
-        .terminal-menu {
-            display: flex;
-            background: #c0c0c0;
-            padding: 2px 0;
-            border-bottom: 1px solid #808080;
-        }
-        .menu-item {
-            padding: 2px 8px;
-            font-size: 11px;
-            color: #000;
-        }
-        .menu-item:first-letter { text-decoration: underline; }
-
-        iframe.app-content {
-            width: 100%;
-            flex-grow: 1;
-            border: none;
-            display: block;
-        }
+        .start-button { display: flex; align-items: center; gap: 4px; font-weight: bold; height: 22px; padding: 2px 6px; }
     </style>
 </head>
-<body x-data="{ startMenu: false, yxon6Open: true, internetOpen: false }">
+<body x-data="{ startMenu: false, yxon6Open: false, internetOpen: false, mapOpen: true }">
 
     <div class="desktop">
         <div class="icon" @click="yxon6Open = true">
-            <img src="https://win98icons.alexmeub.com/icons/png/msdos-0.png">
+            <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png">
             <span>Yxon6 OS</span>
+        </div>
+        <div class="icon" @click="mapOpen = true">
+            <img src="https://win98icons.alexmeub.com/icons/png/world-3.png">
+            <span>State Map</span>
         </div>
         <div class="icon" @click="internetOpen = true">
             <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png">
@@ -111,119 +117,38 @@
         </div>
     </div>
 
-    <div class="window" 
-         x-show="yxon6Open" 
-         x-draggable 
-         style="width: 640px; height: 400px; top: 50px; left: 50px;">
+    <div class="window" x-show="mapOpen" x-draggable style="width: 500px; height: 450px; top: 80px; left: 300px;">
         <div class="title-bar">
-            <div class="title-bar-text">MS-DOS Prompt - YXON6</div>
+            <div class="title-bar-text">Map Viewer - Louisiana_Sector_04.bmp</div>
             <div class="title-bar-controls">
                 <button aria-label="Minimize"></button>
                 <button aria-label="Maximize"></button>
-                <button aria-label="Close" @click="yxon6Open = false"></button>
+                <button aria-label="Close" @click="mapOpen = false"></button>
             </div>
         </div>
-        <div class="terminal-menu">
-            <div class="menu-item">File</div>
-            <div class="menu-item">Edit</div>
-            <div class="menu-item">Search</div>
-            <div class="menu-item">Help</div>
-        </div>
         <div class="window-body">
-            <iframe class="app-content" srcdoc="
-                <html>
-                <head>
-                    <style>
-                        body { 
-                            background-color: #000; 
-                            color: #c0c0c0; 
-                            margin: 0; 
-                            padding: 10px; 
-                            font-family: 'Courier New', Courier, monospace; 
-                            font-size: 14px;
-                            overflow-y: auto;
-                        }
-                        #output { white-space: pre-wrap; line-height: 1.2; }
-                        .input-line { display: flex; margin-top: 10px; }
-                        .prompt { color: #c0c0c0; margin-right: 5px; font-weight: bold; }
-                        input { 
-                            background: transparent; 
-                            border: none; 
-                            color: #c0c0c0; 
-                            font-family: inherit; 
-                            font-size: 14px; 
-                            outline: none; 
-                            flex-grow: 1; 
-                        }
-                        a { color: #fff; text-decoration: underline; }
-                        .header-text { margin-bottom: 15px; color: #fff; }
-                    </style>
-                </head>
-                <body onclick='document.getElementById(&quot;commandInput&quot;).focus()'>
-                    <div class='header-text'>Microsoft(R) Windows 98<br>(C)Copyright Microsoft Corp 1981-1998.</div>
-                    <div id='output'>YXON6 OS Terminal [Version 4.10.1998]<br>Type 'HELP' for executable commands.</div>
-                    <div class='input-line'>
-                        <span class='prompt'>C:\YXON6></span>
-                        <input type='text' id='commandInput' autofocus autocomplete='off' spellcheck='false'>
-                    </div>
-                    <script>
-                        const database = {
-                            'awp': ['https://lessons.axsetubal.pt/', 'https://useawp.developer.li/'],
-                            'truffled': ['https://truffled.lol/', 'https://edu.sciencecomputers.lat/'],
-                            'help': ['PROXYLIST - View verified directory', 'CLEAR - Wipe screen', 'SPEEDTEST - Test node latency', 'AWP, TRUFFLED, VOID - Service links']
-                        };
-                        const input = document.getElementById('commandInput');
-                        const out = document.getElementById('output');
-
-                        input.addEventListener('keydown', (e) => {
-                            if (e.key === 'Enter') {
-                                const val = input.value.trim();
-                                const cmd = val.toLowerCase();
-                                
-                                const p = document.createElement('div');
-                                p.textContent = 'C:\\YXON6> ' + val;
-                                out.appendChild(p);
-
-                                if (cmd === 'clear') {
-                                    out.innerHTML = '';
-                                } else if (cmd === 'help') {
-                                    database.help.forEach(line => {
-                                        const d = document.createElement('div');
-                                        d.textContent = line;
-                                        out.appendChild(d);
-                                    });
-                                } else if (database[cmd]) {
-                                    database[cmd].forEach(link => {
-                                        const d = document.createElement('div');
-                                        d.innerHTML = '> <a href=&quot;' + link + '&quot; target=&quot;_blank&quot;>' + link + '</a>';
-                                        out.appendChild(d);
-                                    });
-                                } else if (val !== '') {
-                                    const err = document.createElement('div');
-                                    err.textContent = 'Bad command or file name';
-                                    out.appendChild(err);
-                                }
-                                
-                                input.value = '';
-                                window.scrollTo(0, document.body.scrollHeight);
-                            }
-                        });
-                    </script>
-                </body>
-                </html>
-            "></iframe>
+            <div class="map-container">
+                <div class="map-overlay"></div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Map_of_Louisiana_NA.svg/800px-Map_of_Louisiana_NA.svg.png" class="louisiana-map">
+                <div class="map-label">Coordinates: 30.9843° N, 91.9623° W<br>IRONBARK RANGE AREA</div>
+            </div>
         </div>
     </div>
 
-    <div class="window" x-show="internetOpen" x-draggable style="width: 500px; height: 400px; top: 120px; left: 120px;">
+    <div class="window" x-show="yxon6Open" x-draggable style="width: 600px; height: 350px; top: 40px; left: 40px;">
         <div class="title-bar">
-            <div class="title-bar-text">Internet Explorer</div>
+            <div class="title-bar-text">MS-DOS Prompt - YXON6</div>
             <div class="title-bar-controls">
-                <button aria-label="Close" @click="internetOpen = false"></button>
+                <button aria-label="Close" @click="yxon6Open = false"></button>
             </div>
         </div>
-        <div class="window-body" style="background: white;">
-            <iframe class="app-content" src="https://www.google.com/search?igu=1"></iframe>
+        <div class="window-body">
+            <iframe style="width:100%; height:100%; border:none;" srcdoc="
+                <body style='background:#000; color:#c0c0c0; font-family:monospace; padding:10px;'>
+                    <div>Microsoft(R) Windows 98 [YXON6 Edition]</div>
+                    <div style='margin-top:10px;'>C:\YXON6> <span style='border-right: 8px solid #c0c0c0;'>&nbsp;</span></div>
+                </body>
+            "></iframe>
         </div>
     </div>
 
@@ -249,8 +174,8 @@
                     document.onmousemove = (e) => {
                         let offsetX = mouseX - e.clientX, offsetY = mouseY - e.clientY;
                         mouseX = e.clientX; mouseY = e.clientY;
-                        el.style.top = (el.offsetTop - offsetY) + "px";
-                        el.style.left = (el.offsetLeft - offsetX) + "px";
+                        el.style.top = (el.offsetTop - offsetY) + 'px';
+                        el.style.left = (el.offsetLeft - offsetX) + 'px';
                     };
                     document.onmouseup = () => { document.onmousemove = null; };
                 }
