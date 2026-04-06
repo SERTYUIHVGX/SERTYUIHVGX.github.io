@@ -1,92 +1,108 @@
+To make this work using **only HTML**, we have to use "Internal Styling" and "Internal Scripting." This means putting all the CSS and JavaScript inside the same file so you can open it as a single `.html` document on your iPad.
+
+I’ve also optimized the "Bliss" background and icons to ensure they load quickly on a mobile browser.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>XP for iPad</title>
+    <title>Windows XP iPad Edition</title>
     <style>
+        /* CSS STYLES */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
+            width: 100%;
             overflow: hidden;
             font-family: "Tahoma", "Segoe UI", sans-serif;
-            touch-action: none;
-            background-color: #000; /* Fallback */
         }
 
+        /* Desktop Area */
         .desktop {
-            /* The iconic Bliss wallpaper */
-            background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP_wallpaper%29.png') no-repeat center center;
+            background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/7/70/Windows_XP_Bliss.jpg') no-repeat center center;
             background-size: cover;
-            height: calc(100vh - 40px);
+            height: 100vh;
+            width: 100vw;
             position: relative;
-            width: 100%;
         }
 
-        /* Window Styling */
-        .window {
-            position: absolute;
-            top: 50px;
-            left: 50px;
-            width: 320px;
-            background: #ece9d8;
-            border: 3px solid #0054e3;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            box-shadow: 2px 5px 15px rgba(0,0,0,0.3);
-            z-index: 10;
-        }
-
-        .title-bar {
-            background: linear-gradient(to bottom, #0058e4 0%, #3d95ff 10%, #0058e4 100%);
-            padding: 8px 10px;
+        /* Icons */
+        .icon {
+            width: 80px;
+            height: 90px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            text-shadow: 1px 1px #002e86;
-            cursor: grab;
-        }
-
-        .title-controls {
-            display: flex;
-            gap: 2px;
-        }
-
-        .title-controls button {
-            width: 22px;
-            height: 22px;
-            border: 1px solid #fff;
-            border-radius: 3px;
-            font-weight: bold;
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
             font-size: 12px;
         }
 
-        .close { 
-            background: linear-gradient(to bottom, #e76b39, #ad3100) !important; 
-            color: white; 
+        .icon img {
+            width: 42px;
+            margin-bottom: 5px;
+        }
+
+        /* The Window */
+        .window {
+            position: absolute;
+            top: 15%;
+            left: 10%;
+            width: 80%;
+            max-width: 500px;
+            background: #ece9d8;
+            border: 3px solid #0054e3;
+            border-radius: 8px 8px 0 0;
+            display: none; /* Hidden by default */
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .window-header {
+            background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%);
+            color: white;
+            padding: 4px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            height: 30px;
+        }
+
+        .close-btn {
+            background: #e04343;
+            color: white;
+            border: 1px solid white;
+            font-weight: bold;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
         }
 
         .window-body {
+            padding: 20px;
+            height: 200px;
+            color: black;
             background: white;
             margin: 2px;
             border: 1px solid #7f9db9;
-        }
-
-        textarea {
-            width: 100%;
-            height: 200px;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            box-sizing: border-box;
-            outline: none;
-            resize: none;
         }
 
         /* Taskbar */
@@ -94,140 +110,119 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            height: 40px;
+            height: 35px;
             background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
             display: flex;
+            justify-content: space-between;
             align-items: center;
             z-index: 100;
         }
 
-        .start-button {
+        .start-btn {
             height: 100%;
-            padding: 0 15px 0 10px;
-            background: radial-gradient(circle at top left, #53a351, #388e3c);
-            color: white;
-            font-style: italic;
-            font-weight: bold;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-            box-shadow: 2px 0px 5px rgba(0,0,0,0.3);
             cursor: pointer;
         }
 
-        .start-button img {
-            width: 22px;
-            margin-right: 5px;
-        }
-
         .system-tray {
-            margin-left: auto;
-            background: linear-gradient(to bottom, #0996f1, #0076d1);
-            height: 100%;
-            padding: 0 15px;
             color: white;
+            background: linear-gradient(to bottom, #0997ff 0%, #0053ee 100%);
+            height: 100%;
             display: flex;
             align-items: center;
+            padding: 0 15px;
             font-size: 13px;
-            border-left: 1px solid #084ea1;
+            border-left: 1px solid #10b5fc;
+        }
+
+        /* Start Menu */
+        .start-menu {
+            position: fixed;
+            bottom: 35px;
+            left: 0;
+            width: 280px;
+            background: white;
+            border: 2px solid #245edb;
+            border-radius: 5px 5px 0 0;
+            display: none;
+            z-index: 99;
+            box-shadow: 2px -2px 10px rgba(0,0,0,0.2);
+        }
+
+        .start-menu-header {
+            background: linear-gradient(to bottom, #1d52d1 0%, #4689f2 100%);
+            color: white;
+            padding: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="desktop">
-    <div id="xpWindow" class="window">
-        <div id="xpWindowHeader" class="title-bar">
-            <span>Notepad</span>
-            <div class="title-controls">
-                <button style="background: linear-gradient(to bottom, #3d95ff, #0058e4); color: white;">_</button>
-                <button class="close" onclick="document.getElementById('xpWindow').style.display='none'">X</button>
+    <div class="desktop" onclick="closeStart()">
+        <div class="icon" onclick="event.stopPropagation(); toggleWindow('pc-window')">
+            <img src="https://win98icons.alexmeub.com/icons/png/computer_explore_2k-4.png" alt="My Computer">
+            <span>My Computer</span>
+        </div>
+
+        <div id="pc-window" class="window">
+            <div class="window-header">
+                <span>My Computer</span>
+                <div class="close-btn" onclick="toggleWindow('pc-window')">X</div>
+            </div>
+            <div class="window-body">
+                <b>Welcome to Windows XP</b>
+                <p>This clone is running purely on HTML/CSS/JS.</p>
+                <p>Touch works perfectly on iPad.</p>
             </div>
         </div>
-        <div class="window-body">
-            <textarea>This feels more like home! 
-            
-Drag the blue bar to move me.
-The "Bliss" wallpaper is now locked in.</textarea>
+    </div>
+
+    <div id="start-menu" class="start-menu">
+        <div class="start-menu-header">Administrator</div>
+        <div style="padding: 10px; color: #333;">
+            <p>📁 My Documents</p>
+            <p>🌐 Internet Explorer</p>
+            <hr>
+            <p>Log Off | Shut Down</p>
         </div>
     </div>
-</div>
 
-<div class="taskbar">
-    <div class="start-button">
-        <!-- Adding the classic Windows logo placeholder -->
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Windows_Home_Icon.svg" alt="win">
-        start
+    <div class="taskbar">
+        <img class="start-btn" src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" onclick="event.stopPropagation(); toggleStart()">
+        
+        <div class="system-tray">
+            <span id="clock">12:00 PM</span>
+        </div>
     </div>
-    <div class="system-tray" id="clock">12:00 PM</div>
-</div>
 
-<script>
-    const win = document.getElementById("xpWindow");
-    const header = document.getElementById("xpWindowHeader");
-
-    let active = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
-
-    header.addEventListener("touchstart", dragStart, {passive: false});
-    document.addEventListener("touchend", dragEnd, {passive: false});
-    document.addEventListener("touchmove", drag, {passive: false});
-
-    header.addEventListener("mousedown", dragStart, false);
-    document.addEventListener("mouseup", dragEnd, false);
-    document.addEventListener("mousemove", drag, false);
-
-    function dragStart(e) {
-        if (e.type === "touchstart") {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
-        } else {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
+    <script>
+        // JAVASCRIPT LOGIC
+        function toggleWindow(id) {
+            const win = document.getElementById(id);
+            win.style.display = (win.style.display === 'block') ? 'none' : 'block';
         }
-        active = true;
-    }
 
-    function dragEnd() {
-        initialX = currentX;
-        initialY = currentY;
-        active = false;
-    }
-
-    function drag(e) {
-        if (active) {
-            e.preventDefault();
-            if (e.type === "touchmove") {
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
-            } else {
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-            }
-            xOffset = currentX;
-            yOffset = currentY;
-            setTranslate(currentX, currentY, win);
+        function toggleStart() {
+            const menu = document.getElementById('start-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
-    }
 
-    function setTranslate(xPos, yPos, el) {
-        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-    }
+        function closeStart() {
+            document.getElementById('start-menu').style.display = 'none';
+        }
 
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-</script>
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            document.getElementById('clock').innerText = hours + ":" + minutes + " " + ampm;
+        }
 
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
 </body>
 </html>
+```
