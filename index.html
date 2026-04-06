@@ -5,19 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UXONG6 | Exclusive Proxy Terminal</title>
     <style>
+        /* 1. Set the physical background to solid black */
         body { 
             background-color: #000; 
-            color: #00ced1; 
-            background: linear-gradient(to right, #00ced1, #9370db);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-            font-family: 'Courier New', Courier, monospace; 
-            height: 100vh; 
             margin: 0; 
             padding: 0; 
             overflow: hidden; 
+            font-family: 'Courier New', Courier, monospace; 
+            height: 100vh;
         }
+
+        /* 2. Apply the gradient specifically to the text container */
+        #terminal { 
+            height: 100vh; 
+            width: 100vw;
+            overflow-y: auto; 
+            padding: 20px;
+            box-sizing: border-box;
+            scrollbar-width: none; 
+            position: relative;
+            z-index: 2;
+
+            /* Gradient Text Logic */
+            background: linear-gradient(to right, #00ced1, #9370db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        #terminal::-webkit-scrollbar { display: none; }
 
         #matrix {
             position: fixed;
@@ -29,26 +44,11 @@
             opacity: 0.15;
         }
 
-        #terminal { 
-            height: 100vh; 
-            width: 100vw;
-            overflow-y: auto; 
-            padding: 20px;
-            box-sizing: border-box;
-            scrollbar-width: none; 
-            position: relative;
-            z-index: 2;
-        }
-        
-        #terminal::-webkit-scrollbar { display: none; }
-
         .ascii-art {
             position: absolute;
             top: 5px;
             right: 15px;
-            background: linear-gradient(to bottom, #00ced1, #9370db);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            /* Inherits transparent fill from parent #terminal */
             font-size: 8px;
             line-height: 1.1;
             pointer-events: none;
@@ -75,14 +75,12 @@
             margin-right: 12px; 
             white-space: nowrap; 
             font-weight: bold;
-            background: linear-gradient(to right, #00ced1, #00ced1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
         input { 
             background: transparent; 
             border: none; 
+            /* We set a solid color for input so the cursor/text remains visible while typing */
             color: #00ced1; 
             font-family: inherit; 
             font-size: 1rem; 
@@ -91,6 +89,7 @@
             caret-color: #9370db;
         }
 
+        /* Links need to override the transparent fill to be visible */
         a { 
             color: #ffffff; 
             text-decoration: none; 
@@ -119,7 +118,7 @@
                                     888             888     888 Y88b.      
 888  888 888  888  .d88b.  88888b.  888d888b.       888     888  "Y888b.   
 888  888 `Y8bd8P' d88""88b 888 "88b 888P "Y88b      888     888     "Y88b. 
-888  888   X88K   888  888 888  888 888    888      888     888       "888 
+888  888  X88K   888  888 888  888 888    888      888     888       "888 
 Y88b 888 .d8""8b. Y88..88P 888  888 Y88b  d88P      Y88b. .d88P Y88b  d88P 
  "Y88888 888  888  "Y88P"  888  888  "Y8888P"        "Y88888P"   "Y8888P"  
      888                                                                   
@@ -163,53 +162,16 @@ TYPE 'help' FOR THE CATEGORY LIST.</div>
         setInterval(drawMatrix, 50);
 
         const database = {
-            "awp": [
-                "https://lessons.axsetubal.pt/",
-                "https://useawp.developer.li/",
-                "https://api.incatel.cl/",
-                "https://useawp.7s.com.tr/"
-            ],
-            "truffled": [
-                "https://edu.sciencecomputers.lat/",
-                "https://truffled.lol/",
-                "https://ee.rxtech.cl/",
-                "https://infoo.infotechnology.com/"
-            ],
-            "void": [
-                "https://awesome.martinwguy.net/?/",
-                "https://strange.martinwguy.net/?/"
-            ],
-            "quasar": [
-                "https://epic.tomaszu.com/",
-                "https://eglobaleducation.com/"
-            ],
-            "vapour": [
-                "https://watervapor.space/",
-                "https://education-live.com/"
-            ],
-            "boredom": [
-                "https://pn.boredom.apertura.com/",
-                "https://doxwind.xyz/",
-                "https://wispserver.dev/"
-            ],
-            "koopbin": [
-                "https://koopbin.site/",
-                "https://learnster.online/"
-            ],
-            "nebula": [
-                "https://math.school.dovereducation.org/",
-                "http://clever.com.elmhoneyheath.recepist.com/"
-            ],
-            "afilite": [
-                "https://readinghelpforelementary.online/"
-            ],
-            "splash": [
-                "https://cullinary-schools.ks11.ru/",
-                "https://darkn.ks11.ru/",
-                "https://splashstudy.b-cdn.net/",
-                "https://94a80745.splashcli.pages.dev/",
-                "https://splsh.paladinmining.net/"
-            ]
+            "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li/", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+            "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+            "void": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+            "quasar": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+            "vapour": ["https://watervapor.space/", "https://education-live.com/"],
+            "boredom": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+            "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
+            "nebula": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+            "afilite": ["https://readinghelpforelementary.online/"],
+            "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
         };
 
         const input = document.getElementById('commandInput');
