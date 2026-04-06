@@ -1,363 +1,367 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YXON OS - Terminal Edition</title>
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        :root {
-            --bg-color: #050505;
-            --terminal-green: #00ff41;
-            --discord-dark: #1e1f22;
-            --discord-body: #313338;
-            --accent-blurple: #5865F2;
-            --blood-red: #ff0000;
-            --win11-glass: rgba(32, 32, 32, 0.8);
-        }
+import React, { useState, useEffect } from 'react';
+import { 
+  Search, 
+  Globe, 
+  Shield, 
+  Terminal, 
+  Cpu, 
+  Database, 
+  Cloud, 
+  Lock, 
+  Settings, 
+  ExternalLink, 
+  ChevronRight, 
+  Menu, 
+  X,
+  Zap,
+  Activity,
+  Layers,
+  Fingerprint
+} from 'lucide-react';
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background: var(--bg-color);
-            font-family: 'Segoe UI', 'Consolas', monospace;
-            color: #dbdee1;
-            overflow: hidden;
-        }
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-        /* --- 1:1 CSS ULTRAKILL SKULL LOADING --- */
-        .ultrakill-load {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            animation: fadeOut 0.8s ease-in forwards 3.5s;
-            pointer-events: none;
-        }
+  // The custom ASCII art provided by the user
+  const asciiArt = `
+                ''.'.. ^_ZoO(;(p#0-'                                .^,llIIlll!!i!IIIIlI;:,^^^''''''.'''.....                      .... ..?Jkw}>|doJ}"     ..  .'                               
+               .^`.'.^-Y&d/<?LMw|,'                                           ....''^;lI:,;i<>i->;"";;,`.'''..'``'.'......                        .''.   "}paL{;|doJ+^  .'''.                                
+                '..^;chav,~UWa\\:.`^                                            ... `;!i[xLphoooahaabOu{>;:'`'..'''. .....                            ..'.  ..rh*J!<c#Mf+,  ...                                
+               ''.!ndhc+iYodrl''''                                           .']rJZmLv/1[-~i!!l<-]}tYOwOn_".''....                               .'.   ...  ^>tpau__C&px~` ...                               
+               .`/a8Q_lfB%X< '   .'                                        ^^+uhW0\\i^'`,li!I:,:!IIl!;^"I-L*pt^^. .                                ...'..''.. ''^z*au^<O8k|l' ..                               
+         .    ^1w*Z{ItqaJ_^ .   ..                      ..        .'.  .'lfCZQu{;\`''.'":Illlll!lI;;l!l:^. l)UdUt<'  \`                               ...'''. ''...~U*wf+(0o0|I '...    ...                    
+     \`.^" ^. ~d8d)"[*M01'                              .       .'^. .^lfd&m]!:\`    ...`,;IIIIIllIIIlI;:" .\`]j{Yo#dC?"'^" '. .                               ...'`.'.-*%m[,1#8J+'...  .. .'                    
+      \`' .._Xhk\\i]U#pf! '                              .  .'.    . <vhpz|~''..       .\`^,:;IIIllIIllII_{-".lfpUjrvnOk0t~''\`'\`                               ...'''.'',(poJ->uh*z~,' ....                      
+     '  .:C#au,;UMar,.''                                      .^_OoY,;\`..          ..''^,:;IIIl;;I;II,]aqz_.:cv_ .:,]L&d+'\`                                   . .'\`.'^\\bMc<+cMWj>^  ....                    
+      .irhoY[>t#aui.'.'\`.                                  ..';}ChJ?''..  '         ....'^,;III!lI;IlI;;iO0JUzxCz[' \`^^izdX_^                               ...  ......"">u*hu+~Yom\\!^....                    
+      twh0>:fo&U~\`   .''                                    '?JhQi' .  '. .   ..    .....\`";IIIllIIl:,:,^"cOUtI"^'' '. .\`;voJ"                               .......... .'^IXokrl-CWw1I\`.                    
+ . .. .'.^-Lh0):{q#O['                                          .:(dQ]\`        ..    . ...     .'^,:;!ll!>[zYr1+~cZ-\`......''.  ^}dm[".                                        ..}O*m{~\\bWC["'    .                
+ \`\`. .^]JWk)l]Z%q|;,                                        . .l/au<' .  ....  ..     .       .'\`",:Illll,luO?-/Upp>^'..''..   .^+dQ}'                                    . ..''..,[qoO(lra#J<^   ....            
+ ..  '!vkhuI?JMaf;'\`.                                          '}#z! ',l\`.''';,.. .       .     .'^^";;;;;!I,?m_,'. ,^'''.    .",^.ImL_^..                                     . ..'\`'jk#L>>nh*r<^. '..            
+ ...!voac~lUakv!'..'\`                                         .+Xhi'\`;_p1:^;xc]'..'. .....       ..\`\`::;;IIIIl+Yv_. '    ....':UY?\`;(0LI'                                   .    ...' '!to*J]>v#br!\`   ...          
+ ."faMC<lf*MU_    ^^                                           {Om;..\`imX1(mQn?:,I:;I,'...       ...'^":I!!lllI./z|\` .. '  .\`Ium\\. \`/ljdf;.                                 .....     ..":,Qadn;~O#w)l\`...          
+ \`|qaL-:|woC_^ ..                                             .xan"  ."LkY_^zYcx(1[[|uI'.   ..  .....^",;IIIII;:,_jzI. .....';mwn)nmYzQq"..                                            .\`<U#qj<10oO(I.' ..      .
+ .''. ."]Qow1\`+dMm)                                               .:cp+'  ."Lht ,djl ' .^-J{!\`\`;1>^.   ...'\`^":;;IIIlIIi}ok( '  ..I#n!!v#1ith|:'^                                         ...'\`.. _a&01>)*#Q{.''.      .
+ [Xdkf<}CWbf! .                                               .}OQ.  .."Lp|.'........"]zvxrr<,'..     .''\^":;;IIII;,^-X).. \`'.,1Wf_{fXx~?*X!. \`.                                       . ...'''',)whC1inbaX+:' ..    
+ ^fZdv'"YWor"..'                                                rZu.    "Lht '   .'    .^'^"...   ...  ..'\`",:;I;;II;:_>^. ^\`:(&u!_m<;"+mb_ .\`                                            . .'\`. ./oW0_<u%&r!' .    
+ ..'IcZ|lroac~'  '\`.                                               UO(\`    "Zk\\ ..  ..       ..             ..'\`^,:;;I;;:,:^'.\`..;\\Mf+1C*tI>Co[' .                                       ...........lj*kji[h*t       
+ .  ^uL1]Bk]\`. .'..'                                               0O]'   .;oJ]^ ...      ...'.             ....''\`",,:;:;;::,^\`.''^?Mr1X*d?'!X*-.'                                          .''..   . '.."+pkf:dh\\   ... 
+ ^nL1]8b_. .                                                      .+wU>.\`. 'i*ni\`     .         .          .   ..'\\`\`^":;III;,^'^\`'^+*z1jbz]:ln#].                                                      '>wbt,k#t       
+ ^nL1]8p+. .                                                      ^uqt'...!vW}.     ...   .    .          .    .\`\`\`\`^,:;;;;;:"'^\`.IZw\\[qJ_\`IrW[.                                                      '>wbt,k#t       
+ ^nL1]8w~  .                                                      ^Jk/ .  .-kw~.                             ''''\`^^":::;;:,'.':xdwQamX1_nM}\`'.                                                      '>wbt,k#t       
+ ^nL1]&O< ..                                                      \`jpf'.\`.Ir*-^    ...                     ...  ...'\\`\`'\`,:,:;;;l;^':Lk0Uxl !c&[..'                                                      '>wbt,k#t       
+ ^nL1]&0> ..                                                      '[dU!. ^fk0" ..   .\`^:"":I;:^.            .''  .'"l>~<i!!lll,,I,`"^}00:."^~Ok-  .                                                      '>wbt,k#t       
+ ^nL1]&O<                                                          \`OZ}''/wQ;...';_jUQQmwqphpO)^'.  .. .. . .. ."~fOkYCQQZpbpmQn~;l>{rYmb-,.-aY<. .                                                      '>wbt,k#t       
+ ^nL1]&O<                                                           zZt,[w0} \`^1m&#mv)_~"...;vd0+'"^'\`"]<.  ..';tppx:,,"\`...;?rdhpd&am0mbZ~;fa{;'                                                      '>wbt,k#t       
+ ^nL1]&O<                                                          .\\wZ}bx<''-Qpv>\`'..'.    ..>va}:l[(_u{\`\`.  ;/*rl      ....'\`\`>\\CkO]:;?M\\)Ld:.                                                         '>wbt,k#t       
+ ^nL1]&O<                                                          ^<J@%C<.In#Q- .' '^'\`'. .. .<Cq+ivBhat  ''._dm_.   .    .'''')n\\ipd\\^!qLCOX^                                                          '>wbt,k#t       
+ ^nL1]&O<                                                           ^j*#1,<zM\\l^'   .'\`''.    .;{M1?ncO{,.'..^}hn!. ....   ..''\`>udmjZbz<wa#m~"'..                                                       '>wbt,k#t       
+ ^nL1]&O<                                                          '.xBM|!fpY^\`'   \`'       . ':+M}1v+^.  '  "|W|;. .     ''''\`I0U~''Y0(,Ohhz.'\`'..                                                      '>wbt,k#t       
+ ^nL1]&O<                                                          '|ZMMX!|dO,      ....  ..  'lf*])J),..'.. ;f#{,... ''.'i1rL*mX1;"\\pr\`,w*hz,'^^\`...                                                    '>wbt,k#t       
+ ^nL1]&O<                                                          .vQCbk_-Ck:   ..    ....    >Jdt}-.^.     ;t#);..'  '";<0mx]""\` :om}.:Okawr".''...                                                    '>wbt,k#t       
+ ^nL1]&O<                                                          \`|qaL-:|woC_^    ..   ..   .',1kJ<..'..`";\`''_dkn?I\`^'.;(OaO)  \`''!oL?',pahO\\"'\`'...                                                    '>wbt,k#t       
+ ^nL1]&O<                                                          \`^}0W*-]Lb:           .. ^\\QpQi'\`";1trUbzi.':inpaL~\` ':\\bq| .. 'i#Y~"{M&bn,^''\`'..                                                    '>wbt,k#t       
+ ^nL1]&O<                                                           1ZM*M[-Yh~:\`.      .;!_/0amx+' \`'>Q8hpb*%0]. .\`;}Oawf<ifbm(\`''"~no)"~Ohbdkh_".'\`..                                                    '>wbt,k#t       
+ ^nL{]&O<                                .  .''?(xXXYcj-.'.   .  '?w0(?az_~JbpQYUxzXXCqkZn[!'..   ,)k#1",-YoXl  \`' 'I_rmop*8*CLQwkp|;;/#{I^[oXi...  .''. I[/nvx\\1;\`. .                                  '>wbt,k#t       
+ ^nL{]&O<                               .'..,_nkopCcvvQpaht>".   .. \`[dXI^tbC-,,_tvcJQO0X{,\`^.      \`\\k#z!...IOw|.  \`' '`' \`)vUYuu1l.'.^rqx:.\`1*/l`'''''.'?CkhkYQ0OaMpri\`.    ..                           '>wbt,k#t       
+ ^nL{]&O<                                 .:vd0-:;"  .  :{bU-..  .'' \`rqJ""+uwwzcXUQZwqwwwL\\l'   ..'{Om~. ''.'{0Q;^'''.'.l{jxccuft|[-}|0wx"..1ZZ>\`....\`'Ir#n~,'...' \`l-cpX;'                                '>wbt,k#t       
+ ^nL{]&O<                              ..':Qb\\  '. ~0r~,'^rkx'   ... '\\khI:^"]rYct['''   fpC\` ....'nbJ\`^'. .. rh/\`.. '^ubodYcvXOwdh*#hn<'.^?0q+".  '\`^!j#xI.. ^.  .:'1b&zl        .                        '>wbt,k#t       
+ ^nL{]&O<                             .'.,d0}''''''"?)tj|,fmO},'.   ''"?Jkr!  '.  ..''.  \`\\mU:.   .rb0lj<\`';'.|wY" .\`ibw\\,.. '' \`'''...'..<OZ).    ..+Ypx^''   .''. _}th#?       .                        '>wbt,k#t       
+ ^nL{]&O<                               .;\\w*U.l|_';.   Ird-<cWd~ .. '. ;p%w1  .... .... ^-Yo?,. .'cOf:1Lz/n^ (wJ"  <Q*-.'.'.  .   . \`\`.\`it*q{   .  "L#Q],  '\`.  ..  ;X@%Q+'...                            '>wbt,k#t       
+ ^nL1]&O<                   '\`'.'''."<]<;,i\\wm\\..}vf^..'''+uj?-rZwY1i^..^/dhpbmM&du~"... ."(W\\I. .'?Um\\:YabC][Lb1^..?*v!   ''. \`>_[}]{xZ*WYi .\`>(Xk0|l' .....    .'.[Qa/;'' '...         .'              '>wbt,k#t       
+ ^nL1]&O<                   .\`'  \`{QW&hM*aWk]," ^.I|C:. .\` '1Y\\:^~rZWbX[ .Cqt^ljwaq*O}'^..\`{#x!.   \`:(MMMwQh&*C1;..']*xI^:\`  +za8WoaWWmmkZ;.\`Irp*dr",'.'.   ... \`^'  'l|#MpOkWqCf: ... ....'               '>wbt,k#t       
+ ^nL1]&O<                     :[Yk0r_.'.{j\`\`.  '' !1tC(I.. ^^I(x!..':)uQdl(mQ\`._LO:;/Zprl\`"}Z{:.   '...        .\`'.. -aJ<. \`izwL|<wL+..,cp+\`{Qpz\\I. .  ..   ..'if{:^. .'^,)xx/]|nQabf!..   ..              '>wbt,k#t       
+ ^nL1]&O<                   '_Ukz!\`.. .I\\r^  '\`   "[Ovuz/  ''.'\`'.  '..^: \`uh\\'\`fbzI.:|kYi \`,\`.      .. ''.. ..      iJd?. ,0kf^  Xwj '/wC '",::  '^.     ... \`_Op1:.  ..        '":;[Ymv ....               '>wbt,k#t       
+ ^nL1]&O<                   :QO1.^. .'.vjI'....... \`^"(vzt!. ..   ...\` '. '"'[0kI'+Ya~\`.\`?ac!.. .\`^' ..   ..    .    '\`"!<"\`I)*r!.. rmv  xZn' '..\`.''.'       .\`".   .     '''....  .\`"\\qmi^.                '>wbt,k#t       
+ ^nL1]&O<                  ^Ybf'   ..  X\\ .'\`..^'.^".^:;~txczzXr_,   ..... .^1#(:']kZ<.-kXi   'v0/'i-l;/ci.icci..' nC|. ^\`iJo]''' JO(' cpn . .'. '. . '. ..  . '.  . .''  .'l)"...  .,1kul .                '>wbt,k#t       
+ ^nL1]&O<                  "L01.  .....v/^.,!\\Qqpbkhh*wztt{>>-[tXYu|<lI;: ^'_kp+ lxd]'?*C~",;1b8C,0Wc)%&z_{&8cU*aiC&d_^~nOQh-..,Xbx,.^L0}'.''.    \`i<i!;.'' \`~YwahmJCUf?l.'^?0,.''    ~qO+.                '>wbt,k#t       
+ ^nL1]&O<                   \`tkn^     . |t_iCpY{-~+i;;l~/JmqwOCJbpwmLt-(uru! InW[.\`>ac+_Cw?/mzUaWJ;a%WoaYhQc#0aMW&YZ##Y^Yomt#)"<Uo|:.'.CZ1 . '^";{vOwkmppr"'in#([?-?]}tChL><jv"''.'  '}Mv<'                '>wbt,k#t       
+ ^nL1]&O<                    Jbn'..  . \`|pak+.''.....  .' '.'^' _vOhoL(~,"\`.:*X<.:Qm(ljM0mkQU*hYn&%8Wq<O&Wk~Q8B%dZh%8a*W*qML]{&f;...<pC<",l}Xk*kQtl. :|a#UjXh,  .\`  .."ObX(|\`..  ..[LZ!'                 '>wbt,k#t       
+ ^nL1]&O<                   'InpX,'. '.\`fad~\`  . ..     ...'^' '\`.."I-|zpw/l.:d0[ '[pL_"J*#oW%W*kqMa*p)^YW*z"U#M**Woh*UkUxWC<(qmI'. ._qn;[mmv{+!^   ...''"[jcv{\`.   ...'^:Jhhq_^ '^.1Om_^''.               '>wbt,k#t       
+ ^nL{]&O<                   .':|*ku]!ifk#X' .... .. '\`.      .\`  '' ..^" :\`.\`_W|"'..(qp_\`QCjbMo0ComrCQ,.tdd{'-0b)+wx-k]Qn|b,IXp]' ..\`jhx   ..'^. .\`'...''     .  ..      ,thW(I""IOaY+^.'. .               '>wb/,k#t       
+ ^nL{]&O<                      \`l]xUQQu}l'.                                 ^_#rl. '.>va|}vdd&k|>zz|Jq-'-Q0^\`\`j0+\`zr(*vCQv[:Ydv\`'   "0q(                                 .">)XZqw0r];.                    '>wbt,k#t       
+ ^nL{]&O<                    ...  .'\`^.       ..                            '!kQ? '\`^\`lf&{''\`.Qr_wXChat^+QZ^ \`f0?'rkoLl'?zCkb\\. . \`>xMf;.                                ...  \`'.\`,'    .                  '>wbt,k#t       
+ ^nL{]&O<                      .      ..                                    ^nduI..',>/h#J-.'i(xrmZC0*abpwOJunvUUx_',vXf{/b0{\`   lxW|;.                                '..       .   ..                  '>wbt,k#t       
+ ^nL{]&O<                       .     ..                                     .vpv '.1wd}~tZO, ''.;"\`^,,,^";'''\`^"\`."}w?. :bb\`\`  \`jdv,'..                     .....    ..  ...''...       .               '>wb/,k#t       
+ ^nL{]&O<                                 ..                        .       ...lzw?".|d0]//na_^...  .'.\`'...'  ....'^!ZZwmYoX+\`"\`+CZ!\`..                    ..........'..   ....                        '>wb/,k#t       
+ ^nL{]8O~                                                                      ''\\wY, ")*WZun0c<^\' . ...      ...   .!vQ]l|#k}^  '|wQ\`  ..            ........''''''''''..........                     .  .imd/,b#t ...  .
+ ^nL{]8O<                                                                       \`[LhI'.!uM(>?(p-             '  ..  .icbCYmM["'  ' uqv   ...\`          .........'''''''''''................................  'imd/,b#t ... ..
+ ^nL{]8O<                                                                 ..          ;f#{,'\`lphmCJpY-.`          ..  .'\`!tw}+~fWJ<..^\`L0{\`....\`          ..........''''''''''''........''''''''''''''''''''... 'iwd/,b#t ......
+ ^nL{]8O<                                                                   .   .'."\`^{*vl ."[dL_\`>Zv;^'.      .       . +zm<;>rM_\`\`^^\br',^\`.           ........'''''''''''''..........''''''''''''''''''''....'iwd/,k#t ......
+ ^nL{]8O<                                                                 .     '^I]vX]~qd-^^ 'vOL0Cv0q/,'...         .. .'<xpz0wpd;\`\`<JktI_dmu[I ''..         ........'''''''''''''''..........''''''''''''''''''''....'iwdt,b#f.......
+ ^nC{]8m_'                                                                ... \`,!(JkoQ1;^-*O].. z*W*Jmk**v-,..       .  .,cww0l]Q%#?^-Lo!'''\`)mohO~I,\`....''.....'''''''''''''''....'''..'''''''''''''''''''''''..`+qdt,b#f.......
+.  ^nL1>L&pji'..'\`.                    ...  ..  ...  ..    ..   ''''l1nLbZc\\-:'.. '[mQ[. tp&@@#Cza0qY-.'  .' -|tn0aLuppjC%ai;udt^ .    ;-\\QbwYj]:'\`\`\`\`'.'\`^\`''.'\`\`\`'\`'.'...''\`''\`\`...........\`\`'''''''^'.Ijk*X+~h*t '''..'
+.. ^cwdzI}0Wk1\`'. .     ..               .....  ',"^'.    .'^. .'.'>fm#aC{\`...  ' .'.._Cp{\`ljwdM*hak:OkZ*Y<_rzabqwL"JkOCW@&LI,j0v"..... ..     irb&MZ(\`''''...'`^\`\`' .:\`.''.\`\`\`\`''\`'..........'''.'^^\`\`\` ,(mB8]"\@BU-^ ..'''
+... .:{Lam1_fw#Z1: ..'.  .               ..   ':[uQpw0Yxt)[~i<-1rJppQv/~\^.'.....'.....'.+Uo[,.^-Q#8Wa)Q/~Jm0m0f&[Itq,cba#Ukpf\`\\pcl.I"'...'...`..'.^_\zmd0c/-l"'\`''''''^..^"'..`^'.\`''''........'\`'\`\`\`'\`^\`\^)Oow1l/w#O[l^..\`\`\`\`\`
+    .''\^}h&0]lnk&Q- ..                  .. 'l(p#0-^'I[vOqkoW%%hY],\`^\`.    ..'. ..  ;f#O[_kO< .^?dB&oQ#x?MnCOY|&r{ca>X#%bl"\`,{MX~;(MptI   .\`^^,,\` ^^'.\`\`~rwWMb0Yc/cCma&&kp#L?;^  \`\`\`"'...........''\`^'.+qM#j,-d#m|'\`'...'''''
+ ...... \`rdoC+-zkhc<,'...                .\`_Qdx]~?{)}+:..'^^\`.  ..  .'''..  ....:}XwOr<\`"]bL|i'"1Jh8hpb*&mpobc8OwaZ#%bCX,.;\\dJi  '+fQpJ/<".'^'.''.'^^'\`'.'">[\\xvcCqwr(fnXmkmXt1>"'............''''''~udhv~]UWpx>.'\`\`\`'''''''
+           lxkkz~?U8hri'"  \`^ .          '<c%mLQX}ll+jw[I\`   ..         '\`. ''>Y*mj<".   ':cwZz^ :_{;"|OQ&%B%#@%WJ;mp|''.1Y0Y:...'.."<|h#C]..'''..'''............f/I ." \`.\`:~(cw#rl\`:''\`\`'\`'''.\`..'"nbaYI_O*dcI^`''.....'.'''
+          . .<Ybwn]{mWpt,...''.         \`.;j&rI.... .'"Xj<.  ..    ..   :" .I?zdO1>,'   ...   ~u0bu?l,^'.\`lXUczOr1>,\`\`',<)wqX[. ... ....'.?cmw|<,'....'\`.......... vrI.'..'^'^\`.:Ybf\` .''..^^\`'\`''l/dML}i/hdX['''.''..........
+          . ..'!YhbY!/qWd1:''  ..  ..   ^\`.+d0+'.   ...''rx+^.    ...  . '!twdx!".  ..''.. ...'"ivqbZ(l'.^. .''...'I{LhhQ_I^..  .   . ..'.\`;+OkU-...''........... (x} \`^\`'..^\`.IwZ)\` .....'\`\`''.\\qoJ~>rhW0?"'\`\`''............
+           .' \`"|moO}-xp8C}: .'.       ....:(hU_.. .'. 'Ifn            l\\Lwci..'....       '  .   :}UOk*oa#oahbo**odpc]:\`  .. .   ... ..'''''.'[JpC?".. .........',']JZ?l,^ \`.:}Jo|,.\`'.'\`'..'"_m*w\\:rp#w1^''''\`\`''...........
+          .   . .',]b#Q1!uhoU_^.. ..    ....'+Qwj,      {x)\`.      ..,ubZ/l....'......    ' .. ...  ':!>>iii!lii!!l\` ..    ....  .'.. ..'''..' :[YaC]^\`...........-uX/jxcXvL0qqz+"'''....'\`'+cdh/<}ZWw/I''''''..\`\`'..........
+               ..     jdaYi?JWMx~"...    ....'..\\kd<\`    xt;.....   ',[Ootl'   ...    ....    .''.    .'   ' ''..  \`^ .'.    .'.   .'.. .......  ':<UpXl'...'...`!Cc_ .. iuMU/_:^...' ....';zdbO,<UWhrI...\`'..'...\`\`'.........
+                      'inMaU1[C8kt:'.'.  ...   .\`-wb?..""v) .  .. 'inwJ~,'....                             ..................':[Jo\\I'.'.''>cxi'.''_Cd|\`...'`''.'.'.ljdoY_iXkwx~\`.  .....................
+                       "Chkc"~CMb{l'.'...      ~wO<'\^:Yj<.   ...!Zpt'..   .                                ..........''......lvWv>'\`\`]XqpbX?"^'fmX. .'\`\`^''''.^(p8m+If&&c-,. ''......................
+                    ..   \`}Chwj~|w&O1:  .      .]aYi!/J);.. ....:Cm(.  ..  ..                             ............'........^(pXilU\\i\`'.![/uxzqd(^\`\`\`''''\`{0hO]!jd#L-;`....''\`....................
+                    ..''   .?hWp1;toMO).    .  '?pYOL|.   '\` .   "[Mu>\`      ..                            ........................^jOmX(i\` '"\`.'"''|wJ"''.'^\`._b&#/"[poqj.........''....................
+                    ....'''. \`)qkU}?ckoXl\`.    '<X8k|'' ''...  :)Wxi'..                                   ................''...... td#L,.'.. '^'  .fbc"'''''-Xhaf>[CWdri.\`'.   '..'.....................
+                               \`j*#0~~YBoc~   ...lh%x   \`'    ,+t&}.                                       ...................      'x%*:''..`.'^' [0Q^. .'"xaan"lO%h/I'.' \`.    .........................
+                                .iYkkc?-0hmt,....\`1OQj1}][[[})uZd\\; ..                                    ...................     .'<rp&Jt)]-_~<_}OC['\`'ifd#U?>n*dx~"'....   ...........................
+                                  .!JhpuI|O*k\\:.'. i)nXmppqwwc1>". ..                                     ....          .....    .'.."!l(Ca&oahh*of<,. \`/q#ZiijbWc-:''  .'. .............................
+                                  ..'[Lhw)-tq&L}:.\`..'. '. . ''.                                          ....          .....     ....'.\`\`..\`. '\`'..,[OaO|I\\p#m)"'.. .. .'..........                    
+                               .  .'..',-b*Z|;na#C?\` ... \`' ..                                             ...          .....        .'''..'. \`''^\`.?Lo*\\!]w8Z(;"'..'\`..'' ..........                    `;
 
-        .skull-wrapper {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.3));
-        }
+  useEffect(() => {
+    // Simulate loading process
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 4500); // Slightly longer to appreciate the art
+    return () => clearTimeout(timer);
+  }, []);
 
-        /* The Bone Structure */
-        .bone {
-            position: absolute;
-            width: 180px;
-            height: 20px;
-            background: #ffffff;
-            top: 90px;
-            left: 10px;
-            border-radius: 10px;
-            z-index: 0;
-        }
-        .bone-1 { transform: rotate(45deg); }
-        .bone-2 { transform: rotate(-45deg); }
-
-        /* The Skull Main Head */
-        .skull-head {
-            position: absolute;
-            width: 110px;
-            height: 90px;
-            background: #ffffff;
-            left: 45px;
-            top: 30px;
-            border-radius: 50% 50% 25% 25%;
-            z-index: 2;
-        }
-
-        /* Eyes */
-        .skull-head::before, .skull-head::after {
-            content: '';
-            position: absolute;
-            width: 28px;
-            height: 32px;
-            background: #000;
-            top: 35px;
-            border-radius: 50%;
-        }
-        .skull-head::before { left: 18px; transform: rotate(15deg); }
-        .skull-head::after { right: 18px; transform: rotate(-15deg); }
-
-        /* The Chatter Jaw */
-        .skull-jaw {
-            position: absolute;
-            width: 70px;
-            height: 45px;
-            background: #ffffff;
-            left: 65px;
-            top: 105px;
-            border-radius: 0 0 15px 15px;
-            z-index: 1;
-            animation: chatter 0.12s infinite steps(2);
-            display: flex;
-            justify-content: space-around;
-            overflow: hidden;
-            border-top: 4px solid #000;
-        }
-
-        /* Teeth Detail */
-        .skull-jaw::before {
-            content: '';
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(90deg, transparent, transparent 8px, #000 8px, #000 12px);
-        }
-
-        .loading-text {
-            margin-top: 50px;
-            color: var(--blood-red);
-            font-family: 'Consolas', monospace;
-            font-size: 20px;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            font-weight: bold;
-            animation: textFlicker 0.08s infinite;
-        }
-
-        @keyframes chatter {
-            0%, 100% { transform: translateY(-5px); }
-            50% { transform: translateY(8px); }
-        }
-
-        @keyframes textFlicker {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.02); }
-            100% { opacity: 0.9; }
-        }
-
-        @keyframes fadeOut {
-            0% { opacity: 1; visibility: visible; }
-            99% { opacity: 0; visibility: visible; }
-            100% { opacity: 0; visibility: hidden; }
-        }
-
-        /* --- DESKTOP --- */
-        .desktop {
-            height: calc(100vh - 48px);
-            padding: 20px;
-            background: radial-gradient(circle at center, #111 0%, #050505 100%);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .icon {
-            width: 80px;
-            text-align: center;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            transition: 0.2s;
-            user-select: none;
-        }
-
-        .icon:hover { background: rgba(88, 101, 242, 0.2); }
-        .icon-symbol { font-size: 32px; color: var(--accent-blurple); margin-bottom: 5px; }
-
-        /* --- WINDOW --- */
-        .window {
-            position: absolute;
-            background: var(--discord-body);
-            border: 1px solid #1e1f22;
-            border-radius: 8px;
-            width: 600px;
-            height: 350px;
-            top: 15%;
-            left: 20%;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            z-index: 10;
-        }
-
-        .title-bar {
-            background: var(--discord-dark);
-            padding: 10px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #949ba4;
-            font-size: 13px;
-            border-bottom: 1px solid rgba(0,0,0,0.2);
-        }
-
-        .window-body {
-            flex-grow: 1;
-            padding: 15px;
-            font-family: 'Consolas', monospace;
-            color: var(--terminal-green);
-            background: #0a0a0a;
-            font-size: 14px;
-            line-height: 1.5;
-            overflow-y: auto;
-        }
-
-        /* --- TASKBAR --- */
-        .taskbar {
-            height: 48px;
-            background: #111214;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            border-top: 1px solid #2b2d31;
-            z-index: 100;
-        }
-
-        .news-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-
-        .news-btn:hover { background: rgba(255,255,255,0.15); }
-
-        .news-panel {
-            position: fixed;
-            bottom: 55px;
-            left: 10px;
-            width: 350px;
-            max-height: 500px;
-            background: var(--win11-glass);
-            backdrop-filter: blur(25px);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 101;
-        }
-
-        .widget {
-            background: rgba(0,0,0,0.3);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--accent-blurple);
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 18px;
-            background: var(--terminal-green);
-            vertical-align: middle;
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-    </style>
-</head>
-<body x-data="{ newsOpen: false, terminalOpen: true }">
-
-    <!-- ULTRAKILL RECREATED 1:1 -->
-    <div class="ultrakill-load">
-        <div class="skull-wrapper">
-            <div class="bone bone-1"></div>
-            <div class="bone bone-2"></div>
-            <div class="skull-head"></div>
-            <div class="skull-jaw"></div>
-        </div>
-        <div class="loading-text">loading...</div>
-    </div>
-
-    <div class="desktop">
-        <div class="icon" @click="terminalOpen = true">
-            <div class="icon-symbol">#</div>
-            <div style="font-size: 11px; font-weight: 600;">CORE_LINK</div>
-        </div>
-        
-        <div class="icon" @click="newsOpen = true">
-            <div class="icon-symbol" style="color: #ffcc00;">⚠</div>
-            <div style="font-size: 11px; font-weight: 600;">NOTICES</div>
-        </div>
-    </div>
-
-    <!-- TERMINAL WINDOW -->
-    <div class="window" x-show="terminalOpen" x-transition>
-        <div class="title-bar">
-            <span># yxon-terminal --auth-root</span>
-            <button @click="terminalOpen = false" style="background:none; border:none; color:inherit; cursor:pointer; font-size: 16px;">✕</button>
-        </div>
-        <div class="window-body">
-            <div>YXON_OS [Version 10.0.2026]</div>
-            <div>(c) Yxon Corp. Hypervisor Access Level 4.</div>
-            <br>
-            <div style="color: #5865F2;">> Boot sequence initiated...</div>
-            <div>> Checking BIOS... [OK]</div>
-            <div>> Initializing CSS_Skull... [ACTIVE]</div>
-            <div>> Loading Blood_Fuel_Reservoir... [100%]</div>
-            <div style="color: var(--blood-red)">> WARNING: HELL IS FULL.</div>
-            <br>
-            <div>C:\YXON> <span class="cursor"></span></div>
-        </div>
-    </div>
-
-    <!-- NEWS PANEL -->
-    <div class="news-panel" x-show="newsOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-4" @click.away="newsOpen = false">
-        <h3 style="margin: 0 0 15px 0; color: white;">System Intelligence</h3>
-        <div class="widget">
-            <small style="color:var(--accent-blurple)">LOG_BOOT</small>
-            <h4 style="margin:5px 0">Skull Recreated 1:1</h4>
-            <p style="font-size: 12px; margin:0; opacity: 0.8;">Custom CSS chatter animation running at 60fps. Zero external assets detected.</p>
-        </div>
-        <div class="widget">
-            <small style="color:var(--blood-red)">STATUS</small>
-            <h4 style="margin:5px 0">Blood is Fuel</h4>
-            <p style="font-size: 12px; margin:0; opacity: 0.8;">Mankind is dead. Blood is fuel. Hell is full.</p>
-        </div>
-        <div class="widget">
-            <small style="color:var(--terminal-green)">NETWORK</small>
-            <h4 style="margin:5px 0">Terminal Edition Active</h4>
-            <p style="font-size: 12px; margin:0; opacity: 0.8;">Running in sandboxed environment. Version 10.0.2026.</p>
-        </div>
-    </div>
-
-    <!-- TASKBAR -->
-    <div class="taskbar">
-        <button class="news-btn" @click="newsOpen = !newsOpen">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2zm0 8H7v-2h10v2z"/></svg>
-            <span style="font-size: 13px; font-weight: 500;">Widgets</span>
-        </button>
-        
-        <div style="flex-grow: 1; display: flex; justify-content: center; gap: 10px;">
-            <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer;">#</div>
-            <div style="width: 32px; height: 32px; background: rgba(88, 101, 242, 0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#5865F2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black flex items-center justify-center overflow-hidden">
+        <div className="w-full h-full flex flex-col items-center justify-center p-4">
+          <div className="relative group">
+            {/* Ambient pulse behind the art */}
+            <div className="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full animate-pulse"></div>
+            
+            <pre className="relative text-[6px] md:text-[8px] lg:text-[10px] leading-[1] font-mono text-blue-400 opacity-90 select-none whitespace-pre overflow-hidden">
+              {asciiArt}
+            </pre>
+          </div>
+          
+          <div className="mt-8 flex flex-col items-center space-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+              <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+              <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce"></div>
             </div>
+            <p className="text-blue-500/60 font-mono text-xs uppercase tracking-[0.3em] animate-pulse">
+              Initializing Core Modules
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const NavItem = ({ id, icon: Icon, label }) => (
+    <button
+      onClick={() => setActiveTab(id)}
+      className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 w-full ${
+        activeTab === id 
+          ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
+      }`}
+    >
+      <Icon size={20} />
+      <span className="font-medium">{label}</span>
+    </button>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row font-sans">
+      {/* Mobile Header */}
+      <header className="lg:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800">
+        <div className="flex items-center space-x-2">
+          <div className="bg-blue-600 p-2 rounded-lg">
+            <Shield className="text-white" size={20} />
+          </div>
+          <span className="font-bold text-xl tracking-tight">Sentinel<span className="text-blue-500">OS</span></span>
+        </div>
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="p-2 text-slate-400"
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </header>
+
+      {/* Sidebar Navigation */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 border-r border-slate-800 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
+        ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-8 hidden lg:flex items-center space-x-3">
+          <div className="bg-blue-600 p-2.5 rounded-xl">
+            <Shield className="text-white" size={24} />
+          </div>
+          <span className="font-bold text-2xl tracking-tight">Sentinel<span className="text-blue-500">OS</span></span>
         </div>
 
-        <div style="font-size: 12px; color: #949ba4; text-align: right; user-select: none;">
-            <div id="clock">4:20 PM</div>
-            <div style="font-size: 10px;">4/20/2026</div>
+        <nav className="px-4 py-4 space-y-2">
+          <NavItem id="overview" icon={Activity} label="System Overview" />
+          <NavItem id="network" icon={Globe} label="Network Traffic" />
+          <NavItem id="security" icon={Lock} label="Threat Vault" />
+          <NavItem id="terminal" icon={Terminal} label="System Shell" />
+          <NavItem id="nodes" icon={Layers} label="Node Clusters" />
+          <NavItem id="config" icon={Settings} label="Global Config" />
+        </nav>
+
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                <Fingerprint className="text-blue-400" size={20} />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">User Level</p>
+                <p className="text-sm font-bold">Administrator</p>
+              </div>
+            </div>
+            <button className="w-full py-2 bg-slate-700 hover:bg-slate-600 transition-colors rounded-lg text-sm font-medium">
+              Access Logs
+            </button>
+          </div>
         </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
+        <header className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">System Dashboard</h1>
+            <p className="text-slate-400">Monitoring 12 active clusters across global nodes.</p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search resources..."
+                className="bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 transition-all"
+              />
+            </div>
+            <button className="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/10">
+              <Zap size={20} />
+            </button>
+          </div>
+        </header>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {[
+            { label: 'CPU Usage', val: '42%', icon: Cpu, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+            { label: 'Network Load', val: '1.2 GB/s', icon: Globe, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+            { label: 'Cloud Storage', val: '86%', icon: Cloud, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+            { label: 'DB Health', val: 'Optimal', icon: Database, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+          ].map((stat, i) => (
+            <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-3xl hover:border-slate-700 transition-all group">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`${stat.bg} p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300`}>
+                  <stat.icon className={stat.color} size={24} />
+                </div>
+                <div className="flex items-center text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
+                  +12.5%
+                </div>
+              </div>
+              <p className="text-slate-400 text-sm font-medium mb-1">{stat.label}</p>
+              <h3 className="text-2xl font-bold text-white">{stat.val}</h3>
+            </div>
+          ))}
+        </div>
+
+        {/* Middle Section */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+          <div className="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-8">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-bold">Network Activity</h3>
+              <div className="flex space-x-2">
+                {['1h', '24h', '7d', '30d'].map(t => (
+                  <button key={t} className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${t === '24h' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'}`}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Visual placeholder for a chart */}
+            <div className="h-64 w-full flex items-end justify-between space-x-2">
+              {[40, 70, 45, 90, 65, 85, 30, 55, 75, 40, 80, 60, 45, 95, 70].map((h, i) => (
+                <div 
+                  key={i} 
+                  className="flex-1 bg-gradient-to-t from-blue-600/20 to-blue-500 rounded-t-md hover:to-blue-400 transition-all duration-300 cursor-pointer relative group"
+                  style={{ height: `${h}%` }}
+                >
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    {h} ms
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-4 text-xs text-slate-500 font-mono">
+              <span>00:00</span>
+              <span>06:00</span>
+              <span>12:00</span>
+              <span>18:00</span>
+              <span>23:59</span>
+            </div>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+            <h3 className="text-xl font-bold mb-6">Threat Intelligence</h3>
+            <div className="space-y-6">
+              {[
+                { title: 'DDoS Attack Mitigated', time: '2m ago', level: 'High', color: 'bg-red-500' },
+                { title: 'Brute Force Attempt', time: '14m ago', level: 'Medium', color: 'bg-amber-500' },
+                { title: 'Firewall Rule Updated', time: '1h ago', level: 'Info', color: 'bg-blue-500' },
+                { title: 'New Node Authorized', time: '3h ago', level: 'Success', color: 'bg-emerald-500' },
+              ].map((log, i) => (
+                <div key={i} className="flex items-start space-x-4 group cursor-pointer">
+                  <div className={`mt-1.5 h-2 w-2 rounded-full ${log.color} ring-4 ring-slate-800 shadow-[0_0_10px_rgba(0,0,0,0.5)]`}></div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-sm font-bold group-hover:text-blue-400 transition-colors">{log.title}</h4>
+                      <span className="text-[10px] text-slate-500">{log.time}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed">Source IP: 192.168.1.{(i+1)*23} via proxy.encrypted.net</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="w-full mt-8 py-3 bg-slate-800 hover:bg-slate-700 transition-all rounded-xl text-sm font-bold flex items-center justify-center space-x-2">
+              <span>View Security Audit</span>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* Footer info */}
+        <footer className="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-slate-800 pt-8 pb-4">
+          <div className="flex items-center space-x-6 mb-4 md:mb-0">
+            <div className="flex items-center space-x-2 text-xs font-mono text-slate-500">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>All Systems Operational</span>
+            </div>
+            <div className="text-xs font-mono text-slate-500">
+              v4.2.0-STABLE
+            </div>
+          </div>
+          <div className="flex items-center space-x-6 text-slate-400 text-sm">
+            <a href="#" className="hover:text-white transition-colors flex items-center space-x-1">
+              <span>Docs</span>
+              <ExternalLink size={14} />
+            </a>
+            <a href="#" className="hover:text-white transition-colors">API</a>
+            <a href="#" className="hover:text-white transition-colors">Support</a>
+          </div>
+        </footer>
+      </main>
+
+      {/* Mobile Menu Backdrop */}
+      {isMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        ></div>
+      )}
     </div>
+  );
+};
 
-    <script>
-        // Simple clock update
-        function updateClock() {
-            const now = new Date();
-            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('clock').textContent = time;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-    </script>
-
-</body>
-</html>
+export default App;
