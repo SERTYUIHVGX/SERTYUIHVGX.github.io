@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YXON OS - Terminal Edition</title>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         :root {
             --bg-color: #050505;
@@ -36,25 +36,40 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            animation: fadeOut 0.5s ease-in forwards 4s;
+            animation: fadeOut 0.8s ease-in forwards 3.5s;
+            pointer-events: none;
         }
 
         .skull-wrapper {
             position: relative;
             width: 200px;
             height: 200px;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.3));
         }
+
+        /* The Bone Structure */
+        .bone {
+            position: absolute;
+            width: 180px;
+            height: 20px;
+            background: #ffffff;
+            top: 90px;
+            left: 10px;
+            border-radius: 10px;
+            z-index: 0;
+        }
+        .bone-1 { transform: rotate(45deg); }
+        .bone-2 { transform: rotate(-45deg); }
 
         /* The Skull Main Head */
         .skull-head {
             position: absolute;
-            width: 120px;
-            height: 100px;
-            background: #fff;
-            left: 40px;
-            top: 20px;
-            border-radius: 50% 50% 20% 20%;
+            width: 110px;
+            height: 90px;
+            background: #ffffff;
+            left: 45px;
+            top: 30px;
+            border-radius: 50% 50% 25% 25%;
             z-index: 2;
         }
 
@@ -62,81 +77,76 @@
         .skull-head::before, .skull-head::after {
             content: '';
             position: absolute;
-            width: 30px;
-            height: 35px;
+            width: 28px;
+            height: 32px;
             background: #000;
             top: 35px;
             border-radius: 50%;
         }
-        .skull-head::before { left: 20px; transform: rotate(15deg); }
-        .skull-head::after { right: 20px; transform: rotate(-15deg); }
+        .skull-head::before { left: 18px; transform: rotate(15deg); }
+        .skull-head::after { right: 18px; transform: rotate(-15deg); }
 
         /* The Chatter Jaw */
         .skull-jaw {
             position: absolute;
-            width: 80px;
-            height: 50px;
-            background: #fff;
-            left: 60px;
-            top: 100px;
-            border-radius: 0 0 20px 20px;
+            width: 70px;
+            height: 45px;
+            background: #ffffff;
+            left: 65px;
+            top: 105px;
+            border-radius: 0 0 15px 15px;
             z-index: 1;
-            animation: chatter 0.15s infinite;
+            animation: chatter 0.12s infinite steps(2);
             display: flex;
             justify-content: space-around;
-            padding-top: 10px;
+            overflow: hidden;
+            border-top: 4px solid #000;
         }
 
         /* Teeth Detail */
         .skull-jaw::before {
             content: '';
             width: 100%;
-            height: 20px;
-            background: repeating-linear-gradient(90deg, transparent, transparent 10px, #000 10px, #000 14px);
+            height: 100%;
+            background: repeating-linear-gradient(90deg, transparent, transparent 8px, #000 8px, #000 12px);
         }
-
-        /* Crossbones */
-        .bone {
-            position: absolute;
-            width: 200px;
-            height: 25px;
-            background: #fff;
-            top: 80px;
-            border-radius: 12px;
-            z-index: 0;
-        }
-        .bone-1 { transform: rotate(45deg); }
-        .bone-2 { transform: rotate(-45deg); }
 
         .loading-text {
-            margin-top: 40px;
+            margin-top: 50px;
             color: var(--blood-red);
             font-family: 'Consolas', monospace;
-            font-size: 24px;
-            letter-spacing: 10px;
+            font-size: 20px;
+            letter-spacing: 8px;
             text-transform: uppercase;
-            animation: textFlicker 0.05s infinite;
+            font-weight: bold;
+            animation: textFlicker 0.08s infinite;
         }
 
         @keyframes chatter {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(12px); }
+            0%, 100% { transform: translateY(-5px); }
+            50% { transform: translateY(8px); }
         }
 
         @keyframes textFlicker {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 0.8; }
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.02); }
+            100% { opacity: 0.9; }
         }
 
         @keyframes fadeOut {
-            to { opacity: 0; visibility: hidden; }
+            0% { opacity: 1; visibility: visible; }
+            99% { opacity: 0; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; }
         }
 
         /* --- DESKTOP --- */
         .desktop {
             height: calc(100vh - 48px);
             padding: 20px;
+            background: radial-gradient(circle at center, #111 0%, #050505 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .icon {
@@ -146,11 +156,11 @@
             padding: 10px;
             border-radius: 8px;
             transition: 0.2s;
+            user-select: none;
         }
 
         .icon:hover { background: rgba(88, 101, 242, 0.2); }
-
-        .icon-symbol { font-size: 32px; color: var(--accent-blurple); }
+        .icon-symbol { font-size: 32px; color: var(--accent-blurple); margin-bottom: 5px; }
 
         /* --- WINDOW --- */
         .window {
@@ -158,22 +168,25 @@
             background: var(--discord-body);
             border: 1px solid #1e1f22;
             border-radius: 8px;
-            width: 500px;
-            height: 300px;
-            top: 100px;
-            left: 200px;
+            width: 600px;
+            height: 350px;
+            top: 15%;
+            left: 20%;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            z-index: 10;
         }
 
         .title-bar {
             background: var(--discord-dark);
-            padding: 8px 12px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             color: #949ba4;
             font-size: 13px;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
         }
 
         .window-body {
@@ -181,10 +194,13 @@
             padding: 15px;
             font-family: 'Consolas', monospace;
             color: var(--terminal-green);
-            background: #2b2d31;
+            background: #0a0a0a;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-y: auto;
         }
 
-        /* --- TASKBAR & NEWS --- */
+        /* --- TASKBAR --- */
         .taskbar {
             height: 48px;
             background: #111214;
@@ -193,39 +209,46 @@
             width: 100%;
             display: flex;
             align-items: center;
-            padding: 0 10px;
+            padding: 0 15px;
             border-top: 1px solid #2b2d31;
+            z-index: 100;
         }
 
         .news-btn {
-            background: transparent;
-            border: none;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             color: white;
+            border-radius: 4px;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 6px 12px;
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: 0.2s;
         }
+
+        .news-btn:hover { background: rgba(255,255,255,0.15); }
 
         .news-panel {
             position: fixed;
             bottom: 55px;
             left: 10px;
             width: 350px;
-            height: 450px;
+            max-height: 500px;
             background: var(--win11-glass);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             border-radius: 12px;
             padding: 20px;
             border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 101;
         }
 
         .widget {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border-left: 4px solid var(--accent-blurple);
         }
 
@@ -234,6 +257,7 @@
             width: 10px;
             height: 18px;
             background: var(--terminal-green);
+            vertical-align: middle;
             animation: blink 1s step-end infinite;
         }
         @keyframes blink { 50% { opacity: 0; } }
@@ -255,51 +279,85 @@
     <div class="desktop">
         <div class="icon" @click="terminalOpen = true">
             <div class="icon-symbol">#</div>
-            <div style="font-size: 11px;">CORE_LINK</div>
+            <div style="font-size: 11px; font-weight: 600;">CORE_LINK</div>
+        </div>
+        
+        <div class="icon" @click="newsOpen = true">
+            <div class="icon-symbol" style="color: #ffcc00;">⚠</div>
+            <div style="font-size: 11px; font-weight: 600;">NOTICES</div>
         </div>
     </div>
 
-    <div class="window" x-show="terminalOpen">
+    <!-- TERMINAL WINDOW -->
+    <div class="window" x-show="terminalOpen" x-transition>
         <div class="title-bar">
-            <span># yxon-terminal</span>
-            <button @click="terminalOpen = false" style="background:none; border:none; color:inherit; cursor:pointer;">✕</button>
+            <span># yxon-terminal --auth-root</span>
+            <button @click="terminalOpen = false" style="background:none; border:none; color:inherit; cursor:pointer; font-size: 16px;">✕</button>
         </div>
         <div class="window-body">
             <div>YXON_OS [Version 10.0.2026]</div>
-            <div>(c) Yxon Corp. Terminal Access.</div>
+            <div>(c) Yxon Corp. Hypervisor Access Level 4.</div>
             <br>
-            <div>> Initializing CSS_Skull... OK</div>
-            <div>> Purging Win98_Assets... OK</div>
-            <div>> Loading Win11_News_Protocol... OK</div>
+            <div style="color: #5865F2;">> Boot sequence initiated...</div>
+            <div>> Checking BIOS... [OK]</div>
+            <div>> Initializing CSS_Skull... [ACTIVE]</div>
+            <div>> Loading Blood_Fuel_Reservoir... [100%]</div>
+            <div style="color: var(--blood-red)">> WARNING: HELL IS FULL.</div>
             <br>
             <div>C:\YXON> <span class="cursor"></span></div>
         </div>
     </div>
 
     <!-- NEWS PANEL -->
-    <div class="news-panel" x-show="newsOpen" x-transition @click.away="newsOpen = false">
-        <h3 style="margin: 0 0 15px 0;">Widgets</h3>
+    <div class="news-panel" x-show="newsOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-4" @click.away="newsOpen = false">
+        <h3 style="margin: 0 0 15px 0; color: white;">System Intelligence</h3>
         <div class="widget">
-            <small style="color:var(--accent-blurple)">SYSTEM</small>
+            <small style="color:var(--accent-blurple)">LOG_BOOT</small>
             <h4 style="margin:5px 0">Skull Recreated 1:1</h4>
-            <p style="font-size: 12px; margin:0">No external GIFs needed. Pure CSS chatter animation active.</p>
+            <p style="font-size: 12px; margin:0; opacity: 0.8;">Custom CSS chatter animation running at 60fps. Zero external assets detected.</p>
         </div>
         <div class="widget">
-            <small style="color:var(--accent-blurple)">MARKET</small>
+            <small style="color:var(--blood-red)">STATUS</small>
             <h4 style="margin:5px 0">Blood is Fuel</h4>
-            <p style="font-size: 12px; margin:0">Current levels: OPTIMAL.</p>
+            <p style="font-size: 12px; margin:0; opacity: 0.8;">Mankind is dead. Blood is fuel. Hell is full.</p>
+        </div>
+        <div class="widget">
+            <small style="color:var(--terminal-green)">NETWORK</small>
+            <h4 style="margin:5px 0">Terminal Edition Active</h4>
+            <p style="font-size: 12px; margin:0; opacity: 0.8;">Running in sandboxed environment. Version 10.0.2026.</p>
         </div>
     </div>
 
+    <!-- TASKBAR -->
     <div class="taskbar">
         <button class="news-btn" @click="newsOpen = !newsOpen">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2zm0 8H7v-2h10v2z"/></svg>
-            <span style="font-weight: 600;">News</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2zm0 8H7v-2h10v2z"/></svg>
+            <span style="font-size: 13px; font-weight: 500;">Widgets</span>
         </button>
-        <div style="margin-left: auto; font-size: 12px; color: #949ba4; padding-right: 10px;">
-            4:20 PM
+        
+        <div style="flex-grow: 1; display: flex; justify-content: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer;">#</div>
+            <div style="width: 32px; height: 32px; background: rgba(88, 101, 242, 0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#5865F2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+            </div>
+        </div>
+
+        <div style="font-size: 12px; color: #949ba4; text-align: right; user-select: none;">
+            <div id="clock">4:20 PM</div>
+            <div style="font-size: 10px;">4/20/2026</div>
         </div>
     </div>
+
+    <script>
+        // Simple clock update
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('clock').textContent = time;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
 
 </body>
 </html>
