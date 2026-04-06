@@ -3,188 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPad-OS Terminal Desktop</title>
+    <title>iPad Pro Terminal OS</title>
     <style>
-        :root {
-            --bg-blur: blur(20px);
-            --win-bg: rgba(255, 255, 255, 0.7);
-            --taskbar-bg: rgba(243, 243, 243, 0.85);
-        }
-
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        
-        body, html {
-            margin: 0; padding: 0; height: 100%; overflow: hidden;
-            background: url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop') center/cover;
-        }
-
-        /* Desktop Area */
-        #desktop {
-            height: calc(100vh - 60px);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Taskbar */
-        #taskbar {
-            position: fixed; bottom: 0; width: 100%; height: 60px;
-            background: var(--taskbar-bg);
-            backdrop-filter: var(--bg-blur);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; border-top: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .task-icon {
-            width: 40px; height: 40px; margin: 0 8px;
-            cursor: pointer; transition: transform 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 8px;
-        }
-        .task-icon:hover { transform: translateY(-5px); background: rgba(0,0,0,0.05); }
-        .task-icon img { width: 30px; height: 30px; }
+        :root { --bg-blur: blur(20px); --win-bg: rgba(255, 255, 255, 0.9); --taskbar-bg: rgba(243, 243, 243, 0.8); }
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop') center/cover; }
 
         /* Window System */
         .window {
-            position: absolute; width: 400px; height: 300px;
-            background: white; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: none; flex-direction: column;
-            overflow: hidden; resize: both; min-width: 300px;
+            position: absolute; width: 350px; min-height: 200px;
+            background: var(--win-bg); border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none; flex-direction: column; z-index: 10;
+            overflow: hidden; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
         }
-
-        .win-header {
-            padding: 10px; background: #eee; display: flex; 
-            justify-content: space-between; cursor: move;
+        .win-header { 
+            padding: 12px; background: rgba(0,0,0,0.05); 
+            display: flex; justify-content: space-between; 
+            cursor: move; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.05);
         }
+        .win-content { flex: 1; padding: 15px; overflow-y: auto; max-height: 400px; }
+        .close-btn { color: #ff5f56; cursor: pointer; font-size: 18px; }
 
-        .close-btn { color: red; cursor: pointer; font-weight: bold; padding: 0 5px; }
-
-        .win-content { flex: 1; padding: 15px; overflow-y: auto; }
-
-        /* Apps Specific Styles */
-        #terminal-app { background: #0c0c0c; color: #00ff00; font-family: monospace; }
-        .stock-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
-        .price-up { color: green; }
-        .price-down { color: red; }
-
-        /* iPad Optimizations */
-        @media (max-width: 1024px) {
-            .window { width: 90%; left: 5% !important; top: 10% !important; }
-            .task-icon { width: 50px; height: 50px; }
+        /* Taskbar */
+        #taskbar {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            height: 65px; padding: 0 15px; background: var(--taskbar-bg);
+            backdrop-filter: var(--bg-blur); border-radius: 20px;
+            display: flex; align-items: center; gap: 10px; z-index: 9999;
+            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
+        .task-icon { width: 45px; height: 45px; cursor: pointer; transition: 0.2s; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .task-icon:active { transform: scale(0.9); }
+        .task-icon img { width: 35px; height: 35px; }
+
+        /* Stock App Styles */
+        .stock-card { background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd; }
+        .chart { width: 100%; height: 40px; stroke-width: 2; fill: none; margin-top: 5px; }
+        .controls { display: flex; gap: 5px; margin-top: 8px; }
+        button { border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-buy { background: #4caf50; color: white; }
+        .btn-sell { background: #f44336; color: white; }
+        #portfolio { background: #333; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+
+        /* Terminal & Chat */
+        #term-body { background: #121212; color: #0f0; font-family: monospace; height: 250px; }
+        .chat-msg { margin-bottom: 8px; font-size: 0.9em; }
+        .chat-user { font-weight: bold; color: #0078d4; }
     </style>
 </head>
 <body>
 
-<div id="desktop">
-    <div style="width: 300px; background: var(--win-bg); backdrop-filter: var(--bg-blur); padding: 15px; border-radius: 15px;">
-        <h3 style="margin-top:0">☕ Morning Brew News</h3>
-        <div id="news-feed" style="font-size: 0.9em;">Loading brew...</div>
-        <button onclick="fetchNews()" style="margin-top:10px; cursor:pointer;">Refresh News</button>
-    </div>
-</div>
-
-<div id="win-stocks" class="window" style="top: 100px; left: 400px;">
-    <div class="win-header"><span>📈 Stock Market</span> <span class="close-btn" onclick="toggleWin('win-stocks')">X</span></div>
-    <div class="win-content" id="stock-list"></div>
-</div>
-
-<div id="win-terminal" class="window" style="top: 150px; left: 100px;">
-    <div class="win-header"><span>cmd.exe</span> <span class="close-btn" onclick="toggleWin('win-terminal')">X</span></div>
-    <div class="win-content" id="terminal-app">
-        <div>Microsoft Windows [Version 11.0.22621]</div>
-        <div>(c) Microsoft Corporation. All rights reserved.</div><br>
-        <div id="term-out">C:\Users\Admin> type 'help' to start...</div>
-        <div style="display:flex">C:\Users\Admin>&nbsp;<input id="term-in" type="text" autofocus style="background:transparent; border:none; color:#00ff00; outline:none; width:100%; font-family:monospace;"></div>
-    </div>
-</div>
-
+<!-- Taskbar -->
 <div id="taskbar">
-    <div class="task-icon" title="Start"><img src="https://img.icons8.com/color/48/windows-11.png"></div>
-    <div class="task-icon" onclick="toggleWin('win-terminal')"><img src="https://img.icons8.com/color/48/console.png"></div>
+    <div class="task-icon" onclick="toggleWin('win-term')"><img src="https://img.icons8.com/color/48/console.png"></div>
     <div class="task-icon" onclick="toggleWin('win-stocks')"><img src="https://img.icons8.com/color/48/stocks.png"></div>
+    <div class="task-icon" onclick="toggleWin('win-games')"><img src="https://img.icons8.com/color/48/controller-icon.png"></div>
+    <div class="task-icon" onclick="toggleWin('win-notes')"><img src="https://img.icons8.com/color/48/notepad.png"></div>
+    <div class="task-icon" onclick="toggleWin('win-chat')"><img src="https://img.icons8.com/color/48/chat.png"></div>
+</div>
+
+<!-- Stock Market App -->
+<div id="win-stocks" class="window" style="top:50px; left:50px; width:320px">
+    <div class="win-header"><span>Market Terminal</span> <span class="close-btn" onclick="toggleWin('win-stocks')">●</span></div>
+    <div class="win-content">
+        <div id="portfolio">Balance: $<span id="balance">1000.00</span><br><small id="holdings">Holdings: None</small></div>
+        <div id="market-list"></div>
+    </div>
+</div>
+
+<!-- Games App -->
+<div id="win-games" class="window" style="top:80px; left:400px;">
+    <div class="win-header"><span>Game Hub</span> <span class="close-btn" onclick="toggleWin('win-games')">●</span></div>
+    <div class="win-content">
+        <h3>Card Classics</h3>
+        <button onclick="window.open('https://worldofsolitaire.com/?deck=tripeaks', '_blank')" style="width:100%; margin-bottom:10px; background:#673ab7; color:white;">Play Tri-Peaks</button>
+        <button onclick="window.open('https://worldofsolitaire.com/', '_blank')" style="width:100%; background:#03a9f4; color:white;">Classic Solitaire</button>
+    </div>
+</div>
+
+<!-- Notepad App -->
+<div id="win-notes" class="window" style="top:200px; left:150px;">
+    <div class="win-header"><span>Notepad</span> <span class="close-btn" onclick="toggleWin('win-notes')">●</span></div>
+    <div class="win-content" style="padding:0">
+        <textarea style="width:100%; height:200px; border:none; padding:10px; outline:none; resize:none;" placeholder="Write something..."></textarea>
+    </div>
+</div>
+
+<!-- Chat App -->
+<div id="win-chat" class="window" style="top:100px; left:800px;">
+    <div class="win-header"><span>Global Chat</span> <span class="close-btn" onclick="toggleWin('win-chat')">●</span></div>
+    <div class="win-content" id="chat-box" style="height:250px;">
+        <div class="chat-msg"><span class="chat-user">System:</span> Welcome to the trade floor.</div>
+    </div>
+    <div style="padding:10px; display:flex; border-top:1px solid #eee;">
+        <input id="chat-in" type="text" placeholder="Message..." style="flex:1; border:1px solid #ddd; border-radius:5px; padding:5px;">
+    </div>
+</div>
+
+<!-- Terminal App -->
+<div id="win-term" class="window" style="top:300px; left:450px; width:450px">
+    <div class="win-header"><span>Terminal</span> <span class="close-btn" onclick="toggleWin('win-term')">●</span></div>
+    <div class="win-content" id="term-body">
+        <div>Root@Desktop:~# type 'help'</div>
+        <div id="term-out"></div>
+        <input id="term-in" type="text" style="background:transparent; border:none; color:#0f0; outline:none; width:100%;">
+    </div>
 </div>
 
 <script>
-    // --- Window Logic ---
-    function toggleWin(id) {
-        const win = document.getElementById(id);
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-    }
+// --- Window Dragging Logic ---
+let activeWin = null, offsetX, offsetY;
+document.querySelectorAll('.win-header').forEach(header => {
+    header.addEventListener('mousedown', startDrag);
+    header.addEventListener('touchstart', startDrag, {passive: false});
+});
 
-    // --- Terminal Logic ---
-    const termIn = document.getElementById('term-in');
-    const termOut = document.getElementById('term-out');
+function startDrag(e) {
+    activeWin = e.target.closest('.window');
+    const evt = e.type === 'touchstart' ? e.touches[0] : e;
+    offsetX = evt.clientX - activeWin.offsetLeft;
+    offsetY = evt.clientY - activeWin.offsetTop;
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag, {passive: false});
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchend', stopDrag);
+}
 
-    termIn.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const cmd = termIn.value.toLowerCase();
-            let response = `<div>C:\\Users\\Admin> ${cmd}</div>`;
-            
-            if (cmd === 'help') response += "<div>Available: help, news, cls, date</div>";
-            else if (cmd === 'cls') { termOut.innerHTML = ''; termIn.value = ''; return; }
-            else if (cmd === 'news') response += "<div>Opening News feed... Check your desktop.</div>";
-            else if (cmd === 'date') response += `<div>${new Date().toLocaleString()}</div>`;
-            else response += `<div>'${cmd}' is not recognized as an internal or external command.</div>`;
-            
-            termOut.innerHTML += response;
-            termIn.value = '';
-            termOut.parentElement.scrollTop = termOut.parentElement.scrollHeight;
+function drag(e) {
+    if (!activeWin) return;
+    e.preventDefault();
+    const evt = e.type === 'touchmove' ? e.touches[0] : e;
+    activeWin.style.left = (evt.clientX - offsetX) + 'px';
+    activeWin.style.top = (evt.clientY - offsetY) + 'px';
+}
+
+function stopDrag() { activeWin = null; }
+
+function toggleWin(id) {
+    const w = document.getElementById(id);
+    w.style.display = w.style.display === 'flex' ? 'none' : 'flex';
+}
+
+// --- Stock System with Budget & Charts ---
+let balance = 1000;
+let portfolio = {};
+const stocks = [
+    { id: 'brew', name: 'BREW', price: 50, history: [50, 52, 48, 50] },
+    { id: 'tech', name: 'GLXY', price: 120, history: [120, 125, 118, 120] },
+    { id: 'meme', name: 'DOGE', price: 0.50, history: [0.4, 0.6, 0.5, 0.5] }
+];
+
+function updateMarket() {
+    const list = document.getElementById('market-list');
+    list.innerHTML = '';
+    stocks.forEach(s => {
+        // Chance to stop/plateau
+        if(Math.random() > 0.4) { 
+            const change = (Math.random() - 0.5) * (s.price * 0.1);
+            s.price = Math.max(0.01, s.price + change);
         }
+        s.history.push(s.price);
+        if(s.history.length > 20) s.history.shift();
+
+        // Generate SVG Chart
+        const points = s.history.map((p, i) => `${i*15},${40 - (p/Math.max(...s.history)*30)}`).join(' ');
+        const color = s.price >= s.history[s.history.length-2] ? '#4caf50' : '#f44336';
+
+        list.innerHTML += `
+            <div class="stock-card">
+                <div style="display:flex; justify-content:space-between">
+                    <b>${s.name}</b> <span>$${s.price.toFixed(2)}</span>
+                </div>
+                <svg class="chart"><polyline points="${points}" stroke="${color}"/></svg>
+                <div class="controls">
+                    <button class="btn-buy" onclick="buyStock('${s.id}')">Buy</button>
+                    <button class="btn-sell" onclick="sellStock('${s.id}')">Sell</button>
+                    <small>${portfolio[s.id] || 0} Owned</small>
+                </div>
+            </div>
+        `;
     });
+    document.getElementById('balance').innerText = balance.toFixed(2);
+}
 
-    // --- Volatile Stocks Simulation ---
-    const stocks = [
-        { name: 'AAPL', price: 150.25 },
-        { name: 'TSLA', price: 680.50 },
-        { name: 'BTC', price: 42000.00 },
-        { name: 'BREW', price: 25.00 }
-    ];
-
-    function updateStocks() {
-        const list = document.getElementById('stock-list');
-        list.innerHTML = '';
-        stocks.forEach(s => {
-            const change = (Math.random() - 0.5) * 10; // Random drop or raise
-            const oldPrice = s.price;
-            s.price = Math.max(1, s.price + change); // Don't let stock hit 0
-            
-            const colorClass = s.price >= oldPrice ? 'price-up' : 'price-down';
-            const arrow = s.price >= oldPrice ? '▲' : '▼';
-
-            list.innerHTML += `
-                <div class="stock-item">
-                    <span><b>${s.name}</b></span>
-                    <span class="${colorClass}">${arrow} $${s.price.toFixed(2)}</span>
-                </div>
-            `;
-        });
+function buyStock(id) {
+    const s = stocks.find(x => x.id === id);
+    if(balance >= s.price) {
+        balance -= s.price;
+        portfolio[id] = (portfolio[id] || 0) + 1;
+        updateMarket();
     }
-    setInterval(updateStocks, 2000);
-    updateStocks();
+}
 
-    // --- News Logic (Morning Brew Feel) ---
-    async function fetchNews() {
-        const feed = document.getElementById('news-feed');
-        feed.innerHTML = "Brewing fresh news...";
-        
-        // Using a public RSS to JSON proxy to get real tech/business news
-        try {
-            const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.theverge.com/rss/index.xml');
-            const data = await res.json();
-            feed.innerHTML = data.items.slice(0, 3).map(item => `
-                <div style="margin-bottom:10px;">
-                    <a href="${item.link}" target="_blank" style="text-decoration:none; color:#333; font-weight:bold;">• ${item.title}</a>
-                </div>
-            `).join('');
-        } catch (e) {
-            feed.innerHTML = "Could't fetch news. Are you offline?";
-        }
+function sellStock(id) {
+    const s = stocks.find(x => x.id === id);
+    if(portfolio[id] > 0) {
+        balance += s.price;
+        portfolio[id] -= 1;
+        updateMarket();
     }
-    fetchNews();
+}
+
+setInterval(updateMarket, 3000); // Slower updates (requested "stop more often")
+updateMarket();
+
+// --- Chat Simulation ---
+const chatBox = document.getElementById('chat-box');
+const chatIn = document.getElementById('chat-in');
+const bots = ["Trader_Joe", "DiamondHands", "MarketWatcher"];
+const phrases = ["GLXY is mooning!", "Just sold my BREW.", "Anyone playing Solitaire?", "Buy the dip!", "Market is flat today."];
+
+chatIn.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter' && chatIn.value) {
+        addChat("You", chatIn.value);
+        chatIn.value = '';
+        setTimeout(() => {
+            addChat(bots[Math.floor(Math.random()*bots.length)], phrases[Math.floor(Math.random()*phrases.length)]);
+        }, 1500);
+    }
+});
+
+function addChat(user, msg) {
+    chatBox.innerHTML += `<div class="chat-msg"><span class="chat-user">${user}:</span> ${msg}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 </script>
-
 </body>
 </html>
