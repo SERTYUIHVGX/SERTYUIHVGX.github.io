@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Windows 98 Web</title>
-    <!-- The library that makes it look like 98 -->
+    <title>Yxon6 OS Web</title>
     <link rel="stylesheet" href="https://unpkg.com/7.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         body { 
-            background-color: #008080; /* The classic teal */
+            background-color: #008080; 
             margin: 0;
             padding: 0;
             height: 100vh;
@@ -71,20 +70,21 @@
         }
         .window {
             position: absolute;
-            width: 300px;
-            top: 50px;
-            left: 50px;
             z-index: 10;
+            user-select: none;
+        }
+        /* Make it clear the title bar is for dragging */
+        .title-bar {
+            cursor: move;
         }
     </style>
 </head>
-<body x-data="{ startMenu: false, myComputer: true, internetOpen: false }">
+<body x-data="{ startMenu: false, yxon6Open: true, internetOpen: false }">
 
-    <!-- Desktop Icons -->
     <div class="desktop">
-        <div class="icon" @click="myComputer = true">
+        <div class="icon" @click="yxon6Open = true">
             <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png">
-            <span>My Computer</span>
+            <span>Yxon6 OS</span>
         </div>
         <div class="icon" @click="internetOpen = true">
             <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png">
@@ -92,44 +92,47 @@
         </div>
     </div>
 
-    <!-- My Computer Window -->
-    <div class="window" x-show="myComputer" style="width: 320px;">
+    <div class="window" 
+         x-show="yxon6Open" 
+         x-draggable 
+         style="width: 320px; top: 50px; left: 50px;">
         <div class="title-bar">
-            <div class="title-bar-text">My Computer</div>
+            <div class="title-bar-text">Yxon6 OS</div>
             <div class="title-bar-controls">
                 <button aria-label="Minimize"></button>
                 <button aria-label="Maximize"></button>
-                <button aria-label="Close" @click="myComputer = false"></button>
+                <button aria-label="Close" @click="yxon6Open = false"></button>
             </div>
         </div>
         <div class="window-body">
-            <p>Select an item to view its description.</p>
+            <p>Welcome to the Yxon6 operating system environment.</p>
             <ul class="tree-view">
-              <li>(C:) Local Disk</li>
-              <li>(D:) CD-ROM Drive</li>
-              <li>Printers</li>
-              <li>Control Panel</li>
+              <li>(C:) System Files</li>
+              <li>(D:) User Data</li>
+              <li>Network Neighborhood</li>
+              <li>Settings</li>
             </ul>
         </div>
     </div>
 
-    <!-- Internet Explorer Window -->
-    <div class="window" x-show="internetOpen" style="width: 90%; max-width: 600px; height: 400px; left: 5%; top: 20%;">
+    <div class="window" 
+         x-show="internetOpen" 
+         x-draggable 
+         style="width: 500px; height: 400px; top: 100px; left: 100px;">
         <div class="title-bar">
             <div class="title-bar-text">Internet Explorer - Google</div>
             <div class="title-bar-controls">
                 <button aria-label="Close" @click="internetOpen = false"></button>
             </div>
         </div>
-        <div class="window-body" style="margin: 0; height: calc(100% - 35px);">
+        <div class="window-body" style="margin: 0; height: calc(100% - 35px); background: white;">
             <iframe src="https://www.google.com/search?igu=1" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
     </div>
 
-    <!-- Start Menu -->
     <div class="start-menu" x-show="startMenu" @click.outside="startMenu = false">
         <div style="background: linear-gradient(to top, #000080, #1084d0); width: 25px; height: 100%; position: absolute; left: 0; bottom: 0;">
-            <span style="transform: rotate(-90deg); color: white; position: absolute; bottom: 40px; left: -15px; font-weight: bold; width: 100px;">Windows 98</span>
+            <span style="transform: rotate(-90deg); color: white; position: absolute; bottom: 40px; left: -15px; font-weight: bold; width: 100px;">Yxon6 OS</span>
         </div>
         <div style="margin-left: 30px;">
             <button class="icon" style="width: 100%; text-align: left; padding: 5px; color: black; text-shadow: none;" @click="internetOpen = true; startMenu = false">
@@ -145,7 +148,6 @@
         </div>
     </div>
 
-    <!-- Taskbar -->
     <div class="taskbar">
         <button class="start-button" @click="startMenu = !startMenu">
             <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
@@ -158,6 +160,43 @@
     </div>
 
     <script>
+        // Custom Alpine.js Logic for Draggable Windows
+        document.addEventListener('alpine:init', () => {
+            Alpine.directive('draggable', (el) => {
+                let titleBar = el.querySelector('.title-bar');
+                let offsetX = 0, offsetY = 0, mouseX = 0, mouseY = 0;
+
+                titleBar.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    e.preventDefault();
+                    // Move this window to the top of the stack
+                    document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
+                    el.style.zIndex = 100;
+
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e.preventDefault();
+                    offsetX = mouseX - e.clientX;
+                    offsetY = mouseY - e.clientY;
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    el.style.top = (el.offsetTop - offsetY) + "px";
+                    el.style.left = (el.offsetLeft - offsetX) + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            });
+        });
+
         function updateClock() {
             const now = new Date();
             document.getElementById('time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
