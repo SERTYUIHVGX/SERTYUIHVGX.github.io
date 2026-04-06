@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS - Professional Edition</title>
+    <title>Yxon6 OS - Live News Edition</title>
     <style>
         /* CORE SYSTEM STYLES */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -21,10 +21,22 @@
             flex-direction: column;
             z-index: 10000;
         }
-        #news-sidebar.open { width: 250px; }
-        .news-header { background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%); color: white; padding: 8px; font-weight: bold; font-size: 13px; }
-        .news-content { padding: 10px; font-size: 12px; color: #333; overflow-y: auto; }
-        .news-item { margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid #aca899; }
+        #news-sidebar.open { width: 280px; }
+        .news-header { 
+            background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%); 
+            color: white; padding: 10px; font-weight: bold; font-size: 13px; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .news-content { padding: 10px; font-size: 12px; color: #333; overflow-y: auto; flex-grow: 1; }
+        
+        /* REAL NEWS STYLING */
+        .news-item { 
+            margin-bottom: 12px; padding: 8px; border: 1px solid #aca899; 
+            background: #fff; border-radius: 2px; box-shadow: 1px 1px 0px #fff inset;
+        }
+        .news-item small { color: #0054e3; font-weight: bold; display: block; margin-bottom: 4px; }
+        .news-item a { text-decoration: none; color: #000; font-weight: 500; display: block; }
+        .news-item a:hover { text-decoration: underline; color: #0054e3; }
 
         .desktop {
             background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/7/70/Windows_XP_Bliss.jpg') no-repeat center center;
@@ -32,10 +44,9 @@
             height: calc(100vh - 35px);
             flex-grow: 1;
             position: relative;
-            transition: margin-left 0.3s ease;
         }
 
-        /* DESKTOP ICONS */
+        /* WINDOWS & ICONS (Existing Logic) */
         .icon-container { display: flex; flex-direction: column; gap: 10px; padding: 15px; width: 110px; }
         .icon {
             width: 80px; height: 90px;
@@ -44,10 +55,7 @@
             cursor: pointer; font-size: 11px; text-align: center; border: 1px solid transparent;
             user-select: none;
         }
-        .icon:hover { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 3px; }
-        .icon img { width: 42px; height: 42px; margin-bottom: 4px; pointer-events: none; }
-
-        /* WINDOW SYSTEM */
+        .icon img { width: 42px; height: 42px; margin-bottom: 4px; }
         .window {
             position: absolute; min-width: 300px; min-height: 200px;
             background: #ece9d8; border: 3px solid #0054e3;
@@ -55,167 +63,76 @@
             flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 100;
         }
-
         .window-header {
             background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%);
             color: white; padding: 0 8px; display: flex;
             justify-content: space-between; align-items: center;
-            font-weight: bold; font-size: 13px; height: 30px; cursor: default;
-            user-select: none;
+            font-weight: bold; font-size: 13px; height: 30px;
         }
-
-        .header-buttons { display: flex; gap: 3px; }
-        .header-btn {
-            width: 21px; height: 21px; border: 1px solid white; border-radius: 2px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-family: sans-serif; font-size: 10px; font-weight: bold;
-        }
-        .close-btn { background: #c72c2c; }
-        .min-btn { background: #3c81f3; }
-
-        .window-body { flex-grow: 1; background: white; position: relative; overflow: hidden; }
-
-        /* BROWSER UI & DRAGGABLE TABS */
-        .tab-bar { display: flex; background: #dcdadc; padding: 2px 5px 0 5px; gap: 2px; border-bottom: 1px solid #aca899; align-items: flex-end; }
-        .tab {
-            background: #bdbebd; border: 1px solid #7b7b7b; border-bottom: none;
-            padding: 4px 12px; font-size: 11px; cursor: move; min-width: 100px; max-width: 150px;
-            border-radius: 3px 3px 0 0; display: flex; justify-content: space-between; align-items: center;
-            user-select: none;
-        }
-        .tab.active { background: #ece9d8; font-weight: bold; border-top: 2px solid #ff9600; padding-top: 3px; z-index: 2; }
-        .tab.dragging { opacity: 0.5; }
-
-        .browser-nav { background: #ece9d8; padding: 5px; display: flex; gap: 5px; border-bottom: 1px solid #aca899; }
-        .url-bar { flex-grow: 1; padding: 3px 8px; border: 1px solid #7f9db9; outline: none; font-size: 12px; }
-        .browser-frame { width: 100%; height: 100%; border: none; display: none; }
-        .browser-frame.active { display: block; }
+        .window-body { flex-grow: 1; background: white; overflow: hidden; }
 
         /* TASKBAR */
         .taskbar {
             position: fixed; bottom: 0; width: 100%; height: 35px;
             background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
-            display: flex; justify-content: flex-start; align-items: center; z-index: 9999;
+            display: flex; align-items: center; z-index: 9999;
         }
-        .start-btn { height: 100%; cursor: pointer; margin-right: 5px; }
+        .start-btn { height: 100%; cursor: pointer; }
         .news-btn-task { 
             background: #388e3c; color: white; border: 1px solid #1b5e20; 
-            font-size: 11px; padding: 2px 10px; cursor: pointer; border-radius: 3px; 
-            margin-right: 10px; font-weight: bold;
+            font-size: 11px; padding: 4px 12px; cursor: pointer; border-radius: 3px; 
+            margin-left: 10px; font-weight: bold; box-shadow: inset 0 1px 1px #81c784;
         }
-        .system-tray { margin-left: auto; color: white; background: #0997ff; height: 100%; display: flex; align-items: center; padding: 0 15px; font-size: 12px; border-left: 1px solid #082d6e; }
+        .system-tray { margin-left: auto; color: white; background: #0997ff; height: 100%; display: flex; align-items: center; padding: 0 15px; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <div id="news-sidebar">
-    <div class="news-header">Yxon6 Daily News</div>
-    <div class="news-content">
-        <div class="news-item">
-            <strong>System Update</strong><br>
-            Draggable tab support added to NetScape Navigator.
-        </div>
-        <div class="news-item">
-            <strong>Weather Report</strong><br>
-            Clear skies over the Bliss wallpaper today.
-        </div>
-        <div class="news-item">
-            <strong>Security Alert</strong><br>
-            Always use 'proxylist' to verify secure connections.
-        </div>
+    <div class="news-header">
+        <span>YXON6 LIVE NEWS</span>
+        <span onclick="toggleNews()" style="cursor:pointer;">[X]</span>
+    </div>
+    <div class="news-content" id="live-news-feed">
+        <div class="news-item">Connecting to 2026 data stream...</div>
     </div>
 </div>
 
 <div class="desktop">
     <div class="icon-container">
-        <div class="icon" onclick="openWindow('yxon6-window')">
-            <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png">
-            <span>Yxon6 OS</span>
-        </div>
         <div class="icon" onclick="openWindow('browser-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/world-0.png">
             <span>Internet</span>
-        </div>
-        <div class="icon" onclick="openWindow('notepad-window')">
-            <img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png">
-            <span>Notepad</span>
-        </div>
-    </div>
-
-    <div id="yxon6-window" class="window" style="top:40px; left:140px; width:650px; height:450px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="yxon6-window-header">
-            <span>Yxon6 OS Terminal</span>
-            <div class="header-buttons">
-                <div class="header-btn close-btn" onclick="closeWindow('yxon6-window')">X</div>
-            </div>
-        </div>
-        <div class="window-body" style="background:black;">
-            <iframe id="yxon6-frame" style="width:100%; height:100%; border:none;"></iframe>
         </div>
     </div>
 
     <div id="browser-window" class="window" style="top:70px; left:180px; width:800px; height:550px;" onmousedown="focusWin(this)">
         <div class="window-header" id="browser-window-header">
             <span>NetScape Navigator</span>
-            <div class="header-buttons">
-                <div class="header-btn close-btn" onclick="closeWindow('browser-window')">X</div>
-            </div>
-        </div>
-        <div class="tab-bar" id="tab-bar">
-            <button onclick="createNewTab()" id="new-tab-btn" style="cursor:pointer; height:22px; margin-bottom:2px; order: 999;">+</button>
-        </div>
-        <div class="browser-nav">
-            <input type="text" class="url-bar" id="url-input" placeholder="Enter URL..." onkeydown="if(event.key==='Enter') netGo(this.value)">
-            <button onclick="netGo(document.getElementById('url-input').value)" style="cursor:pointer;">Go</button>
-        </div>
-        <div class="window-body" id="browser-container"></div>
-    </div>
-
-    <div id="notepad-window" class="window" style="top:120px; left:250px; width:400px; height:300px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="notepad-window-header">
-            <span>Untitled - Notepad</span>
-            <div class="header-buttons">
-                <div class="header-btn close-btn" onclick="closeWindow('notepad-window')">X</div>
-            </div>
+            <div onclick="closeWindow('browser-window')" style="cursor:pointer; background:red; padding:2px 8px; border:1px solid white;">X</div>
         </div>
         <div class="window-body">
-            <textarea style="width:100%; height:100%; border:none; padding:10px; font-family:monospace; outline:none; resize:none;"></textarea>
+            <iframe id="browser-frame" src="https://www.bing.com" style="width:100%; height:100%; border:none;"></iframe>
         </div>
     </div>
 </div>
 
 <div class="taskbar">
-    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" class="start-btn" onclick="alert('Yxon6 OS v1.1. Updated.')">
-    <button class="news-btn-task" onclick="toggleNews()">NEWS</button>
+    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" class="start-btn">
+    <button class="news-btn-task" onclick="toggleNews()">LIVE NEWS</button>
     <div class="system-tray" id="clock">12:00 PM</div>
 </div>
 
 <script>
-    let tabIdCounter = 0;
-    let activeTabId = null;
     let highestZ = 100;
-    let draggedTab = null;
 
-    // --- TERMINAL SOURCE ---
-    const terminalSource = `<html><body style="background:black;color:red;font-family:monospace;padding:15px;">
-        <pre>.d8888b.  .d88888b.  .d8888b.  
-d88P  Y88b d88P" "Y88b d88P  Y88b 
-888        888     888 Y88b.      
-888d888b.  888     888  "Y888b.   
-888P "Y88b 888     888     "Y88b. 
-888    888 888     888       "888 
-Y88b  d88P Y88b. .d88P Y88b  d88P 
- "Y8888P"   "Y88888P"   "Y8888P"  </pre>
-        <p>[ YXON6 KERNEL 1.1 ONLINE ]</p>
-        <p>Type 'help' for commands.</p>
-    </body></html>`;
-
-    // --- NEWS TOGGLE ---
     function toggleNews() {
         document.getElementById('news-sidebar').classList.toggle('open');
+        if(document.getElementById('news-sidebar').classList.contains('open')) {
+            updateLiveNews();
+        }
     }
 
-    // --- SYSTEM CORE ---
     function focusWin(win) {
         highestZ++;
         win.style.zIndex = highestZ;
@@ -225,117 +142,39 @@ Y88b  d88P Y88b. .d88P Y88b  d88P
         const win = document.getElementById(id);
         win.style.display = 'flex';
         focusWin(win);
-        if(id === 'yxon6-window' && !document.getElementById('yxon6-frame').srcdoc) {
-            document.getElementById('yxon6-frame').srcdoc = terminalSource;
-        }
-        if(id === 'browser-window' && !activeTabId) createNewTab();
     }
 
     function closeWindow(id) {
         document.getElementById(id).style.display = 'none';
     }
 
-    // --- DRAG ENGINE ---
-    function makeDraggable(win) {
-        const header = document.getElementById(win.id + "-header");
-        let p1=0, p2=0, p3=0, p4=0;
-        header.onmousedown = (e) => {
-            e.preventDefault();
-            focusWin(win);
-            p3 = e.clientX; p4 = e.clientY;
-            document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
-            document.onmousemove = (e) => {
-                e.preventDefault();
-                p1 = p3 - e.clientX; p2 = p4 - e.clientY;
-                p3 = e.clientX; p4 = e.clientY;
-                win.style.top = (win.offsetTop - p2) + "px";
-                win.style.left = (win.offsetLeft - p1) + "px";
-            };
-        };
-    }
-    document.querySelectorAll('.window').forEach(makeDraggable);
+    // --- REAL-TIME NEWS ENGINE ---
+    async function updateLiveNews() {
+        const feed = document.getElementById('live-news-feed');
+        // Using a public RSS-to-JSON proxy to get real Google News headlines
+        const rssUrl = 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en';
+        const proxy = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
-    // --- TAB DRAG & DROP LOGIC ---
-    const tabBar = document.getElementById('tab-bar');
-
-    function createNewTab(url = 'https://www.bing.com') {
-        tabIdCounter++;
-        const id = `tab-${tabIdCounter}`;
-        const tabBtn = document.createElement('div');
-        tabBtn.className = 'tab';
-        tabBtn.id = `btn-${id}`;
-        tabBtn.draggable = true;
-        tabBtn.innerHTML = `<span>Page</span> <span style="font-weight:bold;cursor:pointer;" onclick="closeTab(event, '${id}')">×</span>`;
-        
-        // Tab Events
-        tabBtn.onclick = () => switchTab(id);
-        tabBtn.addEventListener('dragstart', (e) => {
-            draggedTab = tabBtn;
-            tabBtn.classList.add('dragging');
-        });
-        tabBtn.addEventListener('dragend', () => {
-            draggedTab.classList.remove('dragging');
-            draggedTab = null;
-        });
-        tabBtn.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const afterElement = getDragAfterElement(tabBar, e.clientX);
-            if (afterElement == null) {
-                tabBar.insertBefore(draggedTab, document.getElementById('new-tab-btn'));
-            } else {
-                tabBar.insertBefore(draggedTab, afterElement);
+        try {
+            const response = await fetch(proxy);
+            const data = await response.json();
+            
+            if(data.status === 'ok') {
+                feed.innerHTML = '';
+                data.items.slice(0, 15).forEach(item => {
+                    const date = new Date(item.pubDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const div = document.createElement('div');
+                    div.className = 'news-item';
+                    div.innerHTML = `
+                        <small>SECURE FEED @ ${date}</small>
+                        <a href="${item.link}" target="_blank">${item.title}</a>
+                    `;
+                    feed.appendChild(div);
+                });
             }
-        });
-
-        tabBar.insertBefore(tabBtn, document.getElementById('new-tab-btn'));
-
-        const frame = document.createElement('iframe');
-        frame.id = id;
-        frame.className = 'browser-frame';
-        frame.src = url;
-        document.getElementById('browser-container').appendChild(frame);
-        switchTab(id);
-    }
-
-    function getDragAfterElement(container, x) {
-        const draggableElements = [...container.querySelectorAll('.tab:not(.dragging)')];
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = x - box.left - box.width / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    function switchTab(id) {
-        activeTabId = id;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.browser-frame').forEach(f => f.classList.remove('active'));
-        document.getElementById(`btn-${id}`).classList.add('active');
-        document.getElementById(id).classList.add('active');
-        document.getElementById('url-input').value = document.getElementById(id).src;
-    }
-
-    function closeTab(e, id) {
-        e.stopPropagation();
-        document.getElementById(`btn-${id}`).remove();
-        document.getElementById(id).remove();
-        if (activeTabId === id) {
-            const next = document.querySelector('.tab');
-            if (next) switchTab(next.id.replace('btn-', ''));
-            else activeTabId = null;
+        } catch (e) {
+            feed.innerHTML = '<div class="news-item">Error: Satellite signal lost.</div>';
         }
-    }
-
-    function netGo(val) {
-        if (!activeTabId) createNewTab();
-        let url = val.trim();
-        if (!url.startsWith('http')) url = 'https://' + url;
-        document.getElementById(activeTabId).src = url;
-        document.getElementById(`btn-${activeTabId}`).querySelector('span').innerText = url.split('/')[2] || "Page";
     }
 
     // --- CLOCK ---
@@ -343,8 +182,11 @@ Y88b  d88P Y88b. .d88P Y88b  d88P
         const now = new Date();
         document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
     }
+    
     setInterval(updateClock, 1000);
     updateClock();
+    // Fetch news on load
+    updateLiveNews();
 </script>
 
 </body>
