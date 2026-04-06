@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS - Koopbin Style</title>
+    <title>Yxon6 OS - Pro Edition</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Segoe UI", Tahoma, sans-serif; background: #000; }
@@ -30,7 +30,7 @@
 
         /* WINDOWS */
         .window {
-            position: absolute; width: 800px; height: 550px;
+            position: absolute; width: 750px; height: 500px;
             background: #f0f0f0; border: 1px solid #0054e3;
             border-radius: 6px 6px 0 0; display: none;
             flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -57,7 +57,7 @@
         }
         .tab {
             background: #dee1e6; border: none; padding: 8px 15px;
-            font-size: 12px; cursor: pointer; min-width: 120px; max-width: 180px;
+            font-size: 11px; cursor: pointer; min-width: 100px; max-width: 150px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             border-radius: 8px 8px 0 0; position: relative; color: #444;
             display: flex; align-items: center; justify-content: space-between;
@@ -66,28 +66,25 @@
         .close-tab { font-size: 14px; margin-left: 10px; opacity: 0.6; }
         .close-tab:hover { opacity: 1; color: red; }
         
-        .new-tab-btn { 
-            background: none; border: none; font-size: 20px; 
-            color: #5f6368; cursor: pointer; padding-bottom: 5px; 
-        }
+        .new-tab-btn { background: none; border: none; font-size: 18px; color: #5f6368; cursor: pointer; padding-bottom: 2px; }
 
-        .browser-nav { 
-            background: #fff; padding: 8px; display: flex; gap: 10px; 
-            border-bottom: 1px solid #ccc; align-items: center;
-        }
-        .nav-btn { cursor: pointer; opacity: 0.7; font-size: 18px; }
-        .nav-btn:hover { opacity: 1; }
-
+        .browser-nav { background: #fff; padding: 8px; display: flex; gap: 10px; border-bottom: 1px solid #ccc; align-items: center; }
         .url-bar {
             flex-grow: 1; background: #f1f3f4; border-radius: 20px;
-            padding: 6px 15px; border: 1px solid transparent; outline: none;
-            font-size: 13px;
+            padding: 6px 15px; border: 1px solid transparent; outline: none; font-size: 13px;
         }
-        .url-bar:focus { background: #fff; border: 1px solid #707070; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .url-bar:focus { background: #fff; border: 1px solid #0054e3; }
         
-        .window-body { flex-grow: 1; background: #fff; position: relative; }
+        .window-body { flex-grow: 1; background: #fff; position: relative; overflow: hidden; }
         .browser-frame { width: 100%; height: 100%; border: none; display: none; }
         .browser-frame.active { display: block; }
+
+        /* NOTEPAD */
+        .notepad-area {
+            width: 100%; height: 100%; border: none; padding: 10px;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 14px;
+            outline: none; resize: none;
+        }
 
         /* TASKBAR */
         .taskbar {
@@ -95,7 +92,7 @@
             background: #202124; display: flex; justify-content: space-between; 
             align-items: center; z-index: 9999; color: white;
         }
-        .start-btn { height: 100%; padding: 5px 15px; cursor: pointer; background: #3c4043; font-weight: bold; display: flex; align-items: center; }
+        .start-btn { height: 100%; padding: 0 15px; cursor: pointer; background: #3c4043; font-weight: bold; display: flex; align-items: center; }
         .system-tray { padding: 0 15px; font-size: 12px; }
     </style>
 </head>
@@ -107,33 +104,42 @@
             <img src="https://win98icons.alexmeub.com/icons/png/world-0.png">
             <span>Browser</span>
         </div>
+        <div class="icon" onclick="openWindow('notepad-window')">
+            <img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png">
+            <span>Notepad</span>
+        </div>
         <div class="icon" onclick="openWindow('os-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png">
             <span>Terminal</span>
         </div>
     </div>
 
-    <div id="netscape-window" class="window" style="top:50px; left:100px;" onmousedown="focusWin(this)">
+    <div id="netscape-window" class="window" style="top:40px; left:80px;" onmousedown="focusWin(this)">
         <div class="window-header" id="netscape-window-header">
-            <span>Browser</span>
+            <span>Yxon6 Browser</span>
             <div class="close-btn" onclick="closeWindow('netscape-window')">×</div>
         </div>
-        
         <div class="tab-bar" id="tab-bar">
             <button class="new-tab-btn" onclick="createNewTab()">+</button>
         </div>
-
         <div class="browser-nav">
-            <span class="nav-btn" onclick="browserBack()">←</span>
-            <span class="nav-btn" onclick="browserRefresh()">↻</span>
-            <input type="text" class="url-bar" id="url-input" placeholder="Search Google or enter address" onkeydown="if(event.key==='Enter') netGo(this.value)">
+            <input type="text" class="url-bar" id="url-input" placeholder="Search Google or enter URL" onkeydown="if(event.key==='Enter') netGo(this.value)">
+            <button onclick="netGo(document.getElementById('url-input').value)">Go</button>
         </div>
-
-        <div class="window-body" id="browser-container">
-            </div>
+        <div class="window-body" id="browser-container"></div>
     </div>
 
-    <div id="os-window" class="window" style="top:80px; left:150px; width:600px; height:400px;" onmousedown="focusWin(this)">
+    <div id="notepad-window" class="window" style="top:100px; left:150px; width:500px; height:400px;" onmousedown="focusWin(this)">
+        <div class="window-header" id="notepad-window-header">
+            <span>Notepad</span>
+            <div class="close-btn" onclick="closeWindow('notepad-window')">×</div>
+        </div>
+        <div class="window-body">
+            <textarea class="notepad-area" placeholder="Write something..."></textarea>
+        </div>
+    </div>
+
+    <div id="os-window" class="window" style="top:150px; left:200px; width:600px; height:350px;" onmousedown="focusWin(this)">
         <div class="window-header" id="os-window-header"><span>Terminal</span><div class="close-btn" onclick="closeWindow('os-window')">×</div></div>
         <div class="window-body" style="background:black;"><iframe id="os-frame" style="width:100%; height:100%; border:none;"></iframe></div>
     </div>
@@ -145,32 +151,27 @@
 </div>
 
 <script>
-    // --- BROWSER ENGINE ---
     let tabIdCounter = 0;
     let activeTabId = null;
-    const homePage = "https://www.google.com/webhp?igu=1"; // Uses Google embed-friendly version
+    const homePage = "https://www.google.com/webhp?igu=1";
 
+    // --- BROWSER LOGIC ---
     function createNewTab(url = homePage) {
         tabIdCounter++;
         const id = `tab-${tabIdCounter}`;
-
-        // Create Tab Button
         const tabBtn = document.createElement('div');
         tabBtn.className = 'tab';
         tabBtn.id = `btn-${id}`;
         tabBtn.innerHTML = `<span>New Tab</span> <span class="close-tab" onclick="closeTab(event, '${id}')">×</span>`;
         tabBtn.onclick = () => switchTab(id);
-        
         const tabBar = document.getElementById('tab-bar');
         tabBar.insertBefore(tabBtn, tabBar.lastElementChild);
 
-        // Create Iframe
         const frame = document.createElement('iframe');
         frame.id = id;
         frame.className = 'browser-frame';
         frame.src = url;
         document.getElementById('browser-container').appendChild(frame);
-
         switchTab(id);
     }
 
@@ -178,12 +179,9 @@
         activeTabId = id;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.browser-frame').forEach(f => f.classList.remove('active'));
-        
         document.getElementById(`btn-${id}`).classList.add('active');
+        document.getElementById(id).classList.add('active');
         const frame = document.getElementById(id);
-        frame.classList.add('active');
-        
-        // Update URL bar
         document.getElementById('url-input').value = (frame.src.includes('google.com/webhp')) ? '' : frame.src;
     }
 
@@ -194,7 +192,7 @@
         if (activeTabId === id) {
             const lastTab = document.querySelector('.tab');
             if (lastTab) switchTab(lastTab.id.replace('btn-', ''));
-            else createNewTab();
+            else activeTabId = null;
         }
     }
 
@@ -203,7 +201,7 @@
         let url = val.trim();
         if (!url) return;
 
-        // Logic: If it doesn't look like a URL, search Google
+        // If it's not a URL (no dot or has space), search Google
         if (!url.includes('.') || url.includes(' ')) {
             url = 'https://www.google.com/search?q=' + encodeURIComponent(url) + '&igu=1';
         } else {
@@ -218,15 +216,7 @@
         document.getElementById(`btn-${activeTabId}`).querySelector('span').textContent = label;
     }
 
-    function browserRefresh() {
-        if(activeTabId) document.getElementById(activeTabId).contentWindow.location.reload();
-    }
-
-    function browserBack() {
-        if(activeTabId) window.history.back(); // Note: limited by cross-origin security
-    }
-
-    // --- WINDOW MANAGEMENT ---
+    // --- WINDOW MGMT ---
     let zIndex = 100;
     function focusWin(win) { win.style.zIndex = ++zIndex; }
     
@@ -236,17 +226,13 @@
         focusWin(win);
         if(id === 'netscape-window' && !activeTabId) createNewTab();
         if(id === 'os-window') {
-            document.getElementById('os-frame').srcdoc = `
-                <body style="background:black;color:lime;font-family:monospace;padding:10px;">
-                YXON6 OS TERMINAL [Version 4.2]<br>Type 'help' to start.<br><br>
-                C:\\> <input style="background:transparent;border:none;color:lime;outline:none;" autofocus>
-                </body>`;
+            document.getElementById('os-frame').srcdoc = `<body style="background:black;color:lime;font-family:monospace;padding:10px;">C:\\> <input style="background:transparent;border:none;color:lime;outline:none;" autofocus></body>`;
         }
     }
 
     function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
 
-    // --- DRAGGABLE LOGIC ---
+    // --- DRAG LOGIC ---
     function makeDraggable(elm) {
         let p1=0, p2=0, p3=0, p4=0;
         const header = document.getElementById(elm.id + "-header");
@@ -262,6 +248,7 @@
         };
     }
     makeDraggable(document.getElementById("netscape-window"));
+    makeDraggable(document.getElementById("notepad-window"));
     makeDraggable(document.getElementById("os-window"));
 
     // --- CLOCK ---
