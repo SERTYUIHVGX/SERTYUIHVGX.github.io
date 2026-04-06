@@ -3,314 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS - Bliss Edition</title>
+    <title>Yxon6 OS - Pro Edition</title>
     <style>
-        /* CORE DESKTOP STYLING */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", "Segoe UI", sans-serif; background: #000; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", sans-serif; background: #000; }
 
         .desktop {
-            /* AUTHENTIC WINDOWS XP BLISS BACKGROUND */
             background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/7/70/Windows_XP_Bliss.jpg') no-repeat center center;
             background-size: cover;
             height: calc(100vh - 35px);
             width: 100vw;
             position: relative;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
         }
 
+        /* ICONS */
+        .icon-container { display: flex; flex-direction: column; gap: 15px; width: 100px; }
         .icon {
-            width: 85px;
-            height: 95px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            /* XP style text shadow for readability */
-            text-shadow: 2px 2px 2px rgba(0,0,0,0.9);
-            cursor: pointer;
-            border: 1px solid transparent;
-            font-size: 11px;
-            text-align: center;
+            width: 85px; height: 95px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-shadow: 2px 2px 2px rgba(0,0,0,0.9);
+            cursor: pointer; font-size: 11px; text-align: center;
         }
-        .icon:hover { background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 3px; }
-        .icon img { width: 42px; height: 42px; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); }
+        .icon:hover { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+        .icon img { width: 42px; height: 42px; margin-bottom: 5px; }
 
-        /* WINDOW STYLING */
+        /* WINDOWS */
         .window {
-            position: absolute;
-            width: 600px;
-            height: 400px;
-            background: #ece9d8;
-            border: 3px solid #0054e3;
-            border-radius: 8px 8px 0 0;
-            display: none;
-            flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            overflow: hidden;
+            position: absolute; width: 650px; height: 450px;
+            background: #ece9d8; border: 3px solid #0054e3;
+            border-radius: 8px 8px 0 0; display: none;
+            flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            overflow: hidden; z-index: 100;
         }
 
         .window-header {
             background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%);
-            color: white;
-            padding: 5px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 13px;
-            height: 30px;
-            cursor: move;
+            color: white; padding: 5px 10px; display: flex;
+            justify-content: space-between; align-items: center;
+            font-weight: bold; font-size: 13px; height: 30px; cursor: move;
         }
 
         .close-btn {
-            background: #c72c2c;
-            color: white;
-            border: 1px solid white;
-            width: 21px;
-            height: 21px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 2px;
-            cursor: pointer;
-            font-size: 11px;
+            background: #c72c2c; color: white; border: 1px solid white;
+            width: 21px; height: 21px; display: flex; align-items: center;
+            justify-content: center; border-radius: 2px; cursor: pointer;
         }
 
-        /* NOTEPAD SPECIFIC */
+        /* BROWSER */
+        .browser-nav { background: #ece9d8; padding: 6px; display: flex; gap: 6px; border-bottom: 1px solid #aca899; }
+        .browser-nav input { flex-grow: 1; padding: 4px; border: 1px solid #7f9db9; outline: none; }
+        
+        .window-body { flex-grow: 1; background: white; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+
+        /* NOTEPAD */
         .notepad-area {
-            flex-grow: 1;
-            width: 100%;
-            border: none;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            resize: none;
-            outline: none;
-            background: white;
-            color: black;
+            width: 100%; height: 100%; border: none; padding: 10px;
+            font-family: 'Courier New', monospace; font-size: 14px;
+            outline: none; resize: none;
         }
-        .notepad-menu { background: #ece9d8; padding: 2px 5px; border-bottom: 1px solid #aca899; font-size: 11px; display: flex; gap: 10px; }
-        .menu-item { cursor: pointer; padding: 2px 5px; }
-        .menu-item:hover { background: #316ac5; color: white; }
-
-        /* BROWSER INTERFACE */
-        .browser-nav {
-            background: #ece9d8;
-            padding: 6px;
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            border-bottom: 1px solid #aca899;
-        }
-        .browser-nav input { flex-grow: 1; padding: 4px 8px; border: 1px solid #7f9db9; font-size: 12px; outline: none; }
-        .nav-btn { padding: 3px 10px; font-size: 11px; background: #f0f0f0; border: 1px solid #7f9db9; cursor: pointer; border-radius: 2px; }
-
-        .window-body { flex-grow: 1; background: white; margin: 0; position: relative; border: none; }
-        iframe { width: 100%; height: 100%; border: none; }
 
         /* TASKBAR */
         .taskbar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: 35px;
+            position: fixed; bottom: 0; width: 100%; height: 35px;
             background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 9999;
+            display: flex; justify-content: space-between; align-items: center; z-index: 9999;
         }
-
+        .start-btn { height: 100%; cursor: pointer; }
         .system-tray {
-            color: white;
-            background: linear-gradient(to bottom, #0997ff 0%, #0053ee 100%);
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            font-size: 12px;
-            border-left: 1px solid #10b5fc;
+            color: white; background: linear-gradient(to bottom, #0997ff 0%, #0053ee 100%);
+            height: 100%; display: flex; align-items: center; padding: 0 15px; font-size: 12px;
         }
     </style>
 </head>
 <body>
 
 <div class="desktop">
-    <!-- Desktop Icons -->
-    <div class="icon" onclick="openWindow('os-window')">
-        <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" alt="Terminal">
-        <span>Yxon6 OS</span>
-    </div>
-
-    <div class="icon" onclick="openWindow('netscape-window')">
-        <img src="https://win98icons.alexmeub.com/icons/png/world-0.png" alt="Netscape">
-        <span>NetScape</span>
-    </div>
-
-    <div class="icon" onclick="openWindow('notepad-window')">
-        <img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png" alt="Notepad">
-        <span>Notepad</span>
-    </div>
-
-    <!-- Terminal Window -->
-    <div id="os-window" class="window" style="top: 40px; left: 40px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="os-window-header">
-            <span>Yxon6 OS - Terminal</span>
-            <div class="close-btn" onclick="closeWindow('os-window')">X</div>
+    <div class="icon-container">
+        <div class="icon" onclick="openWindow('os-window')">
+            <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png">
+            <span>Yxon6 OS</span>
         </div>
-        <div class="window-body" style="background: black;">
-            <iframe id="os-frame"></iframe>
+        <div class="icon" onclick="openWindow('netscape-window')">
+            <img src="https://win98icons.alexmeub.com/icons/png/world-0.png">
+            <span>NetScape</span>
+        </div>
+        <div class="icon" onclick="openWindow('notepad-window')">
+            <img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png">
+            <span>Notepad</span>
         </div>
     </div>
 
-    <!-- Browser Window -->
-    <div id="netscape-window" class="window" style="top: 80px; left: 80px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="netscape-window-header">
-            <span>NetScape Navigator</span>
-            <div class="close-btn" onclick="closeWindow('netscape-window')">X</div>
-        </div>
+    <!-- Terminal -->
+    <div id="os-window" class="window" style="top:30px; left:150px;" onmousedown="focusWin(this)">
+        <div class="window-header" id="os-window-header"><span>Yxon6 OS Terminal</span><div class="close-btn" onclick="closeWindow('os-window')">X</div></div>
+        <div class="window-body" style="background:black;"><iframe id="os-frame"></iframe></div>
+    </div>
+
+    <!-- Browser -->
+    <div id="netscape-window" class="window" style="top:60px; left:180px;" onmousedown="focusWin(this)">
+        <div class="window-header" id="netscape-window-header"><span>NetScape Navigator</span><div class="close-btn" onclick="closeWindow('netscape-window')">X</div></div>
         <div class="browser-nav">
-            <button class="nav-btn" onclick="netHome()">Home</button>
-            <input type="text" id="browser-url" placeholder="Search or URL..." onkeydown="if(event.key==='Enter') netGo(this.value)">
-            <button class="nav-btn" onclick="netGo(document.getElementById('browser-url').value)">Go</button>
+            <input type="text" id="url-input" placeholder="Enter URL or Search..." onkeydown="if(event.key==='Enter') netGo(this.value)">
+            <button onclick="netGo(document.getElementById('url-input').value)">Go</button>
         </div>
-        <div class="window-body">
-            <iframe id="netscape-frame"></iframe>
-        </div>
+        <div class="window-body"><iframe id="netscape-frame"></iframe></div>
     </div>
 
-    <!-- Notepad Window -->
-    <div id="notepad-window" class="window" style="top: 120px; left: 120px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="notepad-window-header">
-            <span>Untitled - Notepad</span>
-            <div class="close-btn" onclick="closeWindow('notepad-window')">X</div>
-        </div>
-        <div class="notepad-menu">
-            <span class="menu-item" onclick="document.getElementById('txt-area').value = ''">New</span>
-            <span class="menu-item" onclick="alert('Save functionality coming in v5.0')">Save</span>
-        </div>
-        <textarea id="txt-area" class="notepad-area" spellcheck="false" placeholder="Type here..."></textarea>
+    <!-- Notepad -->
+    <div id="notepad-window" class="window" style="top:100px; left:210px;" onmousedown="focusWin(this)">
+        <div class="window-header" id="notepad-window-header"><span>Untitled - Notepad</span><div class="close-btn" onclick="closeWindow('notepad-window')">X</div></div>
+        <div class="window-body"><textarea class="notepad-area" placeholder="Type here..."></textarea></div>
     </div>
 </div>
 
 <div class="taskbar">
-    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" style="height:100%; cursor: pointer;">
-    <div class="system-tray">
-        <div id="clock" style="font-weight: bold;">--:--:--</div>
-    </div>
+    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" class="start-btn">
+    <div class="system-tray"><div id="clock">00:00 AM</div></div>
 </div>
 
 <script>
-    // --- APP CONTENT ENGINES ---
-    const osContent = `
-    <html><head><style>body { background: black; color: #ff0000; font-family: 'Courier New', monospace; padding: 15px; margin: 0; overflow-y: auto; }</style></head>
-    <body onclick="document.getElementById('cmd').focus()">
-        <div id="out"><div>YXON6 OS v4.0.26 [Bliss Edition]</div><div>Type 'help' for commands.</div><br></div>
-        <div style="display:flex;"><span style="color:#cc0000; font-weight:bold; margin-right:5px;">guest@yxon6:~$</span><input id="cmd" style="background:transparent; border:none; color:#ff0000; outline:none; width:70%;" autofocus autocomplete="off"></div>
+    // --- TERMINAL SETUP ---
+    const termCode = `<html><body style="background:black;color:#ff0000;font-family:monospace;padding:10px;">
+        <div id="o">YXON6 OS v4.0<br>Ready.<br><br></div>
+        <span style="color:#880000">C:\\></span> <input id="i" style="background:transparent;border:none;color:#ff0000;outline:none;width:70%" autofocus>
         <script>
-            const db = {'awp':'https://lessons.axsetubal.pt/','truffled':'https://truffled.lol/','nebula':'https://math.school.dovereducation.org/','vapour':'https://vapour.io/'};
-            const out = document.getElementById('out');
-            document.getElementById('cmd').onkeydown = async (e) => {
-                if(e.key === 'Enter') {
-                    const v = e.target.value.toLowerCase().trim();
-                    out.innerHTML += '<div><span style="color:#cc0000; font-weight:bold;">guest@yxon6:~$</span> '+v+'</div>';
-                    e.target.value = '';
-                    if(v === 'help') out.innerHTML += "<div>Commands: proxylist, speedtest, clear, exit</div>";
-                    else if(v === 'proxylist') out.innerHTML += "<div>Available: " + Object.keys(db).join(', ').toUpperCase() + "</div>";
-                    else if(v === 'speedtest') {
-                        const s = document.createElement('div'); out.appendChild(s);
-                        for(let i=0; i<=10; i++){ s.textContent = "Testing... ["+"#".repeat(i)+"-".repeat(10-i)+"] "+(i*10)+"%"; await new Promise(r=>setTimeout(r,100)); }
-                        out.innerHTML += "<div>Speed: 890Mbps Down / 120Mbps Up</div>";
-                    }
-                    else if(v === 'clear') out.innerHTML = '';
+            const db={'awp':'https://lessons.axsetubal.pt/','truffled':'https://truffled.lol/'};
+            document.getElementById('i').onkeydown=(e)=>{
+                if(e.key==='Enter'){
+                    const v=e.target.value.toLowerCase().trim();
+                    document.getElementById('o').innerHTML+="C:\\\\> "+v+"<br>";
+                    e.target.value='';
+                    if(v==='help') document.getElementById('o').innerHTML+="Commands: PROXYLIST, CLEAR<br>";
+                    else if(v==='clear') document.getElementById('o').innerHTML='';
                     else if(db[v]) window.open(db[v], '_blank');
-                    window.scrollTo(0, document.body.scrollHeight);
                 }
             }
-        <\/script>
-    </body></html>`;
+        <\/script></body></html>`;
 
+    // --- BROWSER ENGINE ---
     function netGo(val) {
         const frame = document.getElementById('netscape-frame');
-        const input = document.getElementById('browser-url');
         let url = val.trim();
-        if (!url.includes('.') || url.includes(' ')) {
-            url = 'https://www.bing.com/search?q=' + encodeURIComponent(url);
-        } else if (!url.startsWith('http')) {
-            url = 'https://' + url;
+        if(!url) return;
+
+        if(!url.includes('.') || url.includes(' ')) {
+            // Search Mode
+            window.open('https://www.google.com/search?q=' + encodeURIComponent(url), '_blank');
+            return;
         }
-        input.value = url;
-        frame.srcdoc = "";
+
+        if(!url.startsWith('http')) url = 'https://' + url;
+        
+        // Use a Proxy for "Error-Free" browsing of smaller sites
+        // Note: Google/FB still block even proxies, so we offer a fail-safe
         frame.src = url;
+        
+        // Compatibility check
+        setTimeout(() => {
+            if(confirm("If the page is blank, it is blocking 'In-OS' view. Open in new tab?")) {
+                window.open(url, '_blank');
+            }
+        }, 3000);
     }
 
-    function netHome() {
-        document.getElementById('browser-url').value = "";
-        document.getElementById('netscape-frame').srcdoc = `
-            <body style="font-family:sans-serif; text-align:center; padding-top:40px; background:white;">
-                <h1 style="color:#0054e3;">NetScape Navigator</h1>
-                <p>Welcome to the Bliss Edition of Yxon6 OS.</p>
-                <div style="border:1px solid #ccc; padding:15px; display:inline-block;">Secure Proxy Engine: ONLINE</div>
-            </body>`;
+    // --- WINDOW MGMT ---
+    let z = 100;
+    function focusWin(e) { e.style.zIndex = ++z; }
+    function openWindow(id) { 
+        document.getElementById(id).style.display = 'flex'; 
+        focusWin(document.getElementById(id));
+        if(id==='os-window') document.getElementById('os-frame').srcdoc = termCode;
     }
+    function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
 
-    // --- WINDOW MANAGEMENT ---
-    let highestZ = 100;
-    function focusWin(elm) {
-        highestZ++;
-        elm.style.zIndex = highestZ;
-    }
-
-    function openWindow(id) {
-        const win = document.getElementById(id);
-        win.style.display = 'flex';
-        focusWin(win);
-        if (id === 'os-window' && !document.getElementById('os-frame').srcdoc) {
-            document.getElementById('os-frame').srcdoc = osContent;
-        }
-        if (id === 'netscape-window' && !document.getElementById('netscape-frame').src) {
-            netHome();
-        }
-    }
-
-    function closeWindow(id) {
-        document.getElementById(id).style.display = 'none';
-    }
-
-    function makeDraggable(elm) {
-        let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
-        const header = document.getElementById(elm.id + "-header");
-        header.onmousedown = (e) => {
-            e.preventDefault();
-            focusWin(elm);
-            p3 = e.clientX; p4 = e.clientY;
-            document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
+    function drag(elm) {
+        let p1=0, p2=0, p3=0, p4=0;
+        document.getElementById(elm.id+"-header").onmousedown = (e) => {
+            p3=e.clientX; p4=e.clientY;
+            document.onmouseup = () => { document.onmousemove = null; };
             document.onmousemove = (e) => {
-                p1 = p3 - e.clientX; p2 = p4 - e.clientY;
-                p3 = e.clientX; p4 = e.clientY;
-                elm.style.top = (elm.offsetTop - p2) + "px";
-                elm.style.left = (elm.offsetLeft - p1) + "px";
+                p1=p3-e.clientX; p2=p4-e.clientY;
+                p3=e.clientX; p4=e.clientY;
+                elm.style.top=(elm.offsetTop-p2)+"px";
+                elm.style.left=(elm.offsetLeft-p1)+"px";
             };
         };
     }
+    drag(document.getElementById("os-window"));
+    drag(document.getElementById("netscape-window"));
+    drag(document.getElementById("notepad-window"));
 
-    makeDraggable(document.getElementById("os-window"));
-    makeDraggable(document.getElementById("netscape-window"));
-    makeDraggable(document.getElementById("notepad-window"));
-
-    // Clock Logic
-    function updateClock() {
-        const options = { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', options);
+    function tick() {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     }
-    setInterval(updateClock, 1000);
-    updateClock();
+    setInterval(tick, 1000); tick();
 </script>
-
 </body>
 </html>
