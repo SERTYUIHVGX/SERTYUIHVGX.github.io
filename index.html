@@ -1,1 +1,37 @@
-<script src="script.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Interface</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onclick="document.getElementById('commandInput').focus()">
+
+    <div class="scanlines"></div>
+    
+    <div id="clock">00:00:00</div>
+
+    <div id="terminal">
+        <div id="logo">
+                            ▄▄▄▄       ▄▄▄▄      ▄▄▄▄▄   
+                          ▄██▀▀▀█    ▄█▀▀████▄  ██▀▀▀▀█▄ 
+                     ▄    ██         ██    ██   ▀██▄  ▄▀ 
+ ██ ██▀██ ██▀ ▄███▄ ████▄██▄███▄    ██    ██     ▀██▄▄  
+ ██▄██  ███   ██ ██ ██ ████▀  ██    ██    ██   ▄   ▀██▄ 
+▄▄▀██▀▄██ ██▄▄▀███▀▄██ ▀█▀█████▀     ▀████▀    ▀██████▀ 
+  ██                                                    
+▀▀▀                                                     
+        </div>
+        <div id="output">SYSTEM ONLINE... TYPE 'proxylist' TO VIEW DIRECTORY. TYPE 'help' FOR COMMANDS.</div>
+        <div class="input-line">
+            <span class="prompt">guest@terminal:~$</span>
+            <form id="commandForm">
+                <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false">
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
