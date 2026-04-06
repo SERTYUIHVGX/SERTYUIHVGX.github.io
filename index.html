@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UXONG6 | SchoolTimes1010 Exclusive</title>
+    <title>UXONG6 | Exclusive Proxy Terminal</title>
     <style>
         body { 
             background-color: #000; 
-            /* Gradient Text Logic - No Images */
             color: #00ced1; 
             background: linear-gradient(to right, #00ced1, #9370db);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
-            
             font-family: 'Courier New', Courier, monospace; 
             height: 100vh; 
             margin: 0; 
@@ -130,8 +128,8 @@ Y8b d88P
         </pre>
 
         <div id="output">UXONG6 TERMINAL [STRICT MODE]
-VERIFIED SOURCE: SCHOOLTIMES1010.BLOGSPOT.COM
-ALL EXTERNAL NODES PURGED. TYPE 'help' TO BEGIN.</div>
+VERIFIED SOURCE DATA LOADED.
+TYPE 'help' FOR THE CATEGORY LIST.</div>
 
         <div class="input-line">
             <span class="prompt">root@uxong6:~#</span>
@@ -164,37 +162,53 @@ ALL EXTERNAL NODES PURGED. TYPE 'help' TO BEGIN.</div>
         }
         setInterval(drawMatrix, 50);
 
-        // EXCLUSIVE DATABASE FROM SCHOOLTIMES1010
         const database = {
             "awp": [
                 "https://lessons.axsetubal.pt/",
                 "https://useawp.developer.li/",
-                "https://physics.unimap.edu.my/",
-                "https://math.pdx.edu.pl/",
-                "https://study.axsetubal.pt/"
-            ],
-            "splash": [
-                "https://splashstudy.b-cdn.net/",
-                "https://splash.quest/",
-                "https://learning.splash.sh/",
-                "https://vault.splashstudy.net/",
-                "https://cdn.splash.li/"
-            ],
-            "koopbin": [
-                "https://koopbin.com/",
-                "https://storage.koopbin.net/",
-                "https://koop.pages.dev/",
-                "https://koop.cloud.li/"
+                "https://api.incatel.cl/",
+                "https://useawp.7s.com.tr/"
             ],
             "truffled": [
+                "https://edu.sciencecomputers.lat/",
                 "https://truffled.lol/",
                 "https://ee.rxtech.cl/",
-                "https://canvas.instructure.com.co/"
+                "https://infoo.infotechnology.com/"
             ],
-            "interstellar": [
-                "https://interstellar.host/",
-                "https://galaxy.interstellar.sh/",
-                "https://x.j0.icom.org.np/"
+            "void": [
+                "https://awesome.martinwguy.net/?/",
+                "https://strange.martinwguy.net/?/"
+            ],
+            "quasar": [
+                "https://epic.tomaszu.com/",
+                "https://eglobaleducation.com/"
+            ],
+            "vapour": [
+                "https://watervapor.space/",
+                "https://education-live.com/"
+            ],
+            "boredom": [
+                "https://pn.boredom.apertura.com/",
+                "https://doxwind.xyz/",
+                "https://wispserver.dev/"
+            ],
+            "koopbin": [
+                "https://koopbin.site/",
+                "https://learnster.online/"
+            ],
+            "nebula": [
+                "https://math.school.dovereducation.org/",
+                "http://clever.com.elmhoneyheath.recepist.com/"
+            ],
+            "afilite": [
+                "https://readinghelpforelementary.online/"
+            ],
+            "splash": [
+                "https://cullinary-schools.ks11.ru/",
+                "https://darkn.ks11.ru/",
+                "https://splashstudy.b-cdn.net/",
+                "https://94a80745.splashcli.pages.dev/",
+                "https://splsh.paladinmining.net/"
             ]
         };
 
@@ -229,17 +243,19 @@ ALL EXTERNAL NODES PURGED. TYPE 'help' TO BEGIN.</div>
                 } else if (database[cmd]) {
                     database[cmd].forEach(link => printLink(link));
                 } else if (cmd === 'help') {
-                    printLine("\n[ AUTHORIZED COMMANDS ]");
-                    printLine("DIRECTORIES: awp, splash, koopbin, truffled, interstellar");
-                    printLine("SYSTEM: proxylist, speedtest, clear, help\n");
+                    printLine("\n[ NETWORK COMMANDS ]");
+                    printLine("awp, truffled, void, quasar, vapour");
+                    printLine("boredom, koopbin, nebula, afilite, splash");
+                    printLine("\n[ SYSTEM ]");
+                    printLine("proxylist, speedtest, clear, help\n");
                 } else if (cmd === 'clear') {
                     output.innerHTML = '';
                 } else if (cmd === 'speedtest') {
-                    printLine(">> RUNNING LATENCY TEST ON SOURCE NODES...");
+                    printLine(">> TESTING NODE LATENCY...");
                     await new Promise(r => setTimeout(r, 600));
-                    printLine(`>> RESULT: ${(Math.random() * 100 + 200).toFixed(2)} Mbps`);
+                    printLine(`>> SPEED: ${(Math.random() * 100 + 200).toFixed(2)} Mbps`);
                 } else if (cmd !== '') {
-                    printLine(`ERR: '${rawVal}' not found in source list.`);
+                    printLine(`ERR: '${rawVal}' not found in local database.`);
                 }
                 
                 input.value = '';
