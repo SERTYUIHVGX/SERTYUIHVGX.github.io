@@ -55,7 +55,6 @@
 </head>
 <body>
 
-<!-- Taskbar -->
 <div id="taskbar">
     <div class="task-icon" onclick="toggleWin('win-term')"><img src="https://img.icons8.com/color/48/console.png"></div>
     <div class="task-icon" onclick="toggleWin('win-stocks')"><img src="https://img.icons8.com/color/48/stocks.png"></div>
@@ -64,7 +63,6 @@
     <div class="task-icon" onclick="toggleWin('win-chat')"><img src="https://img.icons8.com/color/48/chat.png"></div>
 </div>
 
-<!-- Stock Market App -->
 <div id="win-stocks" class="window" style="top:50px; left:50px; width:320px">
     <div class="win-header"><span>Market Terminal</span> <span class="close-btn" onclick="toggleWin('win-stocks')">●</span></div>
     <div class="win-content">
@@ -73,7 +71,6 @@
     </div>
 </div>
 
-<!-- Games App -->
 <div id="win-games" class="window" style="top:80px; left:400px;">
     <div class="win-header"><span>Game Hub</span> <span class="close-btn" onclick="toggleWin('win-games')">●</span></div>
     <div class="win-content">
@@ -83,7 +80,6 @@
     </div>
 </div>
 
-<!-- Notepad App -->
 <div id="win-notes" class="window" style="top:200px; left:150px;">
     <div class="win-header"><span>Notepad</span> <span class="close-btn" onclick="toggleWin('win-notes')">●</span></div>
     <div class="win-content" style="padding:0">
@@ -91,18 +87,16 @@
     </div>
 </div>
 
-<!-- Chat App -->
 <div id="win-chat" class="window" style="top:100px; left:800px;">
     <div class="win-header"><span>Global Chat</span> <span class="close-btn" onclick="toggleWin('win-chat')">●</span></div>
     <div class="win-content" id="chat-box" style="height:250px;">
-        <div class="chat-msg"><span class="chat-user">System:</span> Welcome to the trade floor.</div>
+        <div class="chat-msg"><span class="chat-user">System:</span> Connecting to global server...</div>
     </div>
     <div style="padding:10px; display:flex; border-top:1px solid #eee;">
         <input id="chat-in" type="text" placeholder="Message..." style="flex:1; border:1px solid #ddd; border-radius:5px; padding:5px;">
     </div>
 </div>
 
-<!-- Terminal App -->
 <div id="win-term" class="window" style="top:300px; left:450px; width:450px">
     <div class="win-header"><span>Terminal</span> <span class="close-btn" onclick="toggleWin('win-term')">●</span></div>
     <div class="win-content" id="term-body">
@@ -112,14 +106,32 @@
     </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
 <script>
-// --- Window Dragging Logic ---
+// --- FIREBASE CONFIG ---
+// Replace this with your actual config from Firebase Console
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_ID",
+    storageBucket: "YOUR_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const messagesRef = db.ref('chat_messages');
+
+// --- Window Logic ---
 let activeWin = null, offsetX, offsetY;
 document.querySelectorAll('.win-header').forEach(header => {
     header.addEventListener('mousedown', startDrag);
     header.addEventListener('touchstart', startDrag, {passive: false});
 });
-
 function startDrag(e) {
     activeWin = e.target.closest('.window');
     const evt = e.type === 'touchstart' ? e.touches[0] : e;
@@ -130,7 +142,6 @@ function startDrag(e) {
     document.addEventListener('mouseup', stopDrag);
     document.addEventListener('touchend', stopDrag);
 }
-
 function drag(e) {
     if (!activeWin) return;
     e.preventDefault();
@@ -138,15 +149,13 @@ function drag(e) {
     activeWin.style.left = (evt.clientX - offsetX) + 'px';
     activeWin.style.top = (evt.clientY - offsetY) + 'px';
 }
-
 function stopDrag() { activeWin = null; }
-
 function toggleWin(id) {
     const w = document.getElementById(id);
     w.style.display = w.style.display === 'flex' ? 'none' : 'flex';
 }
 
-// --- Stock System with Budget & Charts ---
+// --- Stock System ---
 let balance = 1000;
 let portfolio = {};
 const stocks = [
@@ -157,20 +166,17 @@ const stocks = [
 
 function updateMarket() {
     const list = document.getElementById('market-list');
+    if(!list) return;
     list.innerHTML = '';
     stocks.forEach(s => {
-        // Chance to stop/plateau
         if(Math.random() > 0.4) { 
             const change = (Math.random() - 0.5) * (s.price * 0.1);
             s.price = Math.max(0.01, s.price + change);
         }
         s.history.push(s.price);
         if(s.history.length > 20) s.history.shift();
-
-        // Generate SVG Chart
         const points = s.history.map((p, i) => `${i*15},${40 - (p/Math.max(...s.history)*30)}`).join(' ');
         const color = s.price >= s.history[s.history.length-2] ? '#4caf50' : '#f44336';
-
         list.innerHTML += `
             <div class="stock-card">
                 <div style="display:flex; justify-content:space-between">
@@ -182,53 +188,50 @@ function updateMarket() {
                     <button class="btn-sell" onclick="sellStock('${s.id}')">Sell</button>
                     <small>${portfolio[s.id] || 0} Owned</small>
                 </div>
-            </div>
-        `;
+            </div>`;
     });
     document.getElementById('balance').innerText = balance.toFixed(2);
 }
-
 function buyStock(id) {
     const s = stocks.find(x => x.id === id);
-    if(balance >= s.price) {
-        balance -= s.price;
-        portfolio[id] = (portfolio[id] || 0) + 1;
-        updateMarket();
-    }
+    if(balance >= s.price) { balance -= s.price; portfolio[id] = (portfolio[id] || 0) + 1; updateMarket(); }
 }
-
 function sellStock(id) {
     const s = stocks.find(x => x.id === id);
-    if(portfolio[id] > 0) {
-        balance += s.price;
-        portfolio[id] -= 1;
-        updateMarket();
-    }
+    if(portfolio[id] > 0) { balance += s.price; portfolio[id] -= 1; updateMarket(); }
 }
-
-setInterval(updateMarket, 3000); // Slower updates (requested "stop more often")
+setInterval(updateMarket, 3000);
 updateMarket();
 
-// --- Chat Simulation ---
+// --- REAL-TIME CHAT (Multiplayer) ---
 const chatBox = document.getElementById('chat-box');
 const chatIn = document.getElementById('chat-in');
-const bots = ["Trader_Joe", "DiamondHands", "MarketWatcher"];
-const phrases = ["GLXY is mooning!", "Just sold my BREW.", "Anyone playing Solitaire?", "Buy the dip!", "Market is flat today."];
+
+// Create a persistent username for this session
+let myName = "User_" + Math.floor(Math.random()*9000 + 1000);
 
 chatIn.addEventListener('keypress', (e) => {
-    if(e.key === 'Enter' && chatIn.value) {
-        addChat("You", chatIn.value);
+    if(e.key === 'Enter' && chatIn.value.trim() !== '') {
+        // Send message to Firebase
+        messagesRef.push({
+            user: myName,
+            text: chatIn.value,
+            time: Date.now()
+        });
         chatIn.value = '';
-        setTimeout(() => {
-            addChat(bots[Math.floor(Math.random()*bots.length)], phrases[Math.floor(Math.random()*phrases.length)]);
-        }, 1500);
     }
 });
 
-function addChat(user, msg) {
-    chatBox.innerHTML += `<div class="chat-msg"><span class="chat-user">${user}:</span> ${msg}</div>`;
+// Sync from Firebase
+messagesRef.limitToLast(30).on('child_added', (snapshot) => {
+    const data = snapshot.val();
+    const isMe = data.user === myName;
+    chatBox.innerHTML += `
+        <div class="chat-msg">
+            <span class="chat-user" style="color: ${isMe ? '#4caf50' : '#0078d4'}">${data.user}:</span> ${data.text}
+        </div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
-}
+});
 </script>
 </body>
 </html>
