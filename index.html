@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS - Terminal Edition</title>
+    <title>Yxon6 OS - Dual App Edition</title>
     <style>
-        /* CORE DESKTOP STYLES */
+        /* DESKTOP STYLING */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", sans-serif; }
 
@@ -15,9 +15,12 @@
             height: 100vh;
             width: 100vw;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
         }
 
-        /* Desktop Icon */
         .icon {
             width: 90px;
             height: 100px;
@@ -27,28 +30,29 @@
             justify-content: center;
             color: white;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-            padding: 10px;
-            margin: 10px;
+            margin-bottom: 15px;
             text-align: center;
             font-size: 11px;
             cursor: pointer;
+            border: 1px solid transparent;
         }
         .icon img { width: 45px; height: 45px; margin-bottom: 4px; }
-        .icon:active { background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+        .icon:active { background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 3px; }
 
-        /* XP Window Styling */
+        /* WINDOW STYLING */
         .window {
             position: absolute;
-            top: 10%;
-            left: 5%;
-            width: 90%;
-            height: 70%;
-            max-width: 800px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 95%;
+            height: 80%;
+            max-width: 900px;
             background: #ece9d8;
             border: 3px solid #0054e3;
             border-radius: 8px 8px 0 0;
             display: none; 
-            box-shadow: 10px 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
             z-index: 10;
             flex-direction: column;
         }
@@ -56,7 +60,7 @@
         .window-header {
             background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%);
             color: white;
-            padding: 4px 8px;
+            padding: 4px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -78,22 +82,17 @@
             cursor: pointer;
         }
 
-        /* Container for your Terminal Code */
         .window-body {
             flex-grow: 1;
             margin: 2px;
-            background: black;
+            background: white;
             border: 1px solid #7f9db9;
             overflow: hidden;
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        /* Taskbar */
+        /* TASKBAR */
         .taskbar {
             position: fixed;
             bottom: 0;
@@ -105,8 +104,6 @@
             align-items: center;
             z-index: 100;
         }
-
-        .start-btn { height: 100%; cursor: pointer; }
 
         .system-tray {
             color: white;
@@ -122,89 +119,68 @@
 </head>
 <body>
 
-    <div class="desktop" onclick="closeStart()">
-        <!-- Icon to launch Terminal -->
-        <div class="icon" onclick="event.stopPropagation(); toggleWindow('terminal-window')">
+    <div class="desktop">
+        <div class="icon" onclick="toggleWindow('terminal-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" alt="Yxon6 OS">
             <span>Yxon6 OS</span>
         </div>
 
-        <!-- The XP Window containing the Terminal -->
+        <div class="icon" onclick="toggleWindow('bing-window')">
+            <img src="https://www.bing.com/favicon.ico" alt="Bing">
+            <span>Bing</span>
+        </div>
+
         <div id="terminal-window" class="window">
             <div class="window-header">
                 <span>Terminal - Yxon6 OS</span>
                 <div class="close-btn" onclick="toggleWindow('terminal-window')">X</div>
             </div>
+            <div class="window-body" style="background: black;">
+                <iframe srcdoc="
+                    <html>
+                    <body style='background:#000; color:#ff0000; font-family:monospace; padding:20px;'>
+                        <pre style='font-size:10px; line-height:1;'>
+ ██╗   ██╗██╗  ██╗ ██████╗ ███╗   ██╗ ██████╗ 
+ ╚██╗ ██╔╝╚██╗██╔╝██╔═══██╗████╗  ██║██╔════╝ 
+  ╚████╔╝  ╚███╔╝ ██║   ██║██╔██╗ ██║███████╗ 
+   ╚██╔╝   ██╔██╗ ██║   ██║██║╚██╗██║██╔═══██╗
+    ██║   ██╔╝ ██╗╚██████╔╝██║ ╚████║╚██████╔╝
+    ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ 
+                        </pre>
+                        <div>YXON6 TERMINAL READY...</div>
+                        <div style='margin-top:10px;'>guest@yxon6:~$ <input type='text' style='background:none; border:none; color:#ff0000; outline:none; font-family:inherit; width:60%;'></div>
+                    </body>
+                    </html>
+                "></iframe>
+            </div>
+        </div>
+
+        <div id="bing-window" class="window">
+            <div class="window-header">
+                <span>Bing Search</span>
+                <div class="close-btn" onclick="toggleWindow('bing-window')">X</div>
+            </div>
             <div class="window-body">
-                <!-- Embedding your Terminal Code here -->
                 <iframe srcdoc="
                     <html>
                     <head>
                         <style>
-                            body { background-color: #000; color: #ff0000; font-family: 'Courier New', monospace; margin: 0; padding: 20px; overflow-y: auto; text-shadow: 0 0 8px #800000; }
-                            #clock { position: fixed; top: 10px; right: 10px; font-size: 14px; border: 1px solid #ff0000; padding: 2px 8px; background: black; }
-                            #logo { white-space: pre; font-size: 8px; margin-bottom: 10px; }
-                            .prompt { color: #ff0000; margin-right: 5px; }
-                            input { background: transparent; border: none; color: #ff0000; font-family: inherit; outline: none; width: 70%; caret-color: white; }
-                            .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 3px; pointer-events: none; }
+                            body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: url('https://www.bing.com/th?id=OHR.GreatWallMist_EN-US1647416390_1920x1080.jpg&rf=LaDigue_1920x1080.jpg') no-repeat center center; background-size: cover; color: white; text-align: center; }
+                            .overlay { background: rgba(0,0,0,0.3); width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+                            h1 { font-size: 48px; margin-bottom: 20px; font-weight: 600; }
+                            .search-bar { background: white; border-radius: 24px; padding: 12px 20px; width: 80%; max-width: 500px; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+                            input { border: none; outline: none; width: 100%; font-size: 16px; margin-left: 10px; }
                         </style>
                     </head>
-                    <body onclick='document.getElementById(&quot;cmd&quot;).focus()'>
-                        <div class='scanlines'></div>
-                        <div id='clock'>00:00:00</div>
-                        <div id='logo'>
-      ▄▄▄▄       ▄▄▄▄      ▄▄▄▄▄  
-    ▄██▀▀▀█    ▄█▀▀████▄  ██▀▀▀▀█▄
- ▄   ██         ██    ██   ▀██▄  ▄▀
-██ ██▀██ ██▀ ▄███▄ ████▄██▄███▄    ██    ██     ▀██▄▄ 
-██▄██  ███   ██ ██ ██ ████▀  ██    ██    ██   ▄   ▀██▄
-▄▄▀██▀▄██ ██▄▄▀███▀▄██ ▀█▀█████▀     ▀████▀    ▀██████▀
+                    <body>
+                        <div class='overlay'>
+                            <h1>Bing</h1>
+                            <div class='search-bar'>
+                                <img src='https://www.bing.com/favicon.ico' width='20'>
+                                <input type='text' placeholder='Search the web' onkeydown='if(event.key===&quot;Enter&quot;) alert(&quot;Searching Yxon6 OS database...&quot;)'>
+                            </div>
+                            <p style='margin-top: 20px;'>Ask me anything...</p>
                         </div>
-                        <div id='out'>SYSTEM ONLINE... TYPE 'proxylist' OR 'help'</div>
-                        <div style='display:flex;'>
-                            <span class='prompt'>guest@terminal:~$</span>
-                            <input type='text' id='cmd' autofocus autocomplete='off'>
-                        </div>
-                        <script>
-                            const database = { 
-                                'awp': ['https://lessons.axsetubal.pt/'], 
-                                'truffled': ['https://truffled.lol/'],
-                                'nebula': ['https://math.school.dovereducation.org/']
-                            };
-                            const input = document.getElementById('cmd');
-                            const out = document.getElementById('out');
-                            
-                            function updateClock() {
-                                document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-                            }
-                            setInterval(updateClock, 1000);
-
-                            input.addEventListener('keydown', (e) => {
-                                if(e.key === 'Enter'){
-                                    const val = input.value.toLowerCase().trim();
-                                    const line = document.createElement('div');
-                                    line.textContent = 'guest@terminal:~$ ' + input.value;
-                                    out.appendChild(line);
-                                    
-                                    if(val === 'proxylist') {
-                                        Object.keys(database).forEach(k => {
-                                            const d = document.createElement('div');
-                                            d.textContent = '- ' + k.toUpperCase();
-                                            out.appendChild(d);
-                                        });
-                                    } else if(database[val]) {
-                                        database[val].forEach(link => {
-                                            const d = document.createElement('div');
-                                            d.textContent = '> ' + link;
-                                            out.appendChild(d);
-                                        });
-                                    } else if(val === 'clear') { out.innerHTML = ''; }
-                                    
-                                    input.value = '';
-                                    window.scrollTo(0, document.body.scrollHeight);
-                                }
-                            });
-                        </script>
                     </body>
                     </html>
                 "></iframe>
@@ -212,9 +188,8 @@
         </div>
     </div>
 
-    <!-- Taskbar -->
     <div class="taskbar">
-        <img class="start-btn" src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" onclick="event.stopPropagation(); toggleStart()">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" style="height:100%">
         <div class="system-tray">
             <span id="tray-clock">--:--</span>
         </div>
@@ -223,11 +198,14 @@
     <script>
         function toggleWindow(id) {
             const win = document.getElementById(id);
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+            // Hide all windows first to bring the selected one to front
+            if (win.style.display === 'flex') {
+                win.style.display = 'none';
+            } else {
+                win.style.display = 'flex';
+                win.style.zIndex = parseInt(new Date().getTime() / 1000); // Bring to front
+            }
         }
-
-        function toggleStart() { /* Simple placeholder for Start menu */ }
-        function closeStart() { /* Click desktop to close menus */ }
 
         function updateTrayClock() {
             const now = new Date();
