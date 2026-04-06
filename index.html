@@ -3,119 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPad Pro Terminal OS - Ultimate Edition</title>
+    <title>Terminal OS - Yxoncord Pro</title>
     <style>
-        :root { --bg-blur: blur(20px); --win-bg: rgba(255, 255, 255, 0.9); --taskbar-bg: rgba(243, 243, 243, 0.8); }
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root { 
+            --bg-blur: blur(25px); 
+            --win-bg: rgba(255, 255, 255, 0.9); 
+            --taskbar-bg: rgba(243, 243, 243, 0.8); 
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop') center/cover; }
 
-        /* Window System */
-        .window {
-            position: absolute; width: 400px; min-height: 300px;
-            background: var(--win-bg); border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            display: none; flex-direction: column; z-index: 10;
-            overflow: hidden; backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        .win-header { padding: 12px; background: rgba(0,0,0,0.05); display: flex; justify-content: space-between; cursor: move; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .win-content { flex: 1; padding: 15px; overflow-y: auto; }
-        .close-btn { color: #ff5f56; cursor: pointer; font-size: 18px; }
+        /* Desktop & Windows */
+        #desktop { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 70px); padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, 90px); grid-auto-flow: column; gap: 15px; z-index: 1; }
+        .desktop-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 85px; padding: 10px; border-radius: 5px; }
+        .desktop-item:hover { background: rgba(255,255,255,0.2); }
+        .desktop-item img { width: 45px; height: 45px; }
+        .desktop-item span { color: white; font-size: 11px; text-shadow: 0 1px 2px black; margin-top: 5px; text-align: center; }
+
+        .window { position: absolute; width: 650px; height: 450px; background: var(--win-bg); border-radius: 12px; display: none; flex-direction: column; z-index: 10; backdrop-filter: var(--bg-blur); border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .win-header { padding: 12px; background: rgba(0,0,0,0.05); display: flex; justify-content: space-between; cursor: move; border-bottom: 1px solid rgba(0,0,0,0.1); }
+        .win-content { flex: 1; display: flex; overflow: hidden; }
+
+        /* Yxoncord Pro UI */
+        #yxon-servers { width: 70px; background: #1e1f22; display: flex; flex-direction: column; align-items: center; padding: 10px 0; gap: 10px; }
+        #yxon-channels { width: 160px; background: #2b2d31; color: #949ba4; padding: 15px 10px; display: flex; flex-direction: column; gap: 5px; }
+        #yxon-chat-area { flex: 1; background: #313338; color: white; display: flex; flex-direction: column; }
+        
+        .srv-icon { width: 45px; height: 45px; background: #35363c; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
+        .srv-icon:hover, .srv-icon.active { border-radius: 30%; background: #5865f2; }
+        
+        .chan-item { padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .chan-item:hover { background: #3f4147; color: white; }
+        .chan-item.active { background: #3f4147; color: white; }
+        .chan-item::before { content: "# "; opacity: 0.5; }
+
+        #yxon-messages { flex: 1; overflow-y: auto; padding: 15px; font-size: 14px; }
+        .msg-box { background: #383a40; margin: 10px; padding: 10px; border-radius: 8px; border: none; color: white; outline: none; }
+        .ping { background: rgba(240, 178, 50, 0.1); border-left: 2px solid #f0b232; }
 
         /* Taskbar */
-        #taskbar {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            height: 65px; padding: 0 15px; background: var(--taskbar-bg);
-            backdrop-filter: var(--bg-blur); border-radius: 20px;
-            display: flex; align-items: center; gap: 10px; z-index: 9999;
-            border: 1px solid rgba(255,255,255,0.4);
-        }
-        .task-icon { width: 45px; height: 45px; cursor: pointer; transition: 0.2s; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .task-icon img { width: 35px; height: 35px; border-radius: 8px; }
-
-        /* Yxoncord Styles */
-        #yxon-layout { display: flex; height: 350px; background: #313338; color: white; border-radius: 8px; overflow: hidden; }
-        #yxon-sidebar { width: 70px; background: #1e1f22; padding: 10px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
-        #yxon-chat { flex: 1; display: flex; flex-direction: column; padding: 10px; }
-        .server-icon { width: 45px; height: 45px; background: #35363c; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 12px; font-weight: bold; }
-        .server-icon.active { border-radius: 30%; background: #5865f2; }
-        #yxon-msgs { flex: 1; overflow-y: auto; margin-bottom: 10px; font-size: 0.9em; }
-        .yxon-input { background: #383a40; border: none; padding: 10px; color: white; border-radius: 5px; outline: none; }
-        .btn-add { background: #23a559; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 24px; }
-
-        /* Game Styles */
-        #game-canvas { background: #1a472a; width: 100%; height: 300px; position: relative; border-radius: 8px; overflow: hidden; }
-        .card { position: absolute; width: 45px; height: 60px; background: white; border-radius: 4px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 12px; color: black; }
-        .card.red { color: red; }
-
-        /* Stock Styles */
-        .stock-card { background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd; color: #333; }
-        #portfolio { background: #333; color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        #taskbar { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); height: 55px; padding: 0 15px; background: var(--taskbar-bg); border-radius: 12px; display: flex; align-items: center; gap: 10px; z-index: 9999; border: 1px solid rgba(255,255,255,0.2); }
+        .task-icon { width: 40px; height: 40px; cursor: pointer; }
     </style>
 </head>
 <body>
 
+<div id="desktop">
+    <div class="desktop-item" onclick="toggleWin('win-yxon')"><img src="https://img.icons8.com/color/96/discord-new-logo.png"><span>Yxoncord</span></div>
+    <div class="desktop-item" onclick="toggleWin('win-stocks')"><img src="https://img.icons8.com/color/96/stocks.png"><span>Market</span></div>
+    <div class="desktop-item" onclick="toggleWin('win-term')"><img src="https://img.icons8.com/color/96/console.png"><span>Terminal</span></div>
+</div>
+
+<div id="win-yxon" class="window">
+    <div class="win-header"><span>Yxoncord Pro</span> <span onclick="toggleWin('win-yxon')" style="cursor:pointer">●</span></div>
+    <div class="win-content">
+        <div id="yxon-servers">
+            <button onclick="addServer()" style="width:45px; height:45px; border-radius:50%; border:none; background:#23a559; color:white; font-size:24px; cursor:pointer">+</button>
+            <div id="srv-list-ui"></div>
+        </div>
+        <div id="yxon-channels">
+            <div style="font-weight:bold; color:white; margin-bottom:10px; font-size:12px; display:flex; justify-content:space-between">
+                CHANNELS <span onclick="addChannel()" style="cursor:pointer">+</span>
+            </div>
+            <div id="chan-list-ui"></div>
+        </div>
+        <div id="yxon-chat-area">
+            <div id="yxon-messages"></div>
+            <input type="text" id="yxon-input" class="msg-box" placeholder="Message..." disabled>
+        </div>
+    </div>
+</div>
+
+<div id="win-stocks" class="window" style="width:300px; height:400px;"><div class="win-header"><span>Market</span><span onclick="toggleWin('win-stocks')">●</span></div><div class="win-content" id="market-ui" style="padding:20px; flex-direction:column"></div></div>
+<div id="win-term" class="window"><div class="win-header"><span>Terminal</span><span onclick="toggleWin('win-term')">●</span></div><div class="win-content" style="background:black; color:lime; padding:10px;">Root@User:~# <input type="text" style="background:transparent; border:none; color:lime; outline:none;"></div></div>
+
 <div id="taskbar">
-    <div class="task-icon" onclick="toggleWin('win-term')"><img src="https://img.icons8.com/color/48/console.png"></div>
-    <div class="task-icon" onclick="toggleWin('win-stocks')"><img src="https://img.icons8.com/color/48/stocks.png"></div>
     <div class="task-icon" onclick="toggleWin('win-yxon')"><img src="https://img.icons8.com/color/48/discord-new-logo.png"></div>
-    <div class="task-icon" onclick="toggleWin('win-games')"><img src="https://img.icons8.com/color/48/controller-icon.png"></div>
-    <div class="task-icon" onclick="toggleWin('win-notes')"><img src="https://img.icons8.com/color/48/notepad.png"></div>
-</div>
-
-<div id="win-yxon" class="window" style="top:50px; left:50px; width:550px;">
-    <div class="win-header"><span>Yxoncord</span> <span class="close-btn" onclick="toggleWin('win-yxon')">●</span></div>
-    <div class="win-content" style="padding:0;">
-        <div id="yxon-layout">
-            <div id="yxon-sidebar">
-                <button class="btn-add" onclick="createNewServer()">+</button>
-                <div id="server-list"></div>
-            </div>
-            <div id="yxon-chat">
-                <div id="chat-header" style="padding-bottom:10px; border-bottom:1px solid #444;">Select a Server</div>
-                <div id="yxon-msgs"></div>
-                <input id="yxon-input" class="yxon-input" type="text" placeholder="Select a server first..." disabled>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="win-stocks" class="window" style="top:20px; left:650px; width:320px;">
-    <div class="win-header"><span>Global Exchange</span> <span class="close-btn" onclick="toggleWin('win-stocks')">●</span></div>
-    <div class="win-content">
-        <div id="portfolio">Balance: $<span id="balance">1000.00</span></div>
-        <div id="market-list">Loading prices...</div>
-    </div>
-</div>
-
-<div id="win-games" class="window" style="top:400px; left:100px; width:480px;">
-    <div class="win-header"><span>Game Hub</span> <span class="close-btn" onclick="toggleWin('win-games')">●</span></div>
-    <div class="win-content">
-        <div style="margin-bottom:10px;">
-            <button onclick="initTriPeaks()" style="background:#673ab7; color:white; border:none; padding:5px 10px; border-radius:4px;">New Tri-Peaks</button>
-            <button onclick="initSolitaire()" style="background:#03a9f4; color:white; border:none; padding:5px 10px; border-radius:4px;">New Solitaire</button>
-        </div>
-        <div id="game-canvas"></div>
-    </div>
-</div>
-
-<div id="win-notes" class="window" style="top:300px; left:700px;">
-    <div class="win-header"><span>Notepad</span> <span class="close-btn" onclick="toggleWin('win-notes')">●</span></div>
-    <div class="win-content" style="padding:0;"><textarea style="width:100%; height:200px; border:none; padding:10px; outline:none; resize:none;" placeholder="Type here..."></textarea></div>
-</div>
-
-<div id="win-term" class="window" style="top:450px; left:600px;">
-    <div class="win-header"><span>Terminal</span> <span class="close-btn" onclick="toggleWin('win-term')">●</span></div>
-    <div class="win-content" style="background:#000; color:#0f0; font-family:monospace; min-height:150px;">
-        Root@Terminal:~# <input id="term-in" type="text" style="background:transparent; border:none; color:#0f0; outline:none;">
-    </div>
+    <div class="task-icon" onclick="toggleWin('win-stocks')"><img src="https://img.icons8.com/color/48/stocks.png"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
 <script>
-// --- FIREBASE CONFIG ---
+// --- CONFIG ---
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_ID.firebaseapp.com",
@@ -128,23 +99,22 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const econRef = db.ref('global_economy');
-const yxonRef = db.ref('yxoncord');
 
-// --- PERSISTENCE & BOOT ---
-let myName = localStorage.getItem('os_user');
+// State & Persistence
+let myName = localStorage.getItem('yxon_name');
 if(!myName) {
-    myName = prompt("Welcome! Please set your Global Username:") || "User" + Math.floor(Math.random()*999);
-    localStorage.setItem('os_user', myName);
+    myName = prompt("Enter your Username:") || "User" + Math.floor(Math.random()*999);
+    localStorage.setItem('yxon_name', myName);
 }
+if(Notification.permission !== 'granted') Notification.requestPermission();
 
-let currentServerId = localStorage.getItem('os_last_srv');
-let myBalance = 1000, myPortfolio = {}, globalStocks = {};
+let currentSrv = localStorage.getItem('yxon_cur_srv');
+let currentChan = localStorage.getItem('yxon_cur_chan');
 
-// --- OS WINDOW LOGIC ---
+// --- OS UTILS ---
 function toggleWin(id) {
     const w = document.getElementById(id);
-    w.style.display = (w.style.display === 'flex' ? 'none' : 'flex');
+    w.style.display = w.style.display === 'flex' ? 'none' : 'flex';
 }
 
 let activeWin = null, oX, oY;
@@ -153,98 +123,97 @@ document.querySelectorAll('.win-header').forEach(h => {
         activeWin = e.target.closest('.window');
         oX = e.clientX - activeWin.offsetLeft;
         oY = e.clientY - activeWin.offsetTop;
-        activeWin.style.zIndex = 100;
+        activeWin.style.zIndex = 1000;
     };
 });
-window.onmousemove = (e) => { if(activeWin) { activeWin.style.left = (e.clientX - oX)+'px'; activeWin.style.top = (e.clientY - oY)+'px'; } };
-window.onmouseup = () => { if(activeWin) activeWin.style.zIndex = 10; activeWin = null; };
+window.onmousemove = (e) => { if(activeWin) { activeWin.style.left = (e.clientX-oX)+'px'; activeWin.style.top = (e.clientY-oY)+'px'; } };
+window.onmouseup = () => activeWin = null;
 
-// --- YXONCORD LOGIC ---
-function createNewServer() {
+// --- YXONCORD CORE ---
+function addServer() {
     const name = prompt("Server Name:");
     if(name) {
         const id = 'srv_' + Date.now();
-        yxonRef.child('servers').child(id).set({ name: name, owner: myName });
+        db.ref('yxon/servers/' + id).set({ name: name, owner: myName });
+        // Create default channel
+        db.ref('yxon/channels/' + id).push({ name: 'general' });
     }
 }
 
-yxonRef.child('servers').on('value', snap => {
-    const list = document.getElementById('server-list');
+function addChannel() {
+    if(!currentSrv) return alert("Select a server first!");
+    const name = prompt("Channel Name:");
+    if(name) db.ref('yxon/channels/' + currentSrv).push({ name: name.toLowerCase() });
+}
+
+// Listen for Servers
+db.ref('yxon/servers').on('value', snap => {
+    const list = document.getElementById('srv-list-ui');
     const data = snap.val() || {};
-    list.innerHTML = '<button class="btn-add" onclick="createNewServer()">+</button>';
+    list.innerHTML = '';
     for(let id in data) {
         const div = document.createElement('div');
-        div.className = 'server-icon' + (currentServerId === id ? ' active' : '');
-        div.innerText = data[id].name.substring(0,2).toUpperCase();
-        div.onclick = () => joinServer(id, data[id].name);
+        div.className = 'srv-icon' + (currentSrv === id ? ' active' : '');
+        div.innerText = data[id].name[0].toUpperCase();
+        div.onclick = () => switchServer(id);
         list.appendChild(div);
     }
-    if(currentServerId && data[currentServerId]) joinServer(currentServerId, data[currentServerId].name);
 });
 
-function joinServer(id, name) {
-    currentServerId = id;
-    localStorage.setItem('os_last_srv', id);
-    document.getElementById('chat-header').innerText = "# " + name;
-    document.getElementById('yxon-input').disabled = false;
-    document.getElementById('yxon-input').placeholder = "Message #" + name;
+function switchServer(id) {
+    currentSrv = id;
+    localStorage.setItem('yxon_cur_srv', id);
+    // Listen for Channels
+    db.ref('yxon/channels/' + id).on('value', snap => {
+        const list = document.getElementById('chan-list-ui');
+        const data = snap.val() || {};
+        list.innerHTML = '';
+        for(let cId in data) {
+            const div = document.createElement('div');
+            div.className = 'chan-item' + (currentChan === cId ? ' active' : '');
+            div.innerText = data[cId].name;
+            div.onclick = () => switchChannel(cId, data[cId].name);
+            list.appendChild(div);
+        }
+    });
+}
+
+function switchChannel(id, name) {
+    currentChan = id;
+    localStorage.setItem('yxon_cur_chan', id);
+    const input = document.getElementById('yxon-input');
+    input.disabled = false;
+    input.placeholder = `Message #${name}`;
     
-    document.getElementById('yxon-msgs').innerHTML = '';
-    yxonRef.child('messages').child(id).off();
-    yxonRef.child('messages').child(id).limitToLast(20).on('child_added', snap => {
-        const d = snap.val();
-        document.getElementById('yxon-msgs').innerHTML += `<div><b style="color:#5865f2">${d.u}:</b> ${d.t}</div>`;
-        document.getElementById('yxon-msgs').scrollTop = 10000;
+    // Listen for Messages
+    const msgDiv = document.getElementById('yxon-messages');
+    msgDiv.innerHTML = '';
+    db.ref('yxon/msgs/' + id).off();
+    db.ref('yxon/msgs/' + id).limitToLast(30).on('child_added', snap => {
+        const m = snap.val();
+        const isPing = m.text.includes('@' + myName);
+        const div = document.createElement('div');
+        div.className = isPing ? 'ping' : '';
+        div.style.padding = '4px 0';
+        div.innerHTML = `<b style="color:#5865f2">${m.user}:</b> ${m.text}`;
+        msgDiv.appendChild(div);
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+
+        if(isPing && m.user !== myName) {
+            new Notification("Yxoncord Ping!", { body: `${m.user} mentioned you in #${name}` });
+        }
     });
 }
 
 document.getElementById('yxon-input').onkeypress = (e) => {
     if(e.key === 'Enter' && e.target.value) {
-        yxonRef.child('messages').child(currentServerId).push({ u: myName, t: e.target.value });
+        db.ref('yxon/msgs/' + currentChan).push({ user: myName, text: e.target.value });
         e.target.value = '';
     }
 };
 
-// --- STOCK LOGIC ---
-econRef.on('value', snap => {
-    globalStocks = snap.val() || { brew:{name:'BREW',price:50,history:[50]} };
-    const list = document.getElementById('market-list');
-    list.innerHTML = '';
-    for(let id in globalStocks) {
-        const s = globalStocks[id];
-        list.innerHTML += `<div class="stock-card"><b>${s.name}</b>: $${s.price.toFixed(2)} 
-        <button onclick="trade('${id}','buy')">Buy</button></div>`;
-    }
-    document.getElementById('balance').innerText = myBalance.toFixed(2);
-});
-
-function trade(id, type) {
-    const s = globalStocks[id];
-    if(type==='buy' && myBalance >= s.price) {
-        myBalance -= s.price;
-        myPortfolio[id] = (myPortfolio[id]||0)+1;
-        econRef.child(id).update({ price: s.price * 1.015 });
-    }
-}
-
-// --- SOLITAIRE / TRI-PEAKS ---
-const canvas = document.getElementById('game-canvas');
-function initTriPeaks() {
-    canvas.innerHTML = '<div style="color:white; padding:20px;">Tri-Peaks Loading... (Tap cards to clear)</div>';
-    // Simplified logic: Create 20 clickable cards
-    for(let i=0; i<20; i++) {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.style.left = (20 + (i%5)*60)+'px';
-        div.style.top = (20 + Math.floor(i/5)*50)+'px';
-        div.innerText = ['A','K','Q','J','10'][Math.floor(Math.random()*5)] + '♠';
-        div.onclick = () => div.remove();
-        canvas.appendChild(div);
-    }
-}
-function initSolitaire() {
-    canvas.innerHTML = '<div style="color:white; padding:20px;">Solitaire Started.</div>';
-}
+// Auto-resume last session
+if(currentSrv) switchServer(currentSrv);
 </script>
 </body>
 </html>
