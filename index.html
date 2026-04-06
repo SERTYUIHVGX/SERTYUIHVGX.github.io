@@ -85,7 +85,7 @@
     <div class="icon-container">
         <div class="icon" onclick="openWindow('os-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png">
-            <span>Terminal</span>
+            <span>Yxon6 OS</span>
         </div>
         <div class="icon" onclick="openWindow('netscape-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/world-0.png">
@@ -97,7 +97,7 @@
         </div>
     </div>
 
-    <div id="os-window" class="window" style="top:30px; left:150px; width:600px; height:400px;" onmousedown="focusWin(this)">
+    <div id="os-window" class="window" style="top:30px; left:150px; width:650px; height:450px;" onmousedown="focusWin(this)">
         <div class="window-header" id="os-window-header"><span>Yxon6 OS Terminal</span><div class="close-btn" onclick="closeWindow('os-window')">X</div></div>
         <div class="window-body" style="background:black;"><iframe id="os-frame" style="width:100%; height:100%; border:none; display:block;"></iframe></div>
     </div>
@@ -127,25 +127,78 @@
     let tabIdCounter = 0;
     let activeTabId = null;
 
-    // --- TERMINAL RED/BLACK LOGIC ---
-    const termCode = `<html><body style="background:black;color:#ff0000;font-family:monospace;padding:10px;margin:0;overflow-x:hidden;">
-        <div id="o">YXON6 OS v4.0<br>Ready.<br><br></div>
-        <span style="color:#880000">C:\\></span> <input id="i" style="background:transparent;border:none;color:#ff0000;outline:none;width:70%;font-family:monospace;" autofocus>
+    // --- UPDATED YXON6 TERMINAL LOGIC ---
+    const termCode = `<html><head><style>
+        body { background:black; color:#ff0000; font-family:'Courier New', monospace; padding:15px; margin:0; overflow-x:hidden; text-shadow: 0 0 5px #aa0000; }
+        #o { white-space: pre; font-size: 11px; line-height: 1.2; margin-bottom: 20px; }
+        .input-line { display: flex; align-items: center; }
+        #i { background:transparent; border:none; color:#ff0000; outline:none; flex-grow:1; font-family:inherit; font-size:inherit; caret-color:#ff0000; }
+        .prompt { color:#ff0000; font-weight:bold; margin-right:8px; white-space: nowrap; }
+        a { color:#fff; text-decoration:underline; font-weight:bold; }
+    </style></head>
+    <body onclick="document.getElementById('i').focus()">
+        <div id="o">
+                                     .d8888b.        .d88888b.   .d8888b.  
+                                    d88P  Y88b      d88P" "Y88b d88P  Y88b 
+                                    888             888     888 Y88b.      
+888  888 888  888  .d88b.  88888b.  888d888b.       888     888  "Y888b.   
+888  888 \`Y8bd8P' d88""88b 888 "88b 888P "Y88b      888     888     "Y88b. 
+888  888   X88K   888  888 888  888 888    888      888     888       "888 
+Y88b 888 .d8""8b. Y88..88P 888  888 Y88b  d88P      Y88b. .d88P Y88b  d88P 
+ "Y88888 888  888  "Y88P"   888  888  "Y8888P"        "Y88888P"   "Y8888P"  
+     888                                                                   
+Y8b d88P                                                                   
+ "Y88P"                                                                    
+
+[ YXON6 OPERATING SYSTEM ]
+[ STATUS: SYSTEM ONLINE ]
+Type 'help' for available commands.</div>
+        <div class="input-line">
+            <span class="prompt">yxon6@root:~$</span>
+            <input id="i" autofocus autocomplete="off" spellcheck="false">
+        </div>
         <script>
-            const db={'awp':'https://lessons.axsetubal.pt/','truffled':'https://truffled.lol/'};
-            document.getElementById('i').onkeydown=(e)=>{
-                if(e.key==='Enter'){
-                    const v=e.target.value.toLowerCase().trim();
-                    const out=document.getElementById('o');
-                    out.innerHTML+="C:\\\\> "+v+"<br>";
-                    e.target.value='';
-                    if(v==='help') out.innerHTML+="Commands: PROXYLIST, CLEAR, HELP<br>";
-                    else if(v==='clear') out.innerHTML='';
-                    else if(db[v]) window.open(db[v], '_blank');
-                    window.scrollTo(0,document.body.scrollHeight);
+            const db = {
+                "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+                "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+                "void.network": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+                "quasar": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+                "vapour": ["https://watervapor.space/", "https://education-live.com/"],
+                "boredom": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+                "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
+                "nebula": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+                "afilite": ["https://readinghelpforelementary.online/"],
+                "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+            };
+
+            const input = document.getElementById('i');
+            const output = document.getElementById('o');
+
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    const val = input.value.trim();
+                    const cmd = val.toLowerCase();
+                    output.innerHTML += "\\nyxon6@root:~$ " + val + "\\n";
+                    input.value = '';
+
+                    if (cmd === 'proxylist') {
+                        output.innerHTML += "[ DIRECTORY ]\\n";
+                        Object.keys(db).forEach(k => output.innerHTML += "- " + k.toUpperCase() + "\\n");
+                    } else if (db[cmd]) {
+                        output.innerHTML += "BYPASSING... [" + cmd.toUpperCase() + "] FOUND:\\n";
+                        db[cmd].forEach(link => {
+                            output.innerHTML += "> <a href='" + link + "' target='_blank'>ACCESS: " + link + "</a>\\n";
+                        });
+                    } else if (cmd === 'help') {
+                        output.innerHTML += "[ COMMANDS ]\\nPROXYLIST - View Dirs\\nCLEAR - Wipe Buffer\\nHELP - System Info\\n";
+                    } else if (cmd === 'clear') {
+                        output.innerHTML = '';
+                    } else if (val !== '') {
+                        output.innerHTML += "ERR: '" + val + "' unauthorized.\\n";
+                    }
+                    window.scrollTo(0, document.body.scrollHeight);
                 }
-            }
-            document.body.onclick=()=>document.getElementById('i').focus();
+            };
         <\/script></body></html>`;
 
     // --- BROWSER LOGIC ---
@@ -206,7 +259,10 @@
     function openWindow(id) { 
         document.getElementById(id).style.display = 'flex'; 
         focusWin(document.getElementById(id));
-        if(id === 'os-window') document.getElementById('os-frame').srcdoc = termCode;
+        if(id === 'os-window') {
+            const frame = document.getElementById('os-frame');
+            if(!frame.srcdoc) frame.srcdoc = termCode;
+        }
         if(id === 'netscape-window' && !activeTabId) createNewTab();
     }
     function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
@@ -221,16 +277,3 @@
                 p3=e.clientX; p4=e.clientY;
                 elm.style.top=(elm.offsetTop-p2)+"px";
                 elm.style.left=(elm.offsetLeft-p1)+"px";
-            };
-        };
-    }
-    drag(document.getElementById("os-window"));
-    drag(document.getElementById("netscape-window"));
-    drag(document.getElementById("notepad-window"));
-
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }, 1000);
-</script>
-</body>
-</html>
