@@ -3,137 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Windows 11 Web</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Windows 98 Web</title>
+    <!-- The library that makes it look like 98 -->
+    <link rel="stylesheet" href="https://unpkg.com/7.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        [x-cloak] { display: none !important; }
         body { 
-            background: url('https://i.imgur.com/vH9vX7v.jpg') center/cover no-repeat fixed;
+            background-color: #008080; /* The classic teal */
+            margin: 0;
+            padding: 0;
             height: 100vh;
             overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            -webkit-font-smoothing: none;
         }
-        .win-glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .desktop {
+            height: calc(100vh - 30px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        .taskbar-icon {
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .icon {
+            width: 75px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            text-shadow: 1px 1px #000;
         }
-        .taskbar-icon:active { transform: scale(0.8); }
+        .icon img { width: 32px; height: 32px; margin-bottom: 4px; }
+        .icon:active img { filter: brightness(0.5); }
+
+        .taskbar {
+            height: 30px;
+            background: #c0c0c0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+            box-sizing: border-box;
+            border-top: 2px solid #fff;
+            z-index: 1000;
+        }
+        .start-button {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+            height: 22px;
+            padding: 2px 6px;
+        }
+        .start-menu {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 200px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #fff #808080 #808080 #fff;
+            z-index: 999;
+        }
+        .window {
+            position: absolute;
+            width: 300px;
+            top: 50px;
+            left: 50px;
+            z-index: 10;
+        }
     </style>
 </head>
-<body x-data="{ 
-    startMenu: false, 
-    browserOpen: false, 
-    settingsOpen: false,
-    zPriority: 10
-}">
+<body x-data="{ startMenu: false, myComputer: true, internetOpen: false }">
 
     <!-- Desktop Icons -->
-    <div class="p-6 grid grid-cols-1 gap-8 w-24">
-        <div @dblclick="browserOpen = true" @click="if(window.innerWidth < 1024) browserOpen = true" class="flex flex-col items-center gap-1 group cursor-pointer">
-            <img src="https://cdn-icons-png.flaticon.com/512/888/888846.png" class="w-12 h-12 drop-shadow-md">
-            <span class="text-white text-xs font-medium drop-shadow-md">Edge</span>
+    <div class="desktop">
+        <div class="icon" @click="myComputer = true">
+            <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png">
+            <span>My Computer</span>
+        </div>
+        <div class="icon" @click="internetOpen = true">
+            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png">
+            <span>Internet Explorer</span>
         </div>
     </div>
 
-    <!-- Edge Browser Window -->
-    <div x-show="browserOpen" 
-         x-cloak
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 scale-95"
-         class="absolute inset-4 md:inset-10 win-glass rounded-xl shadow-2xl flex flex-col z-10 overflow-hidden border border-white/40">
-        
-        <div class="h-10 flex items-center justify-between px-4 bg-white/30">
-            <div class="flex items-center gap-2">
-                <img src="https://cdn-icons-png.flaticon.com/512/888/888846.png" class="w-4 h-4">
-                <span class="text-xs font-semibold text-gray-700">Microsoft Edge</span>
-            </div>
-            <div class="flex gap-2">
-                <button @click="browserOpen = false" class="w-8 h-8 flex items-center justify-center hover:bg-red-500 hover:text-white rounded-lg transition-colors text-gray-600">✕</button>
+    <!-- My Computer Window -->
+    <div class="window" x-show="myComputer" style="width: 320px;">
+        <div class="title-bar">
+            <div class="title-bar-text">My Computer</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize"></button>
+                <button aria-label="Maximize"></button>
+                <button aria-label="Close" @click="myComputer = false"></button>
             </div>
         </div>
-        <div class="flex-grow bg-white">
-            <iframe src="https://www.bing.com" class="w-full h-full border-none"></iframe>
+        <div class="window-body">
+            <p>Select an item to view its description.</p>
+            <ul class="tree-view">
+              <li>(C:) Local Disk</li>
+              <li>(D:) CD-ROM Drive</li>
+              <li>Printers</li>
+              <li>Control Panel</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Internet Explorer Window -->
+    <div class="window" x-show="internetOpen" style="width: 90%; max-width: 600px; height: 400px; left: 5%; top: 20%;">
+        <div class="title-bar">
+            <div class="title-bar-text">Internet Explorer - Google</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" @click="internetOpen = false"></button>
+            </div>
+        </div>
+        <div class="window-body" style="margin: 0; height: calc(100% - 35px);">
+            <iframe src="https://www.google.com/search?igu=1" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
     </div>
 
     <!-- Start Menu -->
-    <div x-show="startMenu" 
-         x-cloak
-         @click.outside="startMenu = false"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-20"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-end="opacity-0 translate-y-20"
-         class="absolute bottom-16 left-1/2 -translate-x-1/2 w-[95%] max-w-[540px] h-[600px] win-glass rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-50 p-8">
-        
-        <div class="flex justify-between items-center mb-6">
-            <span class="font-bold text-sm text-gray-800">Pinned</span>
-            <button class="text-xs bg-white/50 px-2 py-1 rounded shadow-sm border border-black/5 font-medium">All apps ></button>
+    <div class="start-menu" x-show="startMenu" @click.outside="startMenu = false">
+        <div style="background: linear-gradient(to top, #000080, #1084d0); width: 25px; height: 100%; position: absolute; left: 0; bottom: 0;">
+            <span style="transform: rotate(-90deg); color: white; position: absolute; bottom: 40px; left: -15px; font-weight: bold; width: 100px;">Windows 98</span>
         </div>
-
-        <div class="grid grid-cols-6 gap-4">
-            <template x-for="i in 12">
-                <div class="flex flex-col items-center gap-2 p-2 hover:bg-white/40 rounded-lg cursor-pointer transition-colors">
-                    <div class="w-10 h-10 bg-blue-500 rounded-lg shadow-sm"></div>
-                    <span class="text-[10px] text-gray-700">App</span>
-                </div>
-            </template>
-        </div>
-
-        <div class="absolute bottom-0 left-0 w-full h-16 bg-black/5 border-t border-white/20 rounded-b-2xl flex items-center justify-between px-10">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gray-400"></div>
-                <span class="text-xs font-semibold text-gray-700">User</span>
-            </div>
-            <img src="https://cdn-icons-png.flaticon.com/512/6711/6711467.png" class="w-5 h-5 opacity-70">
+        <div style="margin-left: 30px;">
+            <button class="icon" style="width: 100%; text-align: left; padding: 5px; color: black; text-shadow: none;" @click="internetOpen = true; startMenu = false">
+                Programs
+            </button>
+            <button class="icon" style="width: 100%; text-align: left; padding: 5px; color: black; text-shadow: none;">
+                Documents
+            </button>
+            <hr>
+            <button class="icon" style="width: 100%; text-align: left; padding: 5px; color: black; text-shadow: none;">
+                Shut Down...
+            </button>
         </div>
     </div>
 
     <!-- Taskbar -->
-    <div class="absolute bottom-0 w-full h-12 win-glass border-t border-white/30 flex items-center justify-center z-[100] px-4">
-        <div class="flex items-center gap-1">
-            <!-- Start Toggle -->
-            <button @click="startMenu = !startMenu" class="p-2 hover:bg-white/50 rounded-md transition-all taskbar-icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/732/732221.png" class="w-6 h-6">
-            </button>
-            
-            <!-- Search -->
-            <button class="p-2 hover:bg-white/50 rounded-md transition-all taskbar-icon hidden sm:block">
-                <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" class="w-5 h-5 opacity-70">
-            </button>
-
-            <!-- Edge Icon -->
-            <button @click="browserOpen = !browserOpen" class="p-2 hover:bg-white/50 rounded-md transition-all taskbar-icon relative">
-                <img src="https://cdn-icons-png.flaticon.com/512/888/888846.png" class="w-6 h-6">
-                <div x-show="browserOpen" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1 bg-blue-600 rounded-full"></div>
-            </button>
-        </div>
-
-        <!-- System Tray (iPad friendly) -->
-        <div class="absolute right-4 flex items-center gap-4 text-[11px] font-medium text-gray-800">
-            <div class="flex flex-col items-end leading-tight">
-                <span id="clock">12:00 PM</span>
-                <span id="date">4/6/2026</span>
-            </div>
+    <div class="taskbar">
+        <button class="start-button" @click="startMenu = !startMenu">
+            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
+            Start
+        </button>
+        <div style="flex-grow: 1;"></div>
+        <div class="status-bar" style="padding: 2px 10px; box-shadow: inset -1px -1px #fff, inset 1px 1px #808080;">
+            <span id="time" style="font-size: 11px;">12:00 PM</span>
         </div>
     </div>
 
     <script>
-        // Update Clock
-        function updateTime() {
+        function updateClock() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('date').innerText = now.toLocaleDateString();
+            document.getElementById('time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
-        setInterval(updateTime, 1000);
-        updateTime();
+        setInterval(updateClock, 1000);
+        updateClock();
     </script>
 </body>
 </html>
