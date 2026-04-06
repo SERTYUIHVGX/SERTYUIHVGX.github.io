@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPad Pro Terminal OS</title>
+    <title>iPad Pro Terminal OS - Ultimate Edition</title>
     <style>
         :root { --bg-blur: blur(20px); --win-bg: rgba(255, 255, 255, 0.9); --taskbar-bg: rgba(243, 243, 243, 0.8); }
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -11,19 +11,15 @@
 
         /* Window System */
         .window {
-            position: absolute; width: 350px; min-height: 200px;
+            position: absolute; width: 400px; min-height: 300px;
             background: var(--win-bg); border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: none; flex-direction: column; z-index: 10;
-            overflow: hidden; backdrop-filter: blur(10px);
+            overflow: hidden; backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,0.3);
         }
-        .win-header { 
-            padding: 12px; background: rgba(0,0,0,0.05); 
-            display: flex; justify-content: space-between; 
-            cursor: move; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .win-content { flex: 1; padding: 15px; overflow-y: auto; max-height: 400px; }
+        .win-header { padding: 12px; background: rgba(0,0,0,0.05); display: flex; justify-content: space-between; cursor: move; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .win-content { flex: 1; padding: 15px; overflow-y: auto; }
         .close-btn { color: #ff5f56; cursor: pointer; font-size: 18px; }
 
         /* Taskbar */
@@ -32,25 +28,29 @@
             height: 65px; padding: 0 15px; background: var(--taskbar-bg);
             backdrop-filter: var(--bg-blur); border-radius: 20px;
             display: flex; align-items: center; gap: 10px; z-index: 9999;
-            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.4);
         }
         .task-icon { width: 45px; height: 45px; cursor: pointer; transition: 0.2s; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .task-icon:active { transform: scale(0.9); }
-        .task-icon img { width: 35px; height: 35px; }
+        .task-icon img { width: 35px; height: 35px; border-radius: 8px; }
 
-        /* Stock App Styles */
-        .stock-card { background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd; }
-        .chart { width: 100%; height: 40px; stroke-width: 2; fill: none; margin-top: 5px; }
-        .controls { display: flex; gap: 5px; margin-top: 8px; }
-        button { border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-buy { background: #4caf50; color: white; }
-        .btn-sell { background: #f44336; color: white; }
-        #portfolio { background: #333; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+        /* Yxoncord Styles */
+        #yxon-layout { display: flex; height: 350px; background: #313338; color: white; border-radius: 8px; overflow: hidden; }
+        #yxon-sidebar { width: 70px; background: #1e1f22; padding: 10px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        #yxon-chat { flex: 1; display: flex; flex-direction: column; padding: 10px; }
+        .server-icon { width: 45px; height: 45px; background: #35363c; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 12px; font-weight: bold; }
+        .server-icon.active { border-radius: 30%; background: #5865f2; }
+        #yxon-msgs { flex: 1; overflow-y: auto; margin-bottom: 10px; font-size: 0.9em; }
+        .yxon-input { background: #383a40; border: none; padding: 10px; color: white; border-radius: 5px; outline: none; }
+        .btn-add { background: #23a559; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 24px; }
 
-        /* Terminal & Chat */
-        #term-body { background: #121212; color: #0f0; font-family: monospace; height: 250px; }
-        .chat-msg { margin-bottom: 8px; font-size: 0.9em; }
-        .chat-user { font-weight: bold; color: #0078d4; }
+        /* Game Styles */
+        #game-canvas { background: #1a472a; width: 100%; height: 300px; position: relative; border-radius: 8px; overflow: hidden; }
+        .card { position: absolute; width: 45px; height: 60px; background: white; border-radius: 4px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 12px; color: black; }
+        .card.red { color: red; }
+
+        /* Stock Styles */
+        .stock-card { background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd; color: #333; }
+        #portfolio { background: #333; color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -58,51 +58,56 @@
 <div id="taskbar">
     <div class="task-icon" onclick="toggleWin('win-term')"><img src="https://img.icons8.com/color/48/console.png"></div>
     <div class="task-icon" onclick="toggleWin('win-stocks')"><img src="https://img.icons8.com/color/48/stocks.png"></div>
+    <div class="task-icon" onclick="toggleWin('win-yxon')"><img src="https://img.icons8.com/color/48/discord-new-logo.png"></div>
     <div class="task-icon" onclick="toggleWin('win-games')"><img src="https://img.icons8.com/color/48/controller-icon.png"></div>
     <div class="task-icon" onclick="toggleWin('win-notes')"><img src="https://img.icons8.com/color/48/notepad.png"></div>
-    <div class="task-icon" onclick="toggleWin('win-chat')"><img src="https://img.icons8.com/color/48/chat.png"></div>
 </div>
 
-<div id="win-stocks" class="window" style="top:50px; left:50px; width:320px">
-    <div class="win-header"><span>Market Terminal</span> <span class="close-btn" onclick="toggleWin('win-stocks')">●</span></div>
-    <div class="win-content">
-        <div id="portfolio">Balance: $<span id="balance">1000.00</span><br><small id="holdings">Holdings: None</small></div>
-        <div id="market-list"></div>
+<div id="win-yxon" class="window" style="top:50px; left:50px; width:550px;">
+    <div class="win-header"><span>Yxoncord</span> <span class="close-btn" onclick="toggleWin('win-yxon')">●</span></div>
+    <div class="win-content" style="padding:0;">
+        <div id="yxon-layout">
+            <div id="yxon-sidebar">
+                <button class="btn-add" onclick="createNewServer()">+</button>
+                <div id="server-list"></div>
+            </div>
+            <div id="yxon-chat">
+                <div id="chat-header" style="padding-bottom:10px; border-bottom:1px solid #444;">Select a Server</div>
+                <div id="yxon-msgs"></div>
+                <input id="yxon-input" class="yxon-input" type="text" placeholder="Select a server first..." disabled>
+            </div>
+        </div>
     </div>
 </div>
 
-<div id="win-games" class="window" style="top:80px; left:400px;">
+<div id="win-stocks" class="window" style="top:20px; left:650px; width:320px;">
+    <div class="win-header"><span>Global Exchange</span> <span class="close-btn" onclick="toggleWin('win-stocks')">●</span></div>
+    <div class="win-content">
+        <div id="portfolio">Balance: $<span id="balance">1000.00</span></div>
+        <div id="market-list">Loading prices...</div>
+    </div>
+</div>
+
+<div id="win-games" class="window" style="top:400px; left:100px; width:480px;">
     <div class="win-header"><span>Game Hub</span> <span class="close-btn" onclick="toggleWin('win-games')">●</span></div>
     <div class="win-content">
-        <h3>Card Classics</h3>
-        <button onclick="window.open('https://worldofsolitaire.com/?deck=tripeaks', '_blank')" style="width:100%; margin-bottom:10px; background:#673ab7; color:white;">Play Tri-Peaks</button>
-        <button onclick="window.open('https://worldofsolitaire.com/', '_blank')" style="width:100%; background:#03a9f4; color:white;">Classic Solitaire</button>
+        <div style="margin-bottom:10px;">
+            <button onclick="initTriPeaks()" style="background:#673ab7; color:white; border:none; padding:5px 10px; border-radius:4px;">New Tri-Peaks</button>
+            <button onclick="initSolitaire()" style="background:#03a9f4; color:white; border:none; padding:5px 10px; border-radius:4px;">New Solitaire</button>
+        </div>
+        <div id="game-canvas"></div>
     </div>
 </div>
 
-<div id="win-notes" class="window" style="top:200px; left:150px;">
+<div id="win-notes" class="window" style="top:300px; left:700px;">
     <div class="win-header"><span>Notepad</span> <span class="close-btn" onclick="toggleWin('win-notes')">●</span></div>
-    <div class="win-content" style="padding:0">
-        <textarea style="width:100%; height:200px; border:none; padding:10px; outline:none; resize:none;" placeholder="Write something..."></textarea>
-    </div>
+    <div class="win-content" style="padding:0;"><textarea style="width:100%; height:200px; border:none; padding:10px; outline:none; resize:none;" placeholder="Type here..."></textarea></div>
 </div>
 
-<div id="win-chat" class="window" style="top:100px; left:800px;">
-    <div class="win-header"><span>Global Chat</span> <span class="close-btn" onclick="toggleWin('win-chat')">●</span></div>
-    <div class="win-content" id="chat-box" style="height:250px;">
-        <div class="chat-msg"><span class="chat-user">System:</span> Connecting to global server...</div>
-    </div>
-    <div style="padding:10px; display:flex; border-top:1px solid #eee;">
-        <input id="chat-in" type="text" placeholder="Message..." style="flex:1; border:1px solid #ddd; border-radius:5px; padding:5px;">
-    </div>
-</div>
-
-<div id="win-term" class="window" style="top:300px; left:450px; width:450px">
+<div id="win-term" class="window" style="top:450px; left:600px;">
     <div class="win-header"><span>Terminal</span> <span class="close-btn" onclick="toggleWin('win-term')">●</span></div>
-    <div class="win-content" id="term-body">
-        <div>Root@Desktop:~# type 'help'</div>
-        <div id="term-out"></div>
-        <input id="term-in" type="text" style="background:transparent; border:none; color:#0f0; outline:none; width:100%;">
+    <div class="win-content" style="background:#000; color:#0f0; font-family:monospace; min-height:150px;">
+        Root@Terminal:~# <input id="term-in" type="text" style="background:transparent; border:none; color:#0f0; outline:none;">
     </div>
 </div>
 
@@ -111,7 +116,6 @@
 
 <script>
 // --- FIREBASE CONFIG ---
-// Replace this with your actual config from Firebase Console
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_ID.firebaseapp.com",
@@ -124,114 +128,123 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const messagesRef = db.ref('chat_messages');
+const econRef = db.ref('global_economy');
+const yxonRef = db.ref('yxoncord');
 
-// --- Window Logic ---
-let activeWin = null, offsetX, offsetY;
-document.querySelectorAll('.win-header').forEach(header => {
-    header.addEventListener('mousedown', startDrag);
-    header.addEventListener('touchstart', startDrag, {passive: false});
-});
-function startDrag(e) {
-    activeWin = e.target.closest('.window');
-    const evt = e.type === 'touchstart' ? e.touches[0] : e;
-    offsetX = evt.clientX - activeWin.offsetLeft;
-    offsetY = evt.clientY - activeWin.offsetTop;
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag, {passive: false});
-    document.addEventListener('mouseup', stopDrag);
-    document.addEventListener('touchend', stopDrag);
+// --- PERSISTENCE & BOOT ---
+let myName = localStorage.getItem('os_user');
+if(!myName) {
+    myName = prompt("Welcome! Please set your Global Username:") || "User" + Math.floor(Math.random()*999);
+    localStorage.setItem('os_user', myName);
 }
-function drag(e) {
-    if (!activeWin) return;
-    e.preventDefault();
-    const evt = e.type === 'touchmove' ? e.touches[0] : e;
-    activeWin.style.left = (evt.clientX - offsetX) + 'px';
-    activeWin.style.top = (evt.clientY - offsetY) + 'px';
-}
-function stopDrag() { activeWin = null; }
+
+let currentServerId = localStorage.getItem('os_last_srv');
+let myBalance = 1000, myPortfolio = {}, globalStocks = {};
+
+// --- OS WINDOW LOGIC ---
 function toggleWin(id) {
     const w = document.getElementById(id);
-    w.style.display = w.style.display === 'flex' ? 'none' : 'flex';
+    w.style.display = (w.style.display === 'flex' ? 'none' : 'flex');
 }
 
-// --- Stock System ---
-let balance = 1000;
-let portfolio = {};
-const stocks = [
-    { id: 'brew', name: 'BREW', price: 50, history: [50, 52, 48, 50] },
-    { id: 'tech', name: 'GLXY', price: 120, history: [120, 125, 118, 120] },
-    { id: 'meme', name: 'DOGE', price: 0.50, history: [0.4, 0.6, 0.5, 0.5] }
-];
+let activeWin = null, oX, oY;
+document.querySelectorAll('.win-header').forEach(h => {
+    h.onmousedown = (e) => {
+        activeWin = e.target.closest('.window');
+        oX = e.clientX - activeWin.offsetLeft;
+        oY = e.clientY - activeWin.offsetTop;
+        activeWin.style.zIndex = 100;
+    };
+});
+window.onmousemove = (e) => { if(activeWin) { activeWin.style.left = (e.clientX - oX)+'px'; activeWin.style.top = (e.clientY - oY)+'px'; } };
+window.onmouseup = () => { if(activeWin) activeWin.style.zIndex = 10; activeWin = null; };
 
-function updateMarket() {
-    const list = document.getElementById('market-list');
-    if(!list) return;
-    list.innerHTML = '';
-    stocks.forEach(s => {
-        if(Math.random() > 0.4) { 
-            const change = (Math.random() - 0.5) * (s.price * 0.1);
-            s.price = Math.max(0.01, s.price + change);
-        }
-        s.history.push(s.price);
-        if(s.history.length > 20) s.history.shift();
-        const points = s.history.map((p, i) => `${i*15},${40 - (p/Math.max(...s.history)*30)}`).join(' ');
-        const color = s.price >= s.history[s.history.length-2] ? '#4caf50' : '#f44336';
-        list.innerHTML += `
-            <div class="stock-card">
-                <div style="display:flex; justify-content:space-between">
-                    <b>${s.name}</b> <span>$${s.price.toFixed(2)}</span>
-                </div>
-                <svg class="chart"><polyline points="${points}" stroke="${color}"/></svg>
-                <div class="controls">
-                    <button class="btn-buy" onclick="buyStock('${s.id}')">Buy</button>
-                    <button class="btn-sell" onclick="sellStock('${s.id}')">Sell</button>
-                    <small>${portfolio[s.id] || 0} Owned</small>
-                </div>
-            </div>`;
-    });
-    document.getElementById('balance').innerText = balance.toFixed(2);
-}
-function buyStock(id) {
-    const s = stocks.find(x => x.id === id);
-    if(balance >= s.price) { balance -= s.price; portfolio[id] = (portfolio[id] || 0) + 1; updateMarket(); }
-}
-function sellStock(id) {
-    const s = stocks.find(x => x.id === id);
-    if(portfolio[id] > 0) { balance += s.price; portfolio[id] -= 1; updateMarket(); }
-}
-setInterval(updateMarket, 3000);
-updateMarket();
-
-// --- REAL-TIME CHAT (Multiplayer) ---
-const chatBox = document.getElementById('chat-box');
-const chatIn = document.getElementById('chat-in');
-
-// Create a persistent username for this session
-let myName = "User_" + Math.floor(Math.random()*9000 + 1000);
-
-chatIn.addEventListener('keypress', (e) => {
-    if(e.key === 'Enter' && chatIn.value.trim() !== '') {
-        // Send message to Firebase
-        messagesRef.push({
-            user: myName,
-            text: chatIn.value,
-            time: Date.now()
-        });
-        chatIn.value = '';
+// --- YXONCORD LOGIC ---
+function createNewServer() {
+    const name = prompt("Server Name:");
+    if(name) {
+        const id = 'srv_' + Date.now();
+        yxonRef.child('servers').child(id).set({ name: name, owner: myName });
     }
+}
+
+yxonRef.child('servers').on('value', snap => {
+    const list = document.getElementById('server-list');
+    const data = snap.val() || {};
+    list.innerHTML = '<button class="btn-add" onclick="createNewServer()">+</button>';
+    for(let id in data) {
+        const div = document.createElement('div');
+        div.className = 'server-icon' + (currentServerId === id ? ' active' : '');
+        div.innerText = data[id].name.substring(0,2).toUpperCase();
+        div.onclick = () => joinServer(id, data[id].name);
+        list.appendChild(div);
+    }
+    if(currentServerId && data[currentServerId]) joinServer(currentServerId, data[currentServerId].name);
 });
 
-// Sync from Firebase
-messagesRef.limitToLast(30).on('child_added', (snapshot) => {
-    const data = snapshot.val();
-    const isMe = data.user === myName;
-    chatBox.innerHTML += `
-        <div class="chat-msg">
-            <span class="chat-user" style="color: ${isMe ? '#4caf50' : '#0078d4'}">${data.user}:</span> ${data.text}
-        </div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
+function joinServer(id, name) {
+    currentServerId = id;
+    localStorage.setItem('os_last_srv', id);
+    document.getElementById('chat-header').innerText = "# " + name;
+    document.getElementById('yxon-input').disabled = false;
+    document.getElementById('yxon-input').placeholder = "Message #" + name;
+    
+    document.getElementById('yxon-msgs').innerHTML = '';
+    yxonRef.child('messages').child(id).off();
+    yxonRef.child('messages').child(id).limitToLast(20).on('child_added', snap => {
+        const d = snap.val();
+        document.getElementById('yxon-msgs').innerHTML += `<div><b style="color:#5865f2">${d.u}:</b> ${d.t}</div>`;
+        document.getElementById('yxon-msgs').scrollTop = 10000;
+    });
+}
+
+document.getElementById('yxon-input').onkeypress = (e) => {
+    if(e.key === 'Enter' && e.target.value) {
+        yxonRef.child('messages').child(currentServerId).push({ u: myName, t: e.target.value });
+        e.target.value = '';
+    }
+};
+
+// --- STOCK LOGIC ---
+econRef.on('value', snap => {
+    globalStocks = snap.val() || { brew:{name:'BREW',price:50,history:[50]} };
+    const list = document.getElementById('market-list');
+    list.innerHTML = '';
+    for(let id in globalStocks) {
+        const s = globalStocks[id];
+        list.innerHTML += `<div class="stock-card"><b>${s.name}</b>: $${s.price.toFixed(2)} 
+        <button onclick="trade('${id}','buy')">Buy</button></div>`;
+    }
+    document.getElementById('balance').innerText = myBalance.toFixed(2);
 });
+
+function trade(id, type) {
+    const s = globalStocks[id];
+    if(type==='buy' && myBalance >= s.price) {
+        myBalance -= s.price;
+        myPortfolio[id] = (myPortfolio[id]||0)+1;
+        econRef.child(id).update({ price: s.price * 1.015 });
+    }
+}
+
+// --- SOLITAIRE / TRI-PEAKS ---
+const canvas = document.getElementById('game-canvas');
+function initTriPeaks() {
+    canvas.innerHTML = '<div style="color:white; padding:20px;">Tri-Peaks Loading... (Tap cards to clear)</div>';
+    // Simplified logic: Create 20 clickable cards
+    for(let i=0; i<20; i++) {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.style.left = (20 + (i%5)*60)+'px';
+        div.style.top = (20 + Math.floor(i/5)*50)+'px';
+        div.innerText = ['A','K','Q','J','10'][Math.floor(Math.random()*5)] + '♠';
+        div.onclick = () => div.remove();
+        canvas.appendChild(div);
+    }
+}
+function initSolitaire() {
+    canvas.innerHTML = '<div style="color:white; padding:20px;">Solitaire Started.</div>';
+}
 </script>
 </body>
 </html>
