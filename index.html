@@ -2,70 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows XP Clone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XP for iPad</title>
     <style>
-        /* --- CSS STYLES --- */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
-            font-family: "Tahoma", "Segoe UI", sans-serif;
+            overflow: hidden; /* Prevents iPad "bounce" scrolling */
+            font-family: "Tahoma", sans-serif;
+            touch-action: none; /* Disables default browser gestures */
         }
 
         .desktop {
             background: #3a6ea5 url('https://e0.pxfuel.com/wallpapers/315/518/desktop-wallpaper-windows-xp-bliss-windows-xp-original.jpg') no-repeat center center;
             background-size: cover;
-            height: calc(100vh - 30px);
+            height: calc(100vh - 40px); /* Slightly taller taskbar for fingers */
             position: relative;
         }
 
-        /* The Window */
+        /* Window Styling */
         .window {
             position: absolute;
-            top: 100px;
-            left: 100px;
-            width: 350px;
+            top: 50px;
+            left: 50px;
+            width: 320px;
             background: #ece9d8;
             border: 3px solid #0054e3;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
-            box-shadow: 4px 4px 15px rgba(0,0,0,0.3);
-            user-select: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10;
         }
 
         .title-bar {
             background: linear-gradient(to bottom, #0058e4 0%, #3d95ff 10%, #0058e4 100%);
-            padding: 3px 10px;
+            padding: 10px; /* Larger touch target */
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
             font-weight: bold;
             text-shadow: 1px 1px #000;
-            cursor: move; /* Indicates it can be dragged */
         }
 
         .title-controls button {
-            width: 21px;
-            height: 21px;
-            margin-left: 2px;
+            width: 25px;
+            height: 25px;
             background: #ece9d8;
             border: 1px solid #fff;
-            border-radius: 2px;
+            border-radius: 3px;
             font-weight: bold;
-            font-size: 10px;
-            cursor: pointer;
         }
 
-        .title-controls .close {
-            background: linear-gradient(to bottom, #e76b39, #ad3100);
-            color: white;
-        }
+        .close { background: linear-gradient(to bottom, #e76b39, #ad3100) !important; color: white; }
 
         .window-body {
-            padding: 10px;
             background: white;
             margin: 2px;
             border: 1px solid #7f9db9;
@@ -73,11 +65,11 @@
 
         textarea {
             width: 100%;
-            height: 150px;
+            height: 200px;
             border: none;
-            resize: none;
-            outline: none;
-            font-family: "Courier New", monospace;
+            padding: 10px;
+            font-size: 16px; /* Prevents iOS from zooming in on focus */
+            box-sizing: border-box;
         }
 
         /* Taskbar */
@@ -85,109 +77,125 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            height: 30px;
+            height: 40px;
             background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
             display: flex;
             align-items: center;
-            z-index: 1000;
         }
 
         .start-button {
             height: 100%;
-            padding: 0 20px;
+            padding: 0 25px;
             background: radial-gradient(circle at top left, #53a351, #388e3c);
             color: white;
             font-style: italic;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 18px;
             display: flex;
             align-items: center;
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.4);
-            cursor: pointer;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
         }
 
         .system-tray {
             margin-left: auto;
             background: #0996f1;
             height: 100%;
-            display: flex;
-            align-items: center;
             padding: 0 15px;
             color: white;
-            font-size: 11px;
-            border-left: 1px solid #0840a5;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div class="desktop">
-        <div id="myWindow" class="window">
-            <div id="myWindowHeader" class="title-bar">
-                <div class="title-text">Notepad</div>
-                <div class="title-controls">
-                    <button>_</button>
-                    <button>□</button>
-                    <button class="close">X</button>
-                </div>
-            </div>
-            <div class="window-body">
-                <textarea>Welcome to Windows XP.
-Feel free to drag this window around!</textarea>
+<div class="desktop">
+    <div id="xpWindow" class="window">
+        <div id="xpWindowHeader" class="title-bar">
+            <span>Notepad</span>
+            <div class="title-controls">
+                <button class="close" onclick="document.getElementById('xpWindow').style.display='none'">X</button>
             </div>
         </div>
-    </div>
-
-    <div class="taskbar">
-        <div class="start-button">start</div>
-        <div class="system-tray">
-            <span id="clock"></span>
+        <div class="window-body">
+            <textarea>This works on iPad! 
+Use your finger to drag the blue bar.</textarea>
         </div>
     </div>
+</div>
 
-    <script>
-        // --- JAVASCRIPT FOR DRAGGING ---
-        dragElement(document.getElementById("myWindow"));
+<div class="taskbar">
+    <div class="start-button">start</div>
+    <div class="system-tray" id="clock">12:00 PM</div>
+</div>
 
-        function dragElement(elmnt) {
-            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            if (document.getElementById(elmnt.id + "Header")) {
-                document.getElementById(elmnt.id + "Header").onmousedown = dragMouseDown;
-            }
+<script>
+    // Drag Logic for Touch and Mouse
+    const win = document.getElementById("xpWindow");
+    const header = document.getElementById("xpWindowHeader");
 
-            function dragMouseDown(e) {
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
+    let active = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
 
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-            }
+    // Listeners for both Mouse and Touch
+    header.addEventListener("touchstart", dragStart, false);
+    document.addEventListener("touchend", dragEnd, false);
+    document.addEventListener("touchmove", drag, false);
 
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
+    header.addEventListener("mousedown", dragStart, false);
+    document.addEventListener("mouseup", dragEnd, false);
+    document.addEventListener("mousemove", drag, false);
+
+    function dragStart(e) {
+        if (e.type === "touchstart") {
+            initialX = e.touches[0].clientX - xOffset;
+            initialY = e.touches[0].clientY - yOffset;
+        } else {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
         }
+        active = true;
+    }
 
-        // Live Clock
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    function dragEnd() {
+        initialX = currentX;
+        initialY = currentY;
+        active = false;
+    }
+
+    function drag(e) {
+        if (active) {
+            e.preventDefault();
+            if (e.type === "touchmove") {
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+            } else {
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+            }
+            xOffset = currentX;
+            yOffset = currentY;
+            setTranslate(currentX, currentY, win);
         }
-        setInterval(updateClock, 1000);
-        updateClock();
-    </script>
+    }
+
+    function setTranslate(xPos, yPos, el) {
+        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    }
+
+    // Clock Logic
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }, 1000);
+</script>
+
 </body>
 </html>
