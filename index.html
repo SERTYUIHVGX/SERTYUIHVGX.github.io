@@ -58,24 +58,43 @@
             height: 22px;
             padding: 2px 6px;
         }
-        .start-menu {
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            width: 200px;
-            background: #c0c0c0;
-            border: 2px solid;
-            border-color: #fff #808080 #808080 #fff;
-            z-index: 999;
-        }
         .window {
             position: absolute;
             z-index: 10;
             user-select: none;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff;
         }
-        /* Make it clear the title bar is for dragging */
-        .title-bar {
-            cursor: move;
+        .title-bar { cursor: move; }
+        .window-body {
+            flex-grow: 1;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 98 Terminal Menu Bar */
+        .terminal-menu {
+            display: flex;
+            background: #c0c0c0;
+            padding: 2px 0;
+            border-bottom: 1px solid #808080;
+        }
+        .menu-item {
+            padding: 2px 8px;
+            font-size: 11px;
+            color: #000;
+        }
+        .menu-item:first-letter { text-decoration: underline; }
+
+        iframe.app-content {
+            width: 100%;
+            flex-grow: 1;
+            border: none;
+            display: block;
         }
     </style>
 </head>
@@ -83,7 +102,7 @@
 
     <div class="desktop">
         <div class="icon" @click="yxon6Open = true">
-            <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png">
+            <img src="https://win98icons.alexmeub.com/icons/png/msdos-0.png">
             <span>Yxon6 OS</span>
         </div>
         <div class="icon" @click="internetOpen = true">
@@ -95,56 +114,116 @@
     <div class="window" 
          x-show="yxon6Open" 
          x-draggable 
-         style="width: 320px; top: 50px; left: 50px;">
+         style="width: 640px; height: 400px; top: 50px; left: 50px;">
         <div class="title-bar">
-            <div class="title-bar-text">Yxon6 OS</div>
+            <div class="title-bar-text">MS-DOS Prompt - YXON6</div>
             <div class="title-bar-controls">
                 <button aria-label="Minimize"></button>
                 <button aria-label="Maximize"></button>
                 <button aria-label="Close" @click="yxon6Open = false"></button>
             </div>
         </div>
+        <div class="terminal-menu">
+            <div class="menu-item">File</div>
+            <div class="menu-item">Edit</div>
+            <div class="menu-item">Search</div>
+            <div class="menu-item">Help</div>
+        </div>
         <div class="window-body">
-            <p>Welcome to the Yxon6 operating system environment.</p>
-            <ul class="tree-view">
-              <li>(C:) System Files</li>
-              <li>(D:) User Data</li>
-              <li>Network Neighborhood</li>
-              <li>Settings</li>
-            </ul>
+            <iframe class="app-content" srcdoc="
+                <html>
+                <head>
+                    <style>
+                        body { 
+                            background-color: #000; 
+                            color: #c0c0c0; 
+                            margin: 0; 
+                            padding: 10px; 
+                            font-family: 'Courier New', Courier, monospace; 
+                            font-size: 14px;
+                            overflow-y: auto;
+                        }
+                        #output { white-space: pre-wrap; line-height: 1.2; }
+                        .input-line { display: flex; margin-top: 10px; }
+                        .prompt { color: #c0c0c0; margin-right: 5px; font-weight: bold; }
+                        input { 
+                            background: transparent; 
+                            border: none; 
+                            color: #c0c0c0; 
+                            font-family: inherit; 
+                            font-size: 14px; 
+                            outline: none; 
+                            flex-grow: 1; 
+                        }
+                        a { color: #fff; text-decoration: underline; }
+                        .header-text { margin-bottom: 15px; color: #fff; }
+                    </style>
+                </head>
+                <body onclick='document.getElementById(&quot;commandInput&quot;).focus()'>
+                    <div class='header-text'>Microsoft(R) Windows 98<br>(C)Copyright Microsoft Corp 1981-1998.</div>
+                    <div id='output'>YXON6 OS Terminal [Version 4.10.1998]<br>Type 'HELP' for executable commands.</div>
+                    <div class='input-line'>
+                        <span class='prompt'>C:\YXON6></span>
+                        <input type='text' id='commandInput' autofocus autocomplete='off' spellcheck='false'>
+                    </div>
+                    <script>
+                        const database = {
+                            'awp': ['https://lessons.axsetubal.pt/', 'https://useawp.developer.li/'],
+                            'truffled': ['https://truffled.lol/', 'https://edu.sciencecomputers.lat/'],
+                            'help': ['PROXYLIST - View verified directory', 'CLEAR - Wipe screen', 'SPEEDTEST - Test node latency', 'AWP, TRUFFLED, VOID - Service links']
+                        };
+                        const input = document.getElementById('commandInput');
+                        const out = document.getElementById('output');
+
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') {
+                                const val = input.value.trim();
+                                const cmd = val.toLowerCase();
+                                
+                                const p = document.createElement('div');
+                                p.textContent = 'C:\\YXON6> ' + val;
+                                out.appendChild(p);
+
+                                if (cmd === 'clear') {
+                                    out.innerHTML = '';
+                                } else if (cmd === 'help') {
+                                    database.help.forEach(line => {
+                                        const d = document.createElement('div');
+                                        d.textContent = line;
+                                        out.appendChild(d);
+                                    });
+                                } else if (database[cmd]) {
+                                    database[cmd].forEach(link => {
+                                        const d = document.createElement('div');
+                                        d.innerHTML = '> <a href=&quot;' + link + '&quot; target=&quot;_blank&quot;>' + link + '</a>';
+                                        out.appendChild(d);
+                                    });
+                                } else if (val !== '') {
+                                    const err = document.createElement('div');
+                                    err.textContent = 'Bad command or file name';
+                                    out.appendChild(err);
+                                }
+                                
+                                input.value = '';
+                                window.scrollTo(0, document.body.scrollHeight);
+                            }
+                        });
+                    </script>
+                </body>
+                </html>
+            "></iframe>
         </div>
     </div>
 
-    <div class="window" 
-         x-show="internetOpen" 
-         x-draggable 
-         style="width: 500px; height: 400px; top: 100px; left: 100px;">
+    <div class="window" x-show="internetOpen" x-draggable style="width: 500px; height: 400px; top: 120px; left: 120px;">
         <div class="title-bar">
-            <div class="title-bar-text">Internet Explorer - Google</div>
+            <div class="title-bar-text">Internet Explorer</div>
             <div class="title-bar-controls">
                 <button aria-label="Close" @click="internetOpen = false"></button>
             </div>
         </div>
-        <div class="window-body" style="margin: 0; height: calc(100% - 35px); background: white;">
-            <iframe src="https://www.google.com/search?igu=1" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
-    </div>
-
-    <div class="start-menu" x-show="startMenu" @click.outside="startMenu = false">
-        <div style="background: linear-gradient(to top, #000080, #1084d0); width: 25px; height: 100%; position: absolute; left: 0; bottom: 0;">
-            <span style="transform: rotate(-90deg); color: white; position: absolute; bottom: 40px; left: -15px; font-weight: bold; width: 100px;">Yxon6 OS</span>
-        </div>
-        <div style="margin-left: 30px;">
-            <button class="icon" style="width: 100%; text-align: left; padding: 5px; color: black; text-shadow: none;" @click="internetOpen = true; startMenu = false">
-                Programs
-            </button>
-            <button class="icon" style="width: 100%; text-align: left; padding: 5px; color: black; text-shadow: none;">
-                Documents
-            </button>
-            <hr>
-            <button class="icon" style="width: 100%; text-align: left; padding: 5px; color: black; text-shadow: none;">
-                Shut Down...
-            </button>
+        <div class="window-body" style="background: white;">
+            <iframe class="app-content" src="https://www.google.com/search?igu=1"></iframe>
         </div>
     </div>
 
@@ -160,49 +239,27 @@
     </div>
 
     <script>
-        // Custom Alpine.js Logic for Draggable Windows
         document.addEventListener('alpine:init', () => {
             Alpine.directive('draggable', (el) => {
                 let titleBar = el.querySelector('.title-bar');
-                let offsetX = 0, offsetY = 0, mouseX = 0, mouseY = 0;
-
-                titleBar.onmousedown = dragMouseDown;
-
-                function dragMouseDown(e) {
-                    e.preventDefault();
-                    // Move this window to the top of the stack
+                titleBar.onmousedown = (e) => {
                     document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
                     el.style.zIndex = 100;
-
-                    mouseX = e.clientX;
-                    mouseY = e.clientY;
-                    document.onmouseup = closeDragElement;
-                    document.onmousemove = elementDrag;
-                }
-
-                function elementDrag(e) {
-                    e.preventDefault();
-                    offsetX = mouseX - e.clientX;
-                    offsetY = mouseY - e.clientY;
-                    mouseX = e.clientX;
-                    mouseY = e.clientY;
-                    el.style.top = (el.offsetTop - offsetY) + "px";
-                    el.style.left = (el.offsetLeft - offsetX) + "px";
-                }
-
-                function closeDragElement() {
-                    document.onmouseup = null;
-                    document.onmousemove = null;
+                    let mouseX = e.clientX, mouseY = e.clientY;
+                    document.onmousemove = (e) => {
+                        let offsetX = mouseX - e.clientX, offsetY = mouseY - e.clientY;
+                        mouseX = e.clientX; mouseY = e.clientY;
+                        el.style.top = (el.offsetTop - offsetY) + "px";
+                        el.style.left = (el.offsetLeft - offsetX) + "px";
+                    };
+                    document.onmouseup = () => { document.onmousemove = null; };
                 }
             });
         });
-
         function updateClock() {
-            const now = new Date();
-            document.getElementById('time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('time').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
     </script>
 </body>
 </html>
