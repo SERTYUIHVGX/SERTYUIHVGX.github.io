@@ -16,40 +16,31 @@
             text-shadow: 0 0 8px #800000;
             overflow: hidden;
         }
-
         #terminal {
             height: 100%;
             overflow-y: auto;
             scrollbar-width: none;
         }
-
-        #terminal::-webkit-scrollbar { 
-            display: none; 
-        }
-
+        #terminal::-webkit-scrollbar { display: none; }
         #output {
-            white-space: pre;
+            white-space: pre-wrap;
             margin-bottom: 40px;
             line-height: 1.2;
-            font-size: 12px;
+            font-size: 14px;
         }
-
         .input-line {
             display: flex;
             align-items: center;
         }
-
         .prompt {
             margin-right: 10px;
             white-space: nowrap;
         }
-
         #commandForm {
             flex-grow: 1;
             display: flex;
             margin: 0;
         }
-
         input {
             background: transparent;
             border: none;
@@ -59,14 +50,11 @@
             outline: none;
             flex-grow: 1;
             caret-color: #ffffff;
+            width: 100%;
         }
-
         .scanlines {
             position: fixed;
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
             z-index: 10;
             background-size: 100% 3px;
@@ -75,12 +63,9 @@
     </style>
 </head>
 <body onclick="document.getElementById('commandInput').focus()">
-
     <div class="scanlines"></div>
-
     <div id="terminal">
         <div id="output">SYSTEM ONLINE... TYPE 'proxylist' TO VIEW DIRECTORY. TYPE 'help' FOR COMMANDS.</div>
-        
         <div class="input-line">
             <span class="prompt">guest@terminal:~$</span>
             <form id="commandForm">
@@ -88,7 +73,6 @@
             </form>
         </div>
     </div>
-
     <script>
         const form = document.getElementById('commandForm');
         const input = document.getElementById('commandInput');
@@ -102,73 +86,53 @@
             "quasar": ["https://epic.tomaszu.com/"],
             "vapour": ["https://watervapor.space/"],
             "boredom": ["https://wispserver.dev/"],
-            "koopbin": ["https://learnster.online/"],
+            "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
             "nebula": ["https://math.school.dovereducation.org/"],
             "afilite": ["https://readinghelpforelementary.online/"],
             "splash": ["https://splashstudy.b-cdn.net/"]
         };
 
-        const worldMap = `
-        ---------------------------------------------------------------------------
-                                   WORLD MAP - GLOBAL VIEW
-        ---------------------------------------------------------------------------
-                   _..-.._      ______                       ____
-                 .'  USA  '.   /_      \\                   /    \\
-                / @      @  \\ / EUROPE  \\        RUSSIA   / ASIA \\
-               | NORTH AMER  |    @      \\               /   @    \\
-               |     @       |   AFRICA   \\             /    @     |
-                \\   @       /      @       \\___________/           /
-                 '._     _.'        @       /         \\   @       /
-                    '---'  _..---.._       /  INDIAN   \\  AUST   /
-                          / S. AMER \\     /    OCEAN    \\  @    /
-                         /     @     \\    '-------------' '----'
-                         \\    @      /           @
-                          '._     _.'        ANTARCTICA
-                             '---'
-        ---------------------------------------------------------------------------
-        `;
+        function printLine(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            output.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function runSpeedTest() {
+            printLine("\n[ RUNNING SPEEDTEST.CLI ]");
+            const ping = Math.floor(Math.random() * 30) + 5;
+            const dl = (Math.random() * 450 + 50).toFixed(2);
+            const ul = (Math.random() * 90 + 10).toFixed(2);
+            printLine("LATENCY: " + ping + "ms");
+            printLine("DOWNLOAD: " + dl + " Mbps");
+            printLine("UPLOAD: " + ul + " Mbps");
+            printLine("[ TEST COMPLETE ]\n");
+        }
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const rawVal = input.value;
             const cmd = rawVal.trim().toLowerCase();
-            
-            // Log the command to the screen
-            const cmdLine = document.createElement('div');
-            cmdLine.textContent = 'guest@terminal:~$ ' + rawVal;
-            output.appendChild(cmdLine);
-
+            input.value = '';
+            printLine('guest@terminal:~$ ' + rawVal);
             if (cmd === 'proxylist') {
                 printLine("\n[ DIRECTORY ]");
                 Object.keys(database).forEach(key => printLine("- " + key.toUpperCase()));
-            } 
-            else if (cmd === 'global.view') {
-                printLine("\n[ ACCESSING GLOBAL SATELLITE NETWORK ]");
-                printLine(worldMap);
-            }
-            else if (database[cmd]) {
+            } else if (cmd === 'speedtest.cli') {
+                runSpeedTest();
+            } else if (database[cmd]) {
                 printLine("\nRETRIEVING [" + cmd.toUpperCase() + "]...");
                 database[cmd].forEach(link => printLine("> " + link));
-            } 
-            else if (cmd === 'help') {
-                printLine("\nCOMMANDS: proxylist, global.view, clear, help\n");
-            } 
-            else if (cmd === 'clear') {
+            } else if (cmd === 'help') {
+                printLine("\nCOMMANDS: proxylist, speedtest.cli, clear, help\n");
+            } else if (cmd === 'clear') {
                 output.innerHTML = '';
-            } 
-            else if (cmd !== '') {
+            } else if (cmd !== '') {
                 printLine("ERR: '" + rawVal + "' not found.");
             }
-
-            input.value = '';
             terminal.scrollTop = terminal.scrollHeight;
         });
-
-        function printLine(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            output.appendChild(div);
-        }
     </script>
 </body>
-</html>
+</html>help
