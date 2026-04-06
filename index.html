@@ -36,30 +36,32 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            animation: fadeOut 0.6s ease-in forwards 4.5s;
+            animation: fadeOut 0.6s ease-in forwards 5s; /* Extended to 5s to see the animation */
         }
 
         .skull-gif {
-            width: 300px;
+            width: 320px;
             height: auto;
-            image-rendering: pixelated; /* Keeps that retro crunch */
+            display: block;
+            image-rendering: pixelated; 
+            border: none;
         }
 
         .loading-text {
-            margin-top: 20px;
+            margin-top: 10px;
             font-family: 'Consolas', monospace;
             color: var(--blood-red);
-            font-size: 24px;
+            font-size: 20px;
             text-transform: uppercase;
-            letter-spacing: 5px;
+            letter-spacing: 8px;
             text-shadow: 0 0 10px var(--blood-red);
-            animation: flicker 0.1s infinite;
+            animation: pulse 0.2s infinite;
         }
 
-        @keyframes flicker {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 0.9; }
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         @keyframes fadeOut {
@@ -81,9 +83,10 @@
             cursor: pointer;
             padding: 8px;
             border-radius: 4px;
+            transition: background 0.2s;
         }
 
-        .icon:hover { background: rgba(255,255,255,0.1); }
+        .icon:hover { background: rgba(88, 101, 242, 0.2); }
 
         .icon-symbol {
             font-size: 28px;
@@ -97,7 +100,7 @@
             background: var(--discord-body);
             border: 1px solid #1e1f22;
             border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -111,7 +114,6 @@
             align-items: center;
             cursor: move;
             font-size: 13px;
-            font-weight: 600;
             color: #949ba4;
         }
 
@@ -120,26 +122,26 @@
             padding: 15px;
             font-family: 'Consolas', monospace;
             background: #2b2d31;
+            overflow: hidden;
         }
 
         .terminal-text {
             color: var(--terminal-green);
-            line-height: 1.4;
-            text-shadow: 0 0 5px rgba(0,255,65,0.5);
+            line-height: 1.5;
+            text-shadow: 0 0 5px rgba(0,255,65,0.3);
         }
 
         /* --- TASKBAR & NEWS --- */
         .taskbar {
             height: 48px;
-            background: rgba(17, 18, 20, 0.95);
-            backdrop-filter: blur(10px);
+            background: #111214;
             position: fixed;
             bottom: 0;
             width: 100%;
             display: flex;
             align-items: center;
             padding: 0 12px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid #2b2d31;
             z-index: 1000;
         }
 
@@ -153,35 +155,31 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: 0.2s;
         }
 
-        .news-trigger:hover { background: rgba(255,255,255,0.1); }
+        .news-trigger:hover { background: #35373c; }
 
         .news-panel {
             position: fixed;
             bottom: 56px;
             left: 12px;
             width: 380px;
-            height: 550px;
+            height: 500px;
             background: var(--win11-glass);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
             padding: 20px;
             z-index: 2000;
             overflow-y: auto;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
         }
 
         .widget {
             background: rgba(255,255,255,0.05);
             border-radius: 8px;
-            padding: 15px;
+            padding: 12px;
             margin-bottom: 12px;
-        }
-
-        .news-card {
             border-left: 3px solid var(--accent-blurple);
         }
 
@@ -198,74 +196,62 @@
 </head>
 <body x-data="{ newsOpen: false, yxonOpen: true }">
 
-    <!-- Loading Screen with Tenor GIF -->
     <div class="ultrakill-load">
-        <img src="https://media.tenor.com/7S8GqV9W6k8AAAAC/ultrakill-death.gif" alt="ULTRAKILL SKULL" class="skull-gif">
+        <img src="https://media.tenor.com/7S8GqV9W6k8AAAAC/ultrakill-death.gif" 
+             alt="ULTRAKILL SKULL" 
+             class="skull-gif"
+             onerror="this.src='https://c.tenor.com/7S8GqV9W6k8AAAAC/ultrakill-death.gif'">
         <div class="loading-text">loading...</div>
     </div>
 
     <div class="desktop">
         <div class="icon" @click="yxonOpen = true">
             <div class="icon-symbol">#</div>
-            <span style="font-size: 11px;">YXON_CORE</span>
+            <span style="font-size: 11px; font-weight: bold;">YXON_OS</span>
         </div>
     </div>
 
     <div class="window" x-show="yxonOpen" style="width: 550px; height: 350px; top: 100px; left: 200px;">
         <div class="title-bar">
-            <span>yxon-os / main-terminal</span>
-            <button @click="yxonOpen = false" style="background:none; border:none; color:#949ba4; cursor:pointer;">✕</button>
+            <span># terminal-main</span>
+            <button @click="yxonOpen = false" style="background:none; border:none; color:#949ba4; cursor:pointer; font-size: 16px;">✕</button>
         </div>
         <div class="window-body">
             <div class="terminal-text">
-                [SYSTEM]: YXON OS v6.0.4 - TERMINAL_LINK<br>
-                [INFO]: GIF_LOADER_INITIALIZED<br>
-                [AUTH]: ROOT_USER ACCESS GRANTED<br><br>
-                C:\YXON> list active_tasks<br>
-                > Discord_Engine... RUNNING<br>
-                > News_Feed_W11... LISTENING<br>
-                > Skull_Loader... COMPLETE<br><br>
-                C:\YXON> <span class="cursor-blink"></span>
+                [SYSTEM]: YXON OS TERMINAL v7.0<br>
+                [LINK]: SECURE_SHELL ESTABLISHED<br>
+                [MODE]: DISCORD_DARK_UI<br><br>
+                C:\USER\ROOT> status<br>
+                > Skull_Loader: SUCCESS<br>
+                > News_Protocol: ONLINE<br>
+                > Terminal_Theme: APPLIED<br><br>
+                C:\USER\ROOT> <span class="cursor-blink"></span>
             </div>
         </div>
     </div>
 
-    <!-- Win11 Style News Panel -->
-    <div class="news-panel" x-show="newsOpen" x-transition:enter.duration.300ms @click.away="newsOpen = false">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0; font-size:18px;">Widgets</h2>
-            <span style="font-size:20px;">☁️ 74°</span>
-        </div>
-        
-        <div class="widget news-card">
-            <small style="color:var(--accent-blurple); font-weight:bold;">SYSTEM LOG</small>
-            <h4 style="margin:5px 0;">Skull Sequence Implemented</h4>
-            <p style="font-size:12px; opacity:0.8; margin-bottom:0;">The ULTRAKILL death animation is now the primary boot sequence for Yxon OS.</p>
-        </div>
-
+    <div class="news-panel" x-show="newsOpen" x-transition @click.away="newsOpen = false">
+        <h3 style="margin-top:0;">Widgets</h3>
         <div class="widget">
-            <h4 style="margin:0 0 10px 0; font-size:14px;">Market Watch</h4>
-            <div style="display:flex; justify-content:space-between; font-size:13px;">
-                <span>YXON COIN</span>
-                <span style="color:#4ade80;">+12.4% ↑</span>
-            </div>
+            <small style="color:var(--accent-blurple);">BREAKING</small>
+            <h4 style="margin:5px 0;">OS Aesthetic Stabilized</h4>
+            <p style="font-size:12px; margin:0; opacity:0.8;">Win98 assets purged. Discord-Terminal hybrid now running as primary shell.</p>
+        </div>
+        <div class="widget">
+            <small style="color:var(--accent-blurple);">TECH</small>
+            <h4 style="margin:5px 0;">ULTRAKILL Logic</h4>
+            <p style="font-size:12px; margin:0; opacity:0.8;">Animated skull sequence verified. Loading text flicker implemented.</p>
         </div>
     </div>
 
     <div class="taskbar">
         <button class="news-trigger" @click="newsOpen = !newsOpen">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2z"></path><path d="M7 8h5"></path><path d="M7 12h10"></path><path d="M7 16h10"></path></svg>
-            <span style="font-weight: 500;">News</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2z"></path><polyline points="7 8 12 8"></polyline><polyline points="7 12 17 12"></polyline><polyline points="7 16 17 16"></polyline></svg>
+            <span style="font-weight: 600; font-size: 13px;">News</span>
         </button>
         
-        <div style="flex-grow:1; display:flex; justify-content:center; gap:8px;">
-            <div style="width:30px; height:30px; background:var(--accent-blurple); border-radius:4px; opacity:0.5;"></div>
-            <div style="width:30px; height:30px; background:rgba(255,255,255,0.1); border-radius:4px;"></div>
-        </div>
-
-        <div style="text-align:right; font-size:12px; padding-right:10px;">
-            <div>11:59 PM</div>
-            <div style="opacity:0.6;">4/06/2026</div>
+        <div style="margin-left: auto; font-size: 12px; color: #949ba4; padding-right: 15px;">
+            16:20 | 06-04-2026
         </div>
     </div>
 
