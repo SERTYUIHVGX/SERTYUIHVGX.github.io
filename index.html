@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UXONG6 | Binary Terminal</title>
+    <title>UXONG6 | Binary Terminal v4.0</title>
     <style>
         body { 
             background-color: #000; 
@@ -16,7 +16,6 @@
             text-shadow: 0 0 8px #ff0000;
         }
 
-        /* Matrix Canvas Background */
         #matrix {
             position: fixed;
             top: 0;
@@ -24,7 +23,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.25; /* 75% Transparency */
+            opacity: 0.25;
         }
 
         #terminal { 
@@ -52,7 +51,7 @@
             color: #ff0000;
             text-shadow: 0 0 15px #ff0000;
             margin-bottom: 30px;
-            font-size: 11px;
+            font-size: 10px;
             line-height: 1.1;
         }
 
@@ -107,21 +106,16 @@
         <pre id="clock-container"></pre>
 
         <div class="ascii-art">
-                                        .d8888b.         .d88888b.   .d8888b.  
-                                       d88P  Y88b       d88P" "Y88b d88P  Y88b 
-                                       888             888     888 Y88b.      
-888  888 888  888  .d88b.  88888b.  888d888b.       888     888  "Y888b.   
-888  888 `Y8bd8P' d88""88b 888 "88b 888P "Y88b       888     888     "Y88b. 
-888  888   X88K   888  888 888 "88b 888    888       888     888       "888 
-Y88b 888 .d8""8b. Y88..88P 888  888 Y88b  d88P       Y88b. .d88P Y88b  d88P 
- "Y88888 888  888  "Y88P"  888  888  "Y8888P"         "Y88888P"   "Y8888P"  
-     888                                                                    
-Y8b d88P                                                                    
- "Y88P"                                                                     
+ █████╗ ██╗    ██╗██████╗     ██████╗ ███████╗██████╗ ██╗     ██╗ ██████╗ 
+██╔══██╗██║    ██║██╔══██╗   ██╔════╝ ██╔════╝██╔══██╗██║     ██║██╔════╝ 
+███████║██║ █╗ ██║██████╔╝   ██║  ███╗█████╗  ██████╔╝██║     ██║██║  ███╗
+██╔══██║██║███╗██║██╔═══╝    ██║   ██║██╔══╝  ██╔══██╗██║     ██║██║   ██║
+██║  ██║╚███╔███╔╝██║        ╚██████╔╝███████╗██║  ██║███████╗██║╚██████╔╝
+╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝         ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ 
         </div>
 
-        <div id="output">BINARY OVERRIDE ACTIVE... 
-TYPE 'speedtest' FOR BANDWIDTH DATA.
+        <div id="output">SYSTEM OVERRIDE v4.0.26 - GHOST NODES DETECTED...
+TYPE 'proxylist' FOR THE FULL DIRECTORY.
 TYPE 'help' FOR COMMANDS.</div>
 
         <div class="input-line">
@@ -131,13 +125,12 @@ TYPE 'help' FOR COMMANDS.</div>
     </div>
 
     <script>
-        // Matrix Rain (Binary Only)
+        // Matrix Rain Logic
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        
-        const charSet = "01"; // Strict binary
+        const charSet = "01"; 
         const characters = charSet.split("");
         const fontSize = 16;
         const columns = canvas.width / fontSize;
@@ -145,9 +138,9 @@ TYPE 'help' FOR COMMANDS.</div>
         for (let x = 0; x < columns; x++) drops[x] = 1;
 
         function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Trails
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#8b0000"; // Deep red binary
+            ctx.fillStyle = "#8b0000"; 
             ctx.font = fontSize + "px monospace";
             for (let i = 0; i < drops.length; i++) {
                 const text = characters[Math.floor(Math.random() * characters.length)];
@@ -158,7 +151,7 @@ TYPE 'help' FOR COMMANDS.</div>
         }
         setInterval(drawMatrix, 50);
 
-        // ASCII Clock Mapping
+        // ASCII Clock Logic
         const asciiDigits = {
             '0': ["███", "█ █", "█ █", "█ █", "███"],
             '1': ["  █", "  █", "  █", "  █", "  █"],
@@ -175,83 +168,38 @@ TYPE 'help' FOR COMMANDS.</div>
 
         function updateClock() {
             const now = new Date();
-            const cstTime = now.toLocaleTimeString('en-US', { 
-                timeZone: 'America/Chicago', 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            });
-
+            const cstTime = now.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const rows = ["", "", "", "", ""];
             for (let char of cstTime) {
                 const digit = asciiDigits[char] || asciiDigits[':'];
-                for (let i = 0; i < 5; i++) {
-                    rows[i] += digit[i] + "  ";
-                }
+                for (let i = 0; i < 5; i++) rows[i] += digit[i] + "  ";
             }
-            document.getElementById('clock-container').textContent = "CURRENT CST TIME:\n" + rows.join("\n");
+            document.getElementById('clock-container').textContent = "CST SYSTEM TIME:\n" + rows.join("\n");
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Terminal Logic
+        // Database - THE GHOST FLEET 2026
+        const database = {
+            "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li/", "https://math.pdx.edu.pl/", "https://study.axsetubal.pt/"],
+            "splash": ["https://splashstudy.b-cdn.net/", "https://splash.quest/", "https://learning.splash.sh/", "https://cdn.splash.li/"],
+            "interstellar": ["https://x.j0.icom.org.np/", "https://snapshot.photography.backriverphotography.com/", "https://mystic.xyz.moochurch.com/", "https://interstellar-proxy.railway.app/"],
+            "koopbin": ["https://koopbin.com/", "https://storage.koopbin.net/", "https://koop.pages.dev/"],
+            "doge": ["https://doge-unblocker.com/", "https://v5.dogeproxy.org/", "https://shiba.math.biz/"],
+            "ultraviolet": ["https://uv.student.cx/", "https://titan.proxy.net/", "https://uv.static.network/"],
+            "holy": ["https://holy-unblocker.com/", "https://hu.student.cx/", "https://hu-official.pages.dev/"],
+            "utopia": ["https://utopia.hu.student.cx/", "https://petezah.proxy.li/", "https://utopia-gateway.vercel.app/"],
+            "quasar": ["https://quasar.asphyxia.cloud/", "https://quasar-proxy.pages.dev/", "https://qsr.network.sh/"],
+            "lunar": ["https://lunar.proxy.dev/", "https://moonlight.ext.li/", "https://lunar-static.onrender.com/"],
+            "vapor": ["https://vapor.proxy.network/", "https://vapor-node-1.vercel.app/", "https://vapor.surge.sh/"],
+            "glint": ["https://glint.browser.io/", "https://glint-west.railway.app/"]
+        };
+
         const input = document.getElementById('commandInput');
         const output = document.getElementById('output');
         const terminal = document.getElementById('terminal');
 
-        const database = {
-            "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li/"],
-            "truffled": ["https://truffled.lol/", "https://ee.rxtech.cl/"],
-            "splash": ["https://splashstudy.b-cdn.net/"]
-        };
-
-        async function runSpeedTest() {
-            printLine(">> PINGING SERVER...");
-            await sleep(800);
-            let dlLine = printLine(">> DL: 0 Mbps");
-            for(let i = 0; i <= 10; i++) {
-                await sleep(150);
-                dlLine.textContent = `>> DL: ${(Math.random() * 50 + 200).toFixed(2)} Mbps`;
-            }
-            let ulLine = printLine(">> UL: 0 Mbps");
-            for(let i = 0; i <= 10; i++) {
-                await sleep(150);
-                ulLine.textContent = `>> UL: ${(Math.random() * 20 + 80).toFixed(2)} Mbps`;
-            }
-            printLine(">> TEST FINISHED.");
-        }
-
         function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-
-        input.addEventListener('keydown', async function(e) {
-            if (e.key === 'Enter') {
-                const rawVal = input.value.trim();
-                const cmd = rawVal.toLowerCase();
-                printLine(`root@uxong6:~# ${rawVal}`);
-                
-                if (cmd === 'speedtest') {
-                    input.disabled = true;
-                    await runSpeedTest();
-                    input.disabled = false;
-                    input.focus();
-                } else if (cmd === 'proxylist') {
-                    printLine("\n[ DIRECTORY ]");
-                    Object.keys(database).forEach(key => printLine(`- ${key.toUpperCase()}`));
-                } else if (database[cmd]) {
-                    database[cmd].forEach(link => printLink(link));
-                } else if (cmd === 'clear') {
-                    output.innerHTML = '';
-                } else if (cmd === 'help') {
-                    printLine("\nCOMMANDS: speedtest, proxylist, clear, help\n");
-                } else if (cmd !== '') {
-                    printLine(`ERR: '${rawVal}' not found.`);
-                }
-                
-                input.value = '';
-                terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' });
-            }
-        });
 
         function printLine(text) {
             const div = document.createElement('div');
@@ -267,6 +215,42 @@ TYPE 'help' FOR COMMANDS.</div>
             div.appendChild(a);
             output.appendChild(div);
         }
+
+        input.addEventListener('keydown', async function(e) {
+            if (e.key === 'Enter') {
+                const rawVal = input.value.trim();
+                const cmd = rawVal.toLowerCase();
+                printLine(`root@uxong6:~# ${rawVal}`);
+                
+                if (cmd === 'speedtest') {
+                    input.disabled = true;
+                    printLine(">> PINGING GHOST NODES...");
+                    await sleep(800);
+                    let dl = printLine(">> DL: 0 Mbps");
+                    for(let i=0; i<10; i++){ await sleep(100); dl.textContent = `>> DL: ${(Math.random()*150+350).toFixed(2)} Mbps`; }
+                    printLine(">> TEST COMPLETE.");
+                    input.disabled = false;
+                } else if (cmd === 'proxylist') {
+                    printLine("\n[ GLOBAL NODE DIRECTORY ]");
+                    Object.keys(database).sort().forEach(key => printLine(`- ${key.toUpperCase()} (${database[key].length} Nodes)`));
+                } else if (database[cmd]) {
+                    database[cmd].forEach(link => printLink(link));
+                } else if (cmd === 'help') {
+                    printLine("\n[ AUTHORIZED COMMANDS ]");
+                    printLine("GHOST FLEET: utopia, quasar, lunar, vapor, glint");
+                    printLine("CORE NETS: awp, splash, interstellar, koopbin, doge, holy, ultraviolet");
+                    printLine("SYSTEM: proxylist, speedtest, clear, help\n");
+                } else if (cmd === 'clear') {
+                    output.innerHTML = '';
+                } else if (cmd !== '') {
+                    printLine(`ERR: Node '${rawVal}' not found in local encryption table.`);
+                }
+                
+                input.value = '';
+                terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' });
+                input.focus();
+            }
+        });
     </script>
 </body>
 </html>
