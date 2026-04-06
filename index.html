@@ -1,277 +1,273 @@
-display: flex;
-flex-direction: column;
-gap: 20px;
-            flex-wrap: wrap;
-}
-.icon {
-width: 75px;
-@@ -37,27 +38,6 @@
-.icon img { width: 32px; height: 32px; margin-bottom: 4px; }
-.icon:active img { filter: brightness(0.5); }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YXON OS - Terminal Edition</title>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --terminal-green: #00ff41;
+            --discord-dark: #1e1f22;
+            --discord-body: #313338;
+            --accent-blurple: #5865F2;
+            --blood-red: #ff0000;
+            --win11-glass: rgba(32, 32, 32, 0.8);
+        }
 
-        .taskbar {
-            height: 30px;
-            background: #c0c0c0;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: var(--bg-color);
+            font-family: 'Segoe UI', 'Consolas', monospace;
+            color: #dbdee1;
+            overflow: hidden;
+        }
+
+        /* --- ULTRAKILL GIF LOADING SCREEN --- */
+        .ultrakill-load {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeOut 0.6s ease-in forwards 4.5s;
+        }
+
+        .skull-gif {
+            width: 300px;
+            height: auto;
+            image-rendering: pixelated; /* Keeps that retro crunch */
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-family: 'Consolas', monospace;
+            color: var(--blood-red);
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--blood-red);
+            animation: flicker 0.1s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.9; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* --- DESKTOP STYLING --- */
+        .desktop {
+            height: calc(100vh - 48px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .icon {
+            width: 70px;
+            text-align: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .icon:hover { background: rgba(255,255,255,0.1); }
+
+        .icon-symbol {
+            font-size: 28px;
+            color: var(--accent-blurple);
+            margin-bottom: 4px;
+        }
+
+        /* --- WINDOW STYLING --- */
+        .window {
             position: absolute;
+            background: var(--discord-body);
+            border: 1px solid #1e1f22;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .title-bar {
+            background: var(--discord-dark);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            font-size: 13px;
+            font-weight: 600;
+            color: #949ba4;
+        }
+
+        .window-body {
+            flex-grow: 1;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            background: #2b2d31;
+        }
+
+        .terminal-text {
+            color: var(--terminal-green);
+            line-height: 1.4;
+            text-shadow: 0 0 5px rgba(0,255,65,0.5);
+        }
+
+        /* --- TASKBAR & NEWS --- */
+        .taskbar {
+            height: 48px;
+            background: rgba(17, 18, 20, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
             bottom: 0;
             width: 100%;
             display: flex;
             align-items: center;
-            padding: 2px;
-            box-sizing: border-box;
-            border-top: 2px solid #ff
+            padding: 0 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
             z-index: 1000;
         }
-        .start-button {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: bold;
-            height: 22px;
-            padding: 2px 6px;
-        }
-.window {
-position: absolute;
-z-index: 10;
-@@ -67,163 +47,108 @@
-box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff;
-}
-.title-bar { cursor: move; }
-        .window-body {
-            flex-grow: 1;
-            padding: 0;
-            margin: 0;
-        .window-body { flex-grow: 1; padding: 0; margin: 0; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* Fears to Fathom Map Styling */
-        .map-container {
-            background: #2a2a24;
-            height: 100%;
-            position: relative;
-overflow: hidden;
-display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-}
-        
-        /* 98 Terminal Menu Bar */
-        .terminal-menu {
-            display: flex;
-            background: #c0c0c0;
-            padding: 2px 0;
-            border-bottom: 1px solid #808080;
-        /* Grain/CRT Overlay Effect */
-        .map-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.3;
-            pointer-events: none;
-            z-index: 5;
-}
-        .menu-item {
-            padding: 2px 8px;
-            font-size: 11px;
-            color: #000;
-        .louisiana-map {
-            width: 90%;
-            filter: sepia(0.8) contrast(1.2) brightness(0.7) grayscale(0.3);
-            border: 1px solid #444;
-        }
-        .map-label {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            color: #d4d4bc;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-}
-        .menu-item:first-letter { text-decoration: underline; }
-
-        iframe.app-content {
-        .taskbar {
-            height: 30px;
-            background: #c0c0c0;
-            position: absolute;
-            bottom: 0;
-width: 100%;
-            flex-grow: 1;
+        .news-trigger {
+            background: transparent;
             border: none;
-            display: block;
+            color: white;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
             display: flex;
             align-items: center;
-            padding: 2px;
-            box-sizing: border-box;
-            border-top: 2px solid #fff;
-            z-index: 1000;
-}
-        .start-button { display: flex; align-items: center; gap: 4px; font-weight: bold; height: 22px; padding: 2px 6px; }
-</style>
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .news-trigger:hover { background: rgba(255,255,255,0.1); }
+
+        .news-panel {
+            position: fixed;
+            bottom: 56px;
+            left: 12px;
+            width: 380px;
+            height: 550px;
+            background: var(--win11-glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            z-index: 2000;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .widget {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .news-card {
+            border-left: 3px solid var(--accent-blurple);
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: var(--terminal-green);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
 </head>
-<body x-data="{ startMenu: false, yxon6Open: true, internetOpen: false }">
-<body x-data="{ startMenu: false, yxon6Open: false, internetOpen: false, mapOpen: true }">
+<body x-data="{ newsOpen: false, yxonOpen: true }">
 
-<div class="desktop">
-<div class="icon" @click="yxon6Open = true">
-            <img src="https://win98icons.alexmeub.com/icons/png/msdos-0.png">
-            <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png">
-<span>Yxon6 OS</span>
-</div>
-        <div class="icon" @click="mapOpen = true">
-            <img src="https://win98icons.alexmeub.com/icons/png/world-3.png">
-            <span>State Map</span>
+    <!-- Loading Screen with Tenor GIF -->
+    <div class="ultrakill-load">
+        <img src="https://media.tenor.com/7S8GqV9W6k8AAAAC/ultrakill-death.gif" alt="ULTRAKILL SKULL" class="skull-gif">
+        <div class="loading-text">loading...</div>
+    </div>
+
+    <div class="desktop">
+        <div class="icon" @click="yxonOpen = true">
+            <div class="icon-symbol">#</div>
+            <span style="font-size: 11px;">YXON_CORE</span>
         </div>
-<div class="icon" @click="internetOpen = true">
-<img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png">
-<span>Internet Explorer</span>
-</div>
-</div>
+    </div>
 
-    <div class="window" 
-         x-show="yxon6Open" 
-         x-draggable 
-         style="width: 640px; height: 400px; top: 50px; left: 50px;">
-    <div class="window" x-show="mapOpen" x-draggable style="width: 500px; height: 450px; top: 80px; left: 300px;">
-<div class="title-bar">
-            <div class="title-bar-text">MS-DOS Prompt - YXON6</div>
-            <div class="title-bar-text">Map Viewer - Louisiana_Sector_04.bmp</div>
-<div class="title-bar-controls">
-<button aria-label="Minimize"></button>
-<button aria-label="Maximize"></button>
-                <button aria-label="Close" @click="yxon6Open = false"></button>
-                <button aria-label="Close" @click="mapOpen = false"></button>
-</div>
-</div>
-        <div class="terminal-menu">
-            <div class="menu-item">File</div>
-            <div class="menu-item">Edit</div>
-            <div class="menu-item">Search</div>
-            <div class="menu-item">Help</div>
+    <div class="window" x-show="yxonOpen" style="width: 550px; height: 350px; top: 100px; left: 200px;">
+        <div class="title-bar">
+            <span>yxon-os / main-terminal</span>
+            <button @click="yxonOpen = false" style="background:none; border:none; color:#949ba4; cursor:pointer;">✕</button>
         </div>
-<div class="window-body">
-            <iframe class="app-content" srcdoc="
-                <html>
-                <head>
-                    <style>
-                        body { 
-                            background-color: #000; 
-                            color: #c0c0c0; 
-                            margin: 0; 
-                            padding: 10px; 
-                            font-family: 'Courier New', Courier, monospace; 
-                            font-size: 14px;
-                            overflow-y: auto;
-                        }
-                        #output { white-space: pre-wrap; line-height: 1.2; }
-                        .input-line { display: flex; margin-top: 10px; }
-                        .prompt { color: #c0c0c0; margin-right: 5px; font-weight: bold; }
-                        input { 
-                            background: transparent; 
-                            border: none; 
-                            color: #c0c0c0; 
-                            font-family: inherit; 
-                            font-size: 14px; 
-                            outline: none; 
-                            flex-grow: 1; 
-                        }
-                        a { color: #fff; text-decoration: underline; }
-                        .header-text { margin-bottom: 15px; color: #fff; }
-                    </style>
-                </head>
-                <body onclick='document.getElementById(&quot;commandInput&quot;).focus()'>
-                    <div class='header-text'>Microsoft(R) Windows 98<br>(C)Copyright Microsoft Corp 1981-1998.</div>
-                    <div id='output'>YXON6 OS Terminal [Version 4.10.1998]<br>Type 'HELP' for executable commands.</div>
-                    <div class='input-line'>
-                        <span class='prompt'>C:\YXON6></span>
-                        <input type='text' id='commandInput' autofocus autocomplete='off' spellcheck='false'>
-                    </div>
-                    <script>
-                        const database = {
-                            'awp': ['https://lessons.axsetubal.pt/', 'https://useawp.developer.li/'],
-                            'truffled': ['https://truffled.lol/', 'https://edu.sciencecomputers.lat/'],
-                            'help': ['PROXYLIST - View verified directory', 'CLEAR - Wipe screen', 'SPEEDTEST - Test node latency', 'AWP, TRUFFLED, VOID - Service links']
-                        };
-                        const input = document.getElementById('commandInput');
-                        const out = document.getElementById('output');
-
-                        input.addEventListener('keydown', (e) => {
-                            if (e.key === 'Enter') {
-                                const val = input.value.trim();
-                                const cmd = val.toLowerCase();
-                                
-                                const p = document.createElement('div');
-                                p.textContent = 'C:\\YXON6> ' + val;
-                                out.appendChild(p);
-
-                                if (cmd === 'clear') {
-                                    out.innerHTML = '';
-                                } else if (cmd === 'help') {
-                                    database.help.forEach(line => {
-                                        const d = document.createElement('div');
-                                        d.textContent = line;
-                                        out.appendChild(d);
-                                    });
-                                } else if (database[cmd]) {
-                                    database[cmd].forEach(link => {
-                                        const d = document.createElement('div');
-                                        d.innerHTML = '> <a href=&quot;' + link + '&quot; target=&quot;_blank&quot;>' + link + '</a>';
-                                        out.appendChild(d);
-                                    });
-                                } else if (val !== '') {
-                                    const err = document.createElement('div');
-                                    err.textContent = 'Bad command or file name';
-                                    out.appendChild(err);
-                                }
-                                
-                                input.value = '';
-                                window.scrollTo(0, document.body.scrollHeight);
-                            }
-                        });
-                    </script>
-                </body>
-                </html>
-            "></iframe>
-            <div class="map-container">
-                <div class="map-overlay"></div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Map_of_Louisiana_NA.svg/800px-Map_of_Louisiana_NA.svg.png" class="louisiana-map">
-                <div class="map-label">Coordinates: 30.9843° N, 91.9623° W<br>IRONBARK RANGE AREA</div>
-            </div>
-</div>
-</div>
-
-    <div class="window" x-show="internetOpen" x-draggable style="width: 500px; height: 400px; top: 120px; left: 120px;">
-    <div class="window" x-show="yxon6Open" x-draggable style="width: 600px; height: 350px; top: 40px; left: 40px;">
-<div class="title-bar">
-            <div class="title-bar-text">Internet Explorer</div>
-            <div class="title-bar-text">MS-DOS Prompt - YXON6</div>
-<div class="title-bar-controls">
-                <button aria-label="Close" @click="internetOpen = false"></button>
-                <button aria-label="Close" @click="yxon6Open = false"></button>
-</div>
-</div>
-        <div class="window-body" style="background: white;">
-            <iframe class="app-content" src="https://www.google.com/search?igu=1"></iframe>
         <div class="window-body">
-            <iframe style="width:100%; height:100%; border:none;" srcdoc="
-                <body style='background:#000; color:#c0c0c0; font-family:monospace; padding:10px;'>
-                    <div>Microsoft(R) Windows 98 [YXON6 Edition]</div>
-                    <div style='margin-top:10px;'>C:\YXON6> <span style='border-right: 8px solid #c0c0c0;'>&nbsp;</span></div>
-                </body>
-            "></iframe>
-</div>
-</div>
+            <div class="terminal-text">
+                [SYSTEM]: YXON OS v6.0.4 - TERMINAL_LINK<br>
+                [INFO]: GIF_LOADER_INITIALIZED<br>
+                [AUTH]: ROOT_USER ACCESS GRANTED<br><br>
+                C:\YXON> list active_tasks<br>
+                > Discord_Engine... RUNNING<br>
+                > News_Feed_W11... LISTENING<br>
+                > Skull_Loader... COMPLETE<br><br>
+                C:\YXON> <span class="cursor-blink"></span>
+            </div>
+        </div>
+    </div>
 
-@@ -249,8 +174,8 @@
-document.onmousemove = (e) => {
-let offsetX = mouseX - e.clientX, offsetY = mouseY - e.clientY;
-mouseX = e.clientX; mouseY = e.clientY;
-                        el.style.top = (el.offsetTop - offsetY) + "px";
-                        el.style.left = (el.offsetLeft - offsetX) + "px";
-                        el.style.top = (el.offsetTop - offsetY) + 'px';
-                        el.style.left = (el.offsetLeft - offsetX) + 'px';
-};
-document.onmouseup = () => { document.onmousemove = null; };
-}
+    <!-- Win11 Style News Panel -->
+    <div class="news-panel" x-show="newsOpen" x-transition:enter.duration.300ms @click.away="newsOpen = false">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0; font-size:18px;">Widgets</h2>
+            <span style="font-size:20px;">☁️ 74°</span>
+        </div>
+        
+        <div class="widget news-card">
+            <small style="color:var(--accent-blurple); font-weight:bold;">SYSTEM LOG</small>
+            <h4 style="margin:5px 0;">Skull Sequence Implemented</h4>
+            <p style="font-size:12px; opacity:0.8; margin-bottom:0;">The ULTRAKILL death animation is now the primary boot sequence for Yxon OS.</p>
+        </div>
+
+        <div class="widget">
+            <h4 style="margin:0 0 10px 0; font-size:14px;">Market Watch</h4>
+            <div style="display:flex; justify-content:space-between; font-size:13px;">
+                <span>YXON COIN</span>
+                <span style="color:#4ade80;">+12.4% ↑</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="taskbar">
+        <button class="news-trigger" @click="newsOpen = !newsOpen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2z"></path><path d="M7 8h5"></path><path d="M7 12h10"></path><path d="M7 16h10"></path></svg>
+            <span style="font-weight: 500;">News</span>
+        </button>
+        
+        <div style="flex-grow:1; display:flex; justify-content:center; gap:8px;">
+            <div style="width:30px; height:30px; background:var(--accent-blurple); border-radius:4px; opacity:0.5;"></div>
+            <div style="width:30px; height:30px; background:rgba(255,255,255,0.1); border-radius:4px;"></div>
+        </div>
+
+        <div style="text-align:right; font-size:12px; padding-right:10px;">
+            <div>11:59 PM</div>
+            <div style="opacity:0.6;">4/06/2026</div>
+        </div>
+    </div>
+
+</body>
+</html>
