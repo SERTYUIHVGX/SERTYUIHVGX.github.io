@@ -1,236 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS - Classic Terminal Edition</title>
-    <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", sans-serif; background: #000; }
+I’ve updated the code to the **Red and Black** theme as requested. I also updated the initial boot message and the window title to reflect **"Yxon6 OS"**. 
 
-        .desktop {
-            background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/7/70/Windows_XP_Bliss.jpg') no-repeat center center;
-            background-size: cover;
-            height: calc(100vh - 35px);
-            width: 100vw;
-            position: relative;
-        }
-
-        /* ICONS */
-        .icon-container { display: flex; flex-direction: column; gap: 15px; padding: 20px; width: 110px; }
-        .icon {
-            width: 85px; height: 95px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-shadow: 2px 2px 2px rgba(0,0,0,0.9);
-            cursor: pointer; font-size: 11px; text-align: center;
-        }
-        .icon:hover { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
-        .icon img { width: 42px; height: 42px; margin-bottom: 5px; }
-
-        /* WINDOWS */
-        .window {
-            position: absolute; width: 700px; height: 500px;
-            background: #ece9d8; border: 3px solid #0054e3;
-            border-radius: 8px 8px 0 0; display: none;
-            flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            z-index: 100;
-        }
-
-        .window-header {
-            background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%);
-            color: white; padding: 0 10px; display: flex;
-            justify-content: space-between; align-items: center;
-            font-weight: bold; font-size: 13px; height: 30px; cursor: move;
-        }
-
-        .close-btn {
-            background: #c72c2c; color: white; border: 1px solid white;
-            width: 21px; height: 21px; display: flex; align-items: center;
-            justify-content: center; border-radius: 2px; cursor: pointer;
-        }
-
-        /* BROWSER TABS */
-        .tab-bar { display: flex; background: #dcdadc; padding: 2px 5px 0 5px; gap: 2px; border-bottom: 1px solid #aca899; }
-        .tab {
-            background: #bdbebd; border: 1px solid #7b7b7b; border-bottom: none;
-            padding: 4px 10px; font-size: 11px; cursor: pointer; min-width: 80px;
-            border-radius: 3px 3px 0 0; display: flex; justify-content: space-between;
-        }
-        .tab.active { background: #ece9d8; font-weight: bold; }
-        .close-tab { margin-left: 10px; color: #555; }
-
-        .browser-nav { background: #ece9d8; padding: 6px; display: flex; gap: 6px; border-bottom: 1px solid #aca899; }
-        .url-bar { flex-grow: 1; padding: 4px; border: 1px solid #7f9db9; outline: none; }
+```html
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Yxon6 OS - Terminal</title> 
+    <style> 
+        body { 
+            background-color: #000; 
+            color: #ff0000; 
+            font-family: 'Courier New', Courier, monospace; 
+            height: 100vh; 
+            margin: 0; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            text-shadow: 0 0 5px #ff0000; 
+            overflow: hidden; 
+        } 
+        #terminal { 
+            height: 100%; 
+            overflow-y: auto; 
+            scrollbar-width: none; 
+        } 
+        #terminal::-webkit-scrollbar { 
+            display: none; 
+        } 
+        #output { 
+            white-space: pre-wrap; 
+            margin-bottom: 40px; 
+        } 
+        .input-line { 
+            display: flex; 
+            align-items: center; 
+        } 
+        .prompt { 
+            margin-right: 10px; 
+            white-space: nowrap; 
+        } 
+        input { 
+            background: transparent; 
+            border: none; 
+            color: #ff0000; 
+            font-family: inherit; 
+            font-size: inherit; 
+            outline: none; 
+            flex-grow: 1; 
+            text-shadow: 0 0 5px #ff0000; 
+            caret-color: #ff0000; 
+        } 
+        a { 
+            color: #fff; 
+            text-decoration: underline; 
+        } 
+        .scanlines { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 0, 0, 0.01), rgba(255, 0, 0, 0.03)); 
+            z-index: 10; 
+            background-size: 100% 3px, 3px 100%; 
+            pointer-events: none; 
+        } 
+    </style> 
+</head> 
+<body onclick="document.getElementById('commandInput').focus()"> 
+    <div class="scanlines"></div> 
+    <div id="terminal"> 
+        <div id="output">YXON6 OS [Version 1.0.4]
+SYSTEM ONLINE... TYPE 'proxylist' TO VIEW DIRECTORY.</div> 
+        <div class="input-line"> 
+            <span class="prompt">yxon6@root:~$</span> 
+            <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false"> 
+        </div> 
+    </div> 
+    <script> 
+        const input = document.getElementById('commandInput'); 
+        const output = document.getElementById('output'); 
+        const terminal = document.getElementById('terminal'); 
         
-        .window-body { flex-grow: 1; background: white; position: relative; }
-        .browser-frame { width: 100%; height: 100%; border: none; display: none; }
-        .browser-frame.active { display: block; }
+        const database = { 
+            "awp": [" https://lessons.axsetubal.pt/", "https://useawp.developer.li//", " https://api.incatel.cl/", " https://useawp.7s.com.tr/"], 
+            "truffled": [" https://edu.sciencecomputers.lat/", " https://truffled.lol/", " https://ee.rxtech.cl/", " https://infoo.infotechnology.com/"], 
+            "void.network": [" https://awesome.martinwguy.net/?/", " https://strange.martinwguy.net/?/"], 
+            "quasar": [" https://epic.tomaszu.com/", " https://eglobaleducation.com/"], 
+            "vapour": [" https://watervapor.space/", " https://education-live.com/"], 
+            "boredom": [" https://pn.boredom.apertura.com/", " https://doxwind.xyz/", " https://wispserver.dev/"], 
+            "koopbin": [" https://koopbin.site/", " https://learnster.online/"], 
+            "nebula": [" https://math.school.dovereducation.org/", " http://clever.com.elmhoneyheath.recepist.com/"], 
+            "afilite": [" https://readinghelpforelementary.online/"], 
+            "splash": [" https://cullinary-schools.ks11.ru/", " https://darkn.ks11.ru/", " https://splashstudy.b-cdn.net/", " https://94a80745.splashcli.pages.dev/", " https://splsh.paladinmining.net/"] 
+        }; 
 
-        /* NOTEPAD */
-        .notepad-area { width: 100%; height: 100%; border: none; padding: 10px; font-family: 'Courier New', monospace; outline: none; resize: none; }
+        input.addEventListener('keydown', function(e) { 
+            if (e.key === 'Enter') { 
+                const rawVal = input.value.trim(); 
+                const cmd = rawVal.toLowerCase(); 
+                printLine(`yxon6@root:~$ ${rawVal}`); 
+                
+                if (cmd === 'proxylist') { 
+                    printLine("\n[ YXON6 DIRECTORY ]"); 
+                    Object.keys(database).forEach(key => printLine(`- ${key.toUpperCase()}`)); 
+                } else if (database[cmd]) { 
+                    printLine(`\nRETRIEVING ENDPOINTS FOR [${cmd.toUpperCase()}]...`); 
+                    database[cmd].forEach(link => printLink(link)); 
+                } else if (cmd === 'help' || cmd === 'about') { 
+                    printLine("\n[ YXON6 OS INFO ]\nCommands: proxylist, clear, help\nSelect a directory name to bridge connections.\n"); 
+                } else if (cmd === 'clear') { 
+                    output.innerHTML = ''; 
+                } else if (cmd !== '') { 
+                    printLine(`ERR: '${rawVal}' is not recognized as an internal command.`); 
+                } 
+                
+                input.value = ''; 
+                setTimeout(() => { 
+                    terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' }); 
+                }, 10); 
+            } 
+        }); 
 
-        /* TASKBAR */
-        .taskbar {
-            position: fixed; bottom: 0; width: 100%; height: 35px;
-            background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
-            display: flex; justify-content: space-between; align-items: center; z-index: 9999;
-        }
-        .start-btn { height: 100%; cursor: pointer; }
-        .system-tray { color: white; background: #0997ff; height: 100%; display: flex; align-items: center; padding: 0 15px; font-size: 12px; }
-    </style>
-</head>
-<body>
+        function printLine(text) { 
+            const div = document.createElement('div'); 
+            div.textContent = text; 
+            output.appendChild(div); 
+        } 
 
-<div class="desktop">
-    <div class="icon-container">
-        <div class="icon" onclick="openWindow('os-window')">
-            <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png">
-            <span>Terminal</span>
-        </div>
-        <div class="icon" onclick="openWindow('netscape-window')">
-            <img src="https://win98icons.alexmeub.com/icons/png/world-0.png">
-            <span>Browser</span>
-        </div>
-        <div class="icon" onclick="openWindow('notepad-window')">
-            <img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png">
-            <span>Notepad</span>
-        </div>
-    </div>
-
-    <div id="os-window" class="window" style="top:30px; left:150px; width:600px; height:400px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="os-window-header"><span>Yxon6 OS Terminal</span><div class="close-btn" onclick="closeWindow('os-window')">X</div></div>
-        <div class="window-body" style="background:black;"><iframe id="os-frame" style="width:100%; height:100%; border:none; display:block;"></iframe></div>
-    </div>
-
-    <div id="netscape-window" class="window" style="top:60px; left:180px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="netscape-window-header"><span>NetScape Navigator</span><div class="close-btn" onclick="closeWindow('netscape-window')">X</div></div>
-        <div class="tab-bar" id="tab-bar"><button onclick="createNewTab()">+</button></div>
-        <div class="browser-nav">
-            <input type="text" class="url-bar" id="url-input" placeholder="Search or Enter URL..." onkeydown="if(event.key==='Enter') netGo(this.value)">
-            <button onclick="netGo(document.getElementById('url-input').value)">Go</button>
-        </div>
-        <div class="window-body" id="browser-container"></div>
-    </div>
-
-    <div id="notepad-window" class="window" style="top:100px; left:210px; width:500px; height:400px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="notepad-window-header"><span>Untitled - Notepad</span><div class="close-btn" onclick="closeWindow('notepad-window')">X</div></div>
-        <div class="window-body"><textarea class="notepad-area" placeholder="Type here..."></textarea></div>
-    </div>
-</div>
-
-<div class="taskbar">
-    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" class="start-btn">
-    <div class="system-tray" id="clock">00:00 AM</div>
-</div>
-
-<script>
-    let tabIdCounter = 0;
-    let activeTabId = null;
-
-    // --- TERMINAL RED/BLACK LOGIC ---
-    const termCode = `<html><body style="background:black;color:#ff0000;font-family:monospace;padding:10px;margin:0;overflow-x:hidden;">
-        <div id="o">YXON6 OS v4.0<br>Ready.<br><br></div>
-        <span style="color:#880000">C:\\></span> <input id="i" style="background:transparent;border:none;color:#ff0000;outline:none;width:70%;font-family:monospace;" autofocus>
-        <script>
-            const db={'awp':'https://lessons.axsetubal.pt/','truffled':'https://truffled.lol/'};
-            document.getElementById('i').onkeydown=(e)=>{
-                if(e.key==='Enter'){
-                    const v=e.target.value.toLowerCase().trim();
-                    const out=document.getElementById('o');
-                    out.innerHTML+="C:\\\\> "+v+"<br>";
-                    e.target.value='';
-                    if(v==='help') out.innerHTML+="Commands: PROXYLIST, CLEAR, HELP<br>";
-                    else if(v==='clear') out.innerHTML='';
-                    else if(db[v]) window.open(db[v], '_blank');
-                    window.scrollTo(0,document.body.scrollHeight);
-                }
-            }
-            document.body.onclick=()=>document.getElementById('i').focus();
-        <\/script></body></html>`;
-
-    // --- BROWSER LOGIC ---
-    function createNewTab(url = 'https://www.google.com/webhp?igu=1') {
-        tabIdCounter++;
-        const id = `tab-${tabIdCounter}`;
-        const tabBtn = document.createElement('div');
-        tabBtn.className = 'tab';
-        tabBtn.id = `btn-${id}`;
-        tabBtn.innerHTML = `<span>New Tab</span> <span class="close-tab" onclick="closeTab(event, '${id}')">×</span>`;
-        tabBtn.onclick = () => switchTab(id);
-        document.getElementById('tab-bar').insertBefore(tabBtn, document.getElementById('tab-bar').lastElementChild);
-
-        const frame = document.createElement('iframe');
-        frame.id = id;
-        frame.className = 'browser-frame';
-        frame.src = url;
-        document.getElementById('browser-container').appendChild(frame);
-        switchTab(id);
-    }
-
-    function switchTab(id) {
-        activeTabId = id;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.browser-frame').forEach(f => f.classList.remove('active'));
-        document.getElementById(`btn-${id}`).classList.add('active');
-        document.getElementById(id).classList.add('active');
-        document.getElementById('url-input').value = document.getElementById(id).src.includes('google.com') ? '' : document.getElementById(id).src;
-    }
-
-    function closeTab(e, id) {
-        e.stopPropagation();
-        document.getElementById(`btn-${id}`).remove();
-        document.getElementById(id).remove();
-        if (activeTabId === id) {
-            const last = document.querySelector('.tab');
-            if (last) switchTab(last.id.replace('btn-', ''));
-            else activeTabId = null;
-        }
-    }
-
-    function netGo(val) {
-        if (!activeTabId) createNewTab();
-        let url = val.trim();
-        if (!url) return;
-        if (!url.includes('.') || url.includes(' ')) {
-            url = 'https://www.google.com/search?q=' + encodeURIComponent(url) + '&igu=1';
-        } else if (!url.startsWith('http')) {
-            url = 'https://' + url;
-        }
-        document.getElementById(activeTabId).src = url;
-        document.getElementById(`btn-${activeTabId}`).querySelector('span').textContent = url.split('/')[2] || "Page";
-    }
-
-    // --- WINDOW MGMT ---
-    let z = 100;
-    function focusWin(e) { e.style.zIndex = ++z; }
-    function openWindow(id) { 
-        document.getElementById(id).style.display = 'flex'; 
-        focusWin(document.getElementById(id));
-        if(id === 'os-window') document.getElementById('os-frame').srcdoc = termCode;
-        if(id === 'netscape-window' && !activeTabId) createNewTab();
-    }
-    function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
-
-    function drag(elm) {
-        let p1=0, p2=0, p3=0, p4=0;
-        document.getElementById(elm.id+"-header").onmousedown = (e) => {
-            p3=e.clientX; p4=e.clientY;
-            document.onmouseup = () => { document.onmousemove = null; };
-            document.onmousemove = (e) => {
-                p1=p3-e.clientX; p2=p4-e.clientY;
-                p3=e.clientX; p4=e.clientY;
-                elm.style.top=(elm.offsetTop-p2)+"px";
-                elm.style.left=(elm.offsetLeft-p1)+"px";
-            };
-        };
-    }
-    drag(document.getElementById("os-window"));
-    drag(document.getElementById("netscape-window"));
-    drag(document.getElementById("notepad-window"));
-
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }, 1000);
-</script>
-</body>
+        function printLink(url) { 
+            const div = document.createElement('div'); 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.target = "_blank"; 
+            a.textContent = `> CONNECTION ESTABLISHED: ${url}`; 
+            div.appendChild(a); 
+            output.appendChild(div); 
+        } 
+    </script> 
+</body> 
 </html>
