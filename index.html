@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yxon6 OS - Windows XP Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yxon6 OS - Professional Edition</title>
     <style>
+        /* CORE SYSTEM STYLES */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", sans-serif; background: #000; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: "Tahoma", "Segoe UI", sans-serif; background: #000; }
 
         .desktop {
             background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/7/70/Windows_XP_Bliss.jpg') no-repeat center center;
@@ -16,63 +17,62 @@
             position: relative;
         }
 
-        /* ICONS */
-        .icon-container { display: flex; flex-direction: column; gap: 15px; padding: 20px; width: 110px; }
+        /* DESKTOP ICONS */
+        .icon-container { display: flex; flex-direction: column; gap: 10px; padding: 15px; width: 110px; }
         .icon {
-            width: 85px; height: 95px;
+            width: 80px; height: 90px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-shadow: 2px 2px 2px rgba(0,0,0,0.9);
-            cursor: pointer; font-size: 11px; text-align: center;
+            color: white; text-shadow: 2px 2px 2px rgba(0,0,0,0.8);
+            cursor: pointer; font-size: 11px; text-align: center; border: 1px solid transparent;
             user-select: none;
         }
-        .icon:hover { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
-        .icon img { width: 42px; height: 42px; margin-bottom: 5px; pointer-events: none; }
+        .icon:hover { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 3px; }
+        .icon img { width: 42px; height: 42px; margin-bottom: 4px; pointer-events: none; }
 
-        /* WINDOWS */
+        /* WINDOW SYSTEM */
         .window {
-            position: absolute; width: 600px; height: 400px;
+            position: absolute; min-width: 300px; min-height: 200px;
             background: #ece9d8; border: 3px solid #0054e3;
             border-radius: 8px 8px 0 0; display: none;
-            flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 100;
         }
 
         .window-header {
             background: linear-gradient(to bottom, #0058e3 0%, #307cee 100%);
-            color: white; padding: 0 10px; display: flex;
+            color: white; padding: 0 8px; display: flex;
             justify-content: space-between; align-items: center;
             font-weight: bold; font-size: 13px; height: 30px; cursor: default;
             user-select: none;
         }
 
-        .close-btn {
-            background: #c72c2c; color: white; border: 1px solid white;
-            width: 21px; height: 21px; display: flex; align-items: center;
-            justify-content: center; border-radius: 2px; cursor: pointer;
-            font-size: 10px; font-weight: bold;
+        .header-buttons { display: flex; gap: 3px; }
+        .header-btn {
+            width: 21px; height: 21px; border: 1px solid white; border-radius: 2px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-family: sans-serif; font-size: 10px; font-weight: bold;
         }
+        .close-btn { background: #c72c2c; }
         .close-btn:hover { background: #e04343; }
+        .min-btn { background: #3c81f3; }
 
-        /* BROWSER TABS */
-        .tab-bar { display: flex; background: #dcdadc; padding: 2px 5px 0 5px; gap: 2px; border-bottom: 1px solid #aca899; }
+        .window-body { flex-grow: 1; background: white; position: relative; overflow: hidden; }
+
+        /* BROWSER UI */
+        .tab-bar { display: flex; background: #dcdadc; padding: 2px 5px 0 5px; gap: 2px; border-bottom: 1px solid #aca899; align-items: flex-end; }
         .tab {
             background: #bdbebd; border: 1px solid #7b7b7b; border-bottom: none;
-            padding: 4px 10px; font-size: 11px; cursor: pointer; min-width: 100px;
-            border-radius: 3px 3px 0 0; display: flex; justify-content: space-between;
-            align-items: center;
+            padding: 4px 12px; font-size: 11px; cursor: pointer; min-width: 120px;
+            border-radius: 3px 3px 0 0; display: flex; justify-content: space-between; align-items: center;
         }
-        .tab.active { background: #ece9d8; font-weight: bold; border-top: 2px solid #ff9600; }
-        .close-tab { margin-left: 10px; color: #555; font-weight: bold; }
-
-        .browser-nav { background: #ece9d8; padding: 6px; display: flex; gap: 6px; border-bottom: 1px solid #aca899; }
-        .url-bar { flex-grow: 1; padding: 4px; border: 1px solid #7f9db9; outline: none; font-size: 12px; }
-        
-        .window-body { flex-grow: 1; background: white; position: relative; overflow: hidden; }
+        .tab.active { background: #ece9d8; font-weight: bold; border-top: 2px solid #ff9600; padding-top: 3px; }
+        .browser-nav { background: #ece9d8; padding: 5px; display: flex; gap: 5px; border-bottom: 1px solid #aca899; }
+        .url-bar { flex-grow: 1; padding: 3px 8px; border: 1px solid #7f9db9; outline: none; font-size: 12px; }
         .browser-frame { width: 100%; height: 100%; border: none; display: none; }
         .browser-frame.active { display: block; }
 
-        /* NOTEPAD */
-        .notepad-area { width: 100%; height: 100%; border: none; padding: 10px; font-family: 'Courier New', monospace; outline: none; resize: none; }
+        /* NOTEPAD UI */
+        .notepad-text { width: 100%; height: 100%; border: none; padding: 10px; font-family: 'Courier New', monospace; outline: none; resize: none; font-size: 14px; }
 
         /* TASKBAR */
         .taskbar {
@@ -80,68 +80,79 @@
             background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
             display: flex; justify-content: space-between; align-items: center; z-index: 9999;
         }
-        .start-btn { height: 100%; cursor: pointer; transition: filter 0.1s; }
-        .start-btn:active { filter: brightness(0.8); }
-        .system-tray { color: white; background: #0997ff; height: 100%; display: flex; align-items: center; padding: 0 15px; font-size: 12px; border-left: 1px solid #0054e3; }
+        .start-btn { height: 100%; cursor: pointer; }
+        .system-tray { color: white; background: #0997ff; height: 100%; display: flex; align-items: center; padding: 0 15px; font-size: 12px; border-left: 1px solid #082d6e; }
     </style>
 </head>
 <body>
 
 <div class="desktop">
     <div class="icon-container">
-        <div class="icon" onclick="openWindow('os-window')">
+        <!-- ICON: YXON6 OS -->
+        <div class="icon" onclick="openWindow('yxon6-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png">
             <span>Yxon6 OS</span>
         </div>
-        <div class="icon" onclick="openWindow('netscape-window')">
+        <!-- ICON: BROWSER -->
+        <div class="icon" onclick="openWindow('browser-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/world-0.png">
-            <span>Browser</span>
+            <span>Internet</span>
         </div>
+        <!-- ICON: NOTEPAD -->
         <div class="icon" onclick="openWindow('notepad-window')">
             <img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png">
             <span>Notepad</span>
         </div>
     </div>
 
-    <div id="os-window" class="window" style="top:30px; left:150px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="os-window-header">
+    <!-- WINDOW: YXON6 TERMINAL -->
+    <div id="yxon6-window" class="window" style="top:40px; left:140px; width:650px; height:450px;" onmousedown="focusWin(this)">
+        <div class="window-header" id="yxon6-window-header">
             <span>Yxon6 OS Terminal</span>
-            <div class="close-btn" onclick="closeWindow('os-window')">X</div>
+            <div class="header-buttons">
+                <div class="header-btn close-btn" onclick="closeWindow('yxon6-window')">X</div>
+            </div>
         </div>
         <div class="window-body" style="background:black;">
-            <iframe id="os-frame" style="width:100%; height:100%; border:none;"></iframe>
+            <iframe id="yxon6-frame" style="width:100%; height:100%; border:none;"></iframe>
         </div>
     </div>
 
-    <div id="netscape-window" class="window" style="top:60px; left:180px; width:750px; height:550px;" onmousedown="focusWin(this)">
-        <div class="window-header" id="netscape-window-header">
+    <!-- WINDOW: BROWSER -->
+    <div id="browser-window" class="window" style="top:70px; left:180px; width:800px; height:550px;" onmousedown="focusWin(this)">
+        <div class="window-header" id="browser-window-header">
             <span>NetScape Navigator</span>
-            <div class="close-btn" onclick="closeWindow('netscape-window')">X</div>
+            <div class="header-buttons">
+                <div class="header-btn close-btn" onclick="closeWindow('browser-window')">X</div>
+            </div>
         </div>
         <div class="tab-bar" id="tab-bar">
-            <button onclick="createNewTab()" style="cursor:pointer; margin-left:5px;">+</button>
+            <button onclick="createNewTab()" style="cursor:pointer; height:22px; margin-bottom:2px;">+</button>
         </div>
         <div class="browser-nav">
-            <input type="text" class="url-bar" id="url-input" placeholder="Search or Enter URL..." onkeydown="if(event.key==='Enter') netGo(this.value)">
-            <button onclick="netGo(document.getElementById('url-input').value)" style="cursor:pointer; padding: 0 10px;">Go</button>
+            <input type="text" class="url-bar" id="url-input" placeholder="Enter URL or Search..." onkeydown="if(event.key==='Enter') netGo(this.value)">
+            <button onclick="netGo(document.getElementById('url-input').value)" style="cursor:pointer;">Go</button>
         </div>
         <div class="window-body" id="browser-container"></div>
     </div>
 
-    <div id="notepad-window" class="window" style="top:100px; left:210px; width:450px; height:350px;" onmousedown="focusWin(this)">
+    <!-- WINDOW: NOTEPAD -->
+    <div id="notepad-window" class="window" style="top:120px; left:250px; width:400px; height:300px;" onmousedown="focusWin(this)">
         <div class="window-header" id="notepad-window-header">
             <span>Untitled - Notepad</span>
-            <div class="close-btn" onclick="closeWindow('notepad-window')">X</div>
+            <div class="header-buttons">
+                <div class="header-btn close-btn" onclick="closeWindow('notepad-window')">X</div>
+            </div>
         </div>
         <div class="window-body">
-            <textarea class="notepad-area" placeholder="Type here..."></textarea>
+            <textarea class="notepad-text" placeholder="Start typing..."></textarea>
         </div>
     </div>
 </div>
 
 <div class="taskbar">
-    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" class="start-btn" onclick="alert('Start Menu clicked!')">
-    <div class="system-tray" id="clock">00:00 AM</div>
+    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Windows_XP_Start_button.png/150px-Windows_XP_Start_button.png" class="start-btn" onclick="alert('Yxon6 OS v1.0. Ready.')">
+    <div class="system-tray" id="clock">12:00 PM</div>
 </div>
 
 <script>
@@ -149,116 +160,128 @@
     let activeTabId = null;
     let highestZ = 100;
 
-    // --- TERMINAL INTERNAL CODE ---
-    const termCode = `<html><head><style>
-        body { background:black; color:#ff0000; font-family:'Courier New', monospace; padding:15px; margin:0; overflow:hidden; }
-        #o { white-space: pre-wrap; font-size: 12px; line-height: 1.2; height: calc(100% - 30px); overflow-y: auto; }
-        .input-line { display: flex; align-items: center; margin-top: 5px; }
-        #i { background:transparent; border:none; color:#ff0000; outline:none; flex-grow:1; font-family:inherit; font-size:inherit; }
+    // --- TERMINAL ENGINE SOURCE ---
+    const terminalSource = `<html><head><style>
+        body { background:black; color:#ff0000; font-family:'Courier New', monospace; padding:15px; margin:0; overflow-x:hidden; }
+        #o { white-space: pre-wrap; font-size: 12px; line-height: 1.3; margin-bottom: 20px; text-shadow: 0 0 5px #ff0000; }
+        .input-line { display: flex; align-items: center; }
+        #i { background:transparent; border:none; color:#ff0000; outline:none; flex-grow:1; font-family:inherit; font-size:inherit; caret-color:#ff0000; }
         .prompt { color:#ff0000; font-weight:bold; margin-right:8px; }
+        a { color:#fff; font-weight:bold; }
     </style></head>
     <body onclick="document.getElementById('i').focus()">
-        <div id="o">[ YXON6 OPERATING SYSTEM ONLINE ]\nType 'help' for commands.</div>
-        <div class="input-line"><span class="prompt">yxon6@root:~$</span><input id="i" autofocus autocomplete="off"></div>
+        <div id="o">
+.d8888b.        .d88888b.   .d8888b.  
+d88P  Y88b      d88P" "Y88b d88P  Y88b 
+888             888     888 Y88b.      
+888d888b.       888     888  "Y888b.   
+888P "Y88b      888     888     "Y88b. 
+888    888      888     888       "888 
+Y88b  d88P      Y88b. .d88P Y88b  d88P 
+ "Y8888P"        "Y88888P"   "Y8888P"  
+
+[ YXON6 OS KERNEL LOADED ]
+Type 'proxylist' to see bypass directory or 'help'.</div>
+        <div class="input-line">
+            <span class="prompt">yxon6@root:~$</span>
+            <input id="i" autofocus autocomplete="off" spellcheck="false">
+        </div>
         <script>
+            const db = {
+                "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li/"],
+                "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/"],
+                "void.network": ["https://awesome.martinwguy.net/?/"],
+                "quasar": ["https://epic.tomaszu.com/"],
+                "vapour": ["https://watervapor.space/"],
+                "boredom": ["https://pn.boredom.apertura.com/"],
+                "koopbin": ["https://koopbin.site/"],
+                "nebula": ["https://math.school.dovereducation.org/"],
+                "afilite": ["https://readinghelpforelementary.online/"],
+                "splash": ["https://cullinary-schools.ks11.ru/", "https://splashstudy.b-cdn.net/"]
+            };
             const input = document.getElementById('i');
             const output = document.getElementById('o');
             input.onkeydown = (e) => {
-                if(e.key === 'Enter'){
-                    const cmd = input.value.trim().toLowerCase();
-                    output.innerHTML += "\\nyxon6@root:~$ " + input.value + "\\n";
-                    if(cmd === 'help') output.innerHTML += "Available: HELP, CLEAR, ABOUT, EXIT\\n";
-                    else if(cmd === 'about') output.innerHTML += "YXON6 OS v1.0. Retro-Bypass Enabled.\\n";
-                    else if(cmd === 'clear') output.innerHTML = "";
-                    else if(cmd !== "") output.innerHTML += "Unknown command: " + cmd + "\\n";
-                    input.value = "";
-                    output.scrollTop = output.scrollHeight;
+                if (e.key === 'Enter') {
+                    const val = input.value.trim();
+                    const cmd = val.toLowerCase();
+                    output.innerHTML += "\\nyxon6@root:~$ " + val + "\\n";
+                    input.value = '';
+                    if (cmd === 'proxylist') {
+                        output.innerHTML += "[ DIRECTORY ]\\n";
+                        Object.keys(db).forEach(k => output.innerHTML += "- " + k.toUpperCase() + "\\n");
+                    } else if (db[cmd]) {
+                        output.innerHTML += "DECRYPTING LINKS FOR: " + cmd.toUpperCase() + "\\n";
+                        db[cmd].forEach(link => output.innerHTML += "> <a href='"+link+"' target='_blank'>"+link+"</a>\\n");
+                    } else if (cmd === 'help') {
+                        output.innerHTML += "Commands: PROXYLIST, HELP, CLEAR\\n";
+                    } else if (cmd === 'clear') {
+                        output.innerHTML = "";
+                    } else if (val !== "") {
+                        output.innerHTML += "ERR: Command not found.\\n";
+                    }
+                    window.scrollTo(0, document.body.scrollHeight);
                 }
-            }
+            };
         <\/script></body></html>`;
 
-    // --- CLOCK ---
-    function updateClock() {
-        const now = new Date();
-        let h = now.getHours();
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        document.getElementById('clock').textContent = `${h}:${m} ${ampm}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // --- WINDOW FOCUS ---
-    function focusWin(elm) {
+    // --- SYSTEM CORE FUNCTIONS ---
+    function focusWin(win) {
         highestZ++;
-        elm.style.zIndex = highestZ;
+        win.style.zIndex = highestZ;
     }
 
-    // --- DRAG LOGIC ---
-    function initDrag(elm) {
-        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-        const header = document.getElementById(elm.id + "-header");
-        
-        header.onmousedown = (e) => {
-            e.preventDefault();
-            focusWin(elm);
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            document.onmouseup = () => {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            };
-            document.onmousemove = (e) => {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                elm.style.top = (elm.offsetTop - pos2) + "px";
-                elm.style.left = (elm.offsetLeft - pos1) + "px";
-            };
-        };
-    }
-
-    document.querySelectorAll('.window').forEach(initDrag);
-
-    // --- WINDOW CONTROL ---
     function openWindow(id) {
         const win = document.getElementById(id);
         win.style.display = 'flex';
         focusWin(win);
-        if(id === 'os-window') {
-            const frame = document.getElementById('os-frame');
-            if(!frame.srcdoc) frame.srcdoc = termCode;
+        if(id === 'yxon6-window' && !document.getElementById('yxon6-frame').srcdoc) {
+            document.getElementById('yxon6-frame').srcdoc = terminalSource;
         }
-        if(id === 'netscape-window' && !activeTabId) createNewTab();
+        if(id === 'browser-window' && !activeTabId) createNewTab();
     }
 
     function closeWindow(id) {
         document.getElementById(id).style.display = 'none';
     }
 
-    // --- BROWSER TABS ---
+    // --- DRAG ENGINE ---
+    function makeDraggable(win) {
+        const header = document.getElementById(win.id + "-header");
+        let p1=0, p2=0, p3=0, p4=0;
+        header.onmousedown = (e) => {
+            e.preventDefault();
+            focusWin(win);
+            p3 = e.clientX; p4 = e.clientY;
+            document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
+            document.onmousemove = (e) => {
+                e.preventDefault();
+                p1 = p3 - e.clientX; p2 = p4 - e.clientY;
+                p3 = e.clientX; p4 = e.clientY;
+                win.style.top = (win.offsetTop - p2) + "px";
+                win.style.left = (win.offsetLeft - p1) + "px";
+            };
+        };
+    }
+
+    document.querySelectorAll('.window').forEach(makeDraggable);
+
+    // --- BROWSER ENGINE ---
     function createNewTab(url = 'https://www.bing.com') {
         tabIdCounter++;
         const id = `tab-${tabIdCounter}`;
-        
         const tabBtn = document.createElement('div');
         tabBtn.className = 'tab';
         tabBtn.id = `btn-${id}`;
-        tabBtn.innerHTML = `<span>New Tab</span> <span class="close-tab" onclick="closeTab(event, '${id}')">×</span>`;
+        tabBtn.innerHTML = `<span>Page</span> <span style="margin-left:8px; font-weight:bold;" onclick="closeTab(event, '${id}')">×</span>`;
         tabBtn.onclick = () => switchTab(id);
-        
-        const tabBar = document.getElementById('tab-bar');
-        tabBar.insertBefore(tabBtn, tabBar.lastElementChild);
+        document.getElementById('tab-bar').insertBefore(tabBtn, document.getElementById('tab-bar').lastElementChild);
 
         const frame = document.createElement('iframe');
         frame.id = id;
         frame.className = 'browser-frame';
         frame.src = url;
         document.getElementById('browser-container').appendChild(frame);
-        
         switchTab(id);
     }
 
@@ -266,15 +289,9 @@
         activeTabId = id;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.browser-frame').forEach(f => f.classList.remove('active'));
-        
-        const btn = document.getElementById(`btn-${id}`);
-        if(btn) btn.classList.add('active');
-        
-        const frame = document.getElementById(id);
-        if(frame) {
-            frame.classList.add('active');
-            document.getElementById('url-input').value = frame.src.includes('bing.com') ? '' : frame.src;
-        }
+        document.getElementById(`btn-${id}`).classList.add('active');
+        document.getElementById(id).classList.add('active');
+        document.getElementById('url-input').value = document.getElementById(id).src;
     }
 
     function closeTab(e, id) {
@@ -282,8 +299,8 @@
         document.getElementById(`btn-${id}`).remove();
         document.getElementById(id).remove();
         if (activeTabId === id) {
-            const last = document.querySelector('.tab');
-            if (last) switchTab(last.id.replace('btn-', ''));
+            const next = document.querySelector('.tab');
+            if (next) switchTab(next.id.replace('btn-', ''));
             else activeTabId = null;
         }
     }
@@ -291,13 +308,18 @@
     function netGo(val) {
         if (!activeTabId) createNewTab();
         let url = val.trim();
-        if (!url) return;
         if (!url.startsWith('http')) url = 'https://' + url;
-        
-        const frame = document.getElementById(activeTabId);
-        frame.src = url;
-        document.getElementById(`btn-${activeTabId}`).querySelector('span').textContent = url.split('/')[2] || "Page";
+        document.getElementById(activeTabId).src = url;
+        document.getElementById(`btn-${activeTabId}`).querySelector('span').innerText = url.split('/')[2] || "Page";
     }
+
+    // --- CLOCK ---
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 </script>
 
 </body>
