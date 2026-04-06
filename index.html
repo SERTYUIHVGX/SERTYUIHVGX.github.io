@@ -22,6 +22,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            flex-wrap: wrap;
         }
         .icon {
             width: 75px;
@@ -36,7 +37,6 @@
         }
         .icon img { width: 32px; height: 32px; margin-bottom: 4px; }
 
-        /* Window Styling */
         .window {
             position: absolute;
             z-index: 10;
@@ -47,76 +47,67 @@
         .title-bar { cursor: move; }
         .window-body { flex-grow: 1; padding: 0; margin: 0; overflow: hidden; position: relative; }
 
-        /* F2F Episode 4 Map Aesthetic */
-        .map-viewer {
-            background: #1a1a15;
+        /* ASCII Map Styling */
+        .ascii-map-container {
+            background: #0a0a05;
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
             position: relative;
         }
-        .map-image {
-            width: 110%; /* Slight zoom for that cramped look */
-            filter: sepia(1) contrast(1.5) brightness(0.6) grayscale(0.2);
-            mix-blend-mode: lighten;
+        .ascii-art {
+            color: #4a5d23; /* Muted forest green */
+            font-family: "Courier New", monospace;
+            font-size: 10px;
+            line-height: 8px;
+            letter-spacing: 2px;
+            white-space: pre;
+            text-shadow: 0 0 3px #2d3a16;
         }
-        /* Grain and Scanline Overlays */
-        .vhs-overlay {
+        .vhs-scanlines {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+            background-size: 100% 4px;
             pointer-events: none;
-            z-index: 2;
-        }
-        .map-ui {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            font-size: 10px;
-            text-shadow: 0 0 5px #00ff00;
-            z-index: 3;
-            pointer-events: none;
+            z-index: 5;
+            opacity: 0.4;
         }
 
         .taskbar {
             height: 30px;
             background: #c0c0c0;
             position: absolute;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            padding: 2px;
-            box-sizing: border-box;
-            border-top: 2px solid #fff;
-            z-index: 1000;
+            bottom: 0; width: 100%;
+            display: flex; align-items: center;
+            padding: 2px; box-sizing: border-box;
+            border-top: 2px solid #fff; z-index: 1000;
         }
         .start-button { display: flex; align-items: center; gap: 4px; font-weight: bold; height: 22px; padding: 2px 6px; }
     </style>
 </head>
-<body x-data="{ mapOpen: true, yxon6Open: false }">
+<body x-data="{ mapOpen: true, yxon6Open: false, edgeOpen: false }">
 
     <div class="desktop">
-        <div class="icon" @click="mapOpen = true">
-            <img src="https://win98icons.alexmeub.com/icons/png/world-1.png">
-            <span>Louisiana Map</span>
-        </div>
         <div class="icon" @click="yxon6Open = true">
             <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png">
             <span>Yxon6 OS</span>
         </div>
+        <div class="icon" @click="mapOpen = true">
+            <img src="https://win98icons.alexmeub.com/icons/png/world-1.png">
+            <span>Louisiana Map</span>
+        </div>
+        <div class="icon" @click="edgeOpen = true">
+            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png">
+            <span>Internet Explorer</span>
+        </div>
     </div>
 
-    <div class="window" x-show="mapOpen" x-draggable style="width: 550px; height: 450px; top: 50px; left: 150px;">
+    <div class="window" x-show="mapOpen" x-draggable style="width: 500px; height: 420px; top: 40px; left: 180px;">
         <div class="title-bar">
-            <div class="title-bar-text">MapViewer - LA_Sector_North.tga</div>
+            <div class="title-bar-text">MapViewer - LA_ASCII_GRID.txt</div>
             <div class="title-bar-controls">
                 <button aria-label="Minimize"></button>
                 <button aria-label="Maximize"></button>
@@ -124,16 +115,55 @@
             </div>
         </div>
         <div class="window-body">
-            <div class="map-viewer">
-                <div class="vhs-overlay"></div>
-                <div class="map-ui">
-                    REC [●]<br>
-                    LOC: LOUISIANA PARISH<br>
-                    ELEV: 240ft<br>
-                    CONDITION: OVERCAST
-                </div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Map_of_Louisiana_NA.svg/1200px-Map_of_Louisiana_NA.svg.png" class="map-image">
+            <div class="ascii-map-container">
+                <div class="vhs-scanlines"></div>
+                <pre class="ascii-art">
+       _____________________
+      | . . . . . . . . . . |
+      | . /| - - - - - \ . .|
+      | . | . . . . . . | . |
+      | . | . . . . . . | . |
+      | . | . . . . . . \ . |
+      | . \ . . . . . . . \ |
+      | . . \ . . . . . . . |
+      | . . . | . . . . . . |
+      | . . . | . . . . . . |
+      | . . . | - - - - - \ |
+      | . . . . . . . . . | |
+      | - - - - - - - - - | |
+      | | . . . . . . . . | |
+      | | . . . . . . . . | |
+      | \_________________/ /
+       \___________________/
+      
+      [ SECTOR: NORTH_WOODS ]
+      [ STATUS: SCANNING... ]
+                </pre>
             </div>
+        </div>
+    </div>
+
+    <div class="window" x-show="edgeOpen" x-draggable style="width: 600px; height: 400px; top: 100px; left: 100px;">
+        <div class="title-bar">
+            <div class="title-bar-text">Internet Explorer</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" @click="edgeOpen = false"></button>
+            </div>
+        </div>
+        <div class="window-body" style="background: white;">
+            <iframe style="width: 100%; height: 100%; border: none;" src="https://www.google.com/search?igu=1"></iframe>
+        </div>
+    </div>
+
+    <div class="window" x-show="yxon6Open" x-draggable style="width: 400px; height: 250px; top: 300px; left: 50px;">
+        <div class="title-bar">
+            <div class="title-bar-text">MS-DOS Prompt</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" @click="yxon6Open = false"></button>
+            </div>
+        </div>
+        <div class="window-body" style="background: black; color: #c0c0c0; padding: 10px; font-family: monospace;">
+            C:\YXON6> <span style="background: #c0c0c0; color: black;">_</span>
         </div>
     </div>
 
