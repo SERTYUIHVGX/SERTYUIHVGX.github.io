@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS Web</title>
+    <title>Yxon6 OS - Lookout Terminal</title>
     <link rel="stylesheet" href="https://unpkg.com/7.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
@@ -22,7 +22,6 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            flex-wrap: wrap;
         }
         .icon {
             width: 75px;
@@ -36,52 +35,54 @@
             text-shadow: 1px 1px #000;
         }
         .icon img { width: 32px; height: 32px; margin-bottom: 4px; }
-        .icon:active img { filter: brightness(0.5); }
 
+        /* Window Styling */
         .window {
             position: absolute;
             z-index: 10;
             user-select: none;
             display: flex;
             flex-direction: column;
-            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff;
         }
         .title-bar { cursor: move; }
-        .window-body { flex-grow: 1; padding: 0; margin: 0; overflow: hidden; display: flex; flex-direction: column; }
+        .window-body { flex-grow: 1; padding: 0; margin: 0; overflow: hidden; position: relative; }
 
-        /* Fears to Fathom Map Styling */
-        .map-container {
-            background: #2a2a24;
+        /* F2F Episode 4 Map Aesthetic */
+        .map-viewer {
+            background: #1a1a15;
+            width: 100%;
             height: 100%;
-            position: relative;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
+            position: relative;
         }
-        /* Grain/CRT Overlay Effect */
-        .map-overlay {
+        .map-image {
+            width: 110%; /* Slight zoom for that cramped look */
+            filter: sepia(1) contrast(1.5) brightness(0.6) grayscale(0.2);
+            mix-blend-mode: lighten;
+        }
+        /* Grain and Scanline Overlays */
+        .vhs-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.3;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
             pointer-events: none;
-            z-index: 5;
+            z-index: 2;
         }
-        .louisiana-map {
-            width: 90%;
-            filter: sepia(0.8) contrast(1.2) brightness(0.7) grayscale(0.3);
-            border: 1px solid #444;
-        }
-        .map-label {
+        .map-ui {
             position: absolute;
-            bottom: 10px;
+            top: 10px;
             left: 10px;
-            color: #d4d4bc;
+            color: #00ff00;
             font-family: 'Courier New', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 10px;
+            text-shadow: 0 0 5px #00ff00;
+            z-index: 3;
+            pointer-events: none;
         }
 
         .taskbar {
@@ -100,26 +101,22 @@
         .start-button { display: flex; align-items: center; gap: 4px; font-weight: bold; height: 22px; padding: 2px 6px; }
     </style>
 </head>
-<body x-data="{ startMenu: false, yxon6Open: false, internetOpen: false, mapOpen: true }">
+<body x-data="{ mapOpen: true, yxon6Open: false }">
 
     <div class="desktop">
+        <div class="icon" @click="mapOpen = true">
+            <img src="https://win98icons.alexmeub.com/icons/png/world-1.png">
+            <span>Louisiana Map</span>
+        </div>
         <div class="icon" @click="yxon6Open = true">
             <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png">
             <span>Yxon6 OS</span>
         </div>
-        <div class="icon" @click="mapOpen = true">
-            <img src="https://win98icons.alexmeub.com/icons/png/world-3.png">
-            <span>State Map</span>
-        </div>
-        <div class="icon" @click="internetOpen = true">
-            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png">
-            <span>Internet Explorer</span>
-        </div>
     </div>
 
-    <div class="window" x-show="mapOpen" x-draggable style="width: 500px; height: 450px; top: 80px; left: 300px;">
+    <div class="window" x-show="mapOpen" x-draggable style="width: 550px; height: 450px; top: 50px; left: 150px;">
         <div class="title-bar">
-            <div class="title-bar-text">Map Viewer - Louisiana_Sector_04.bmp</div>
+            <div class="title-bar-text">MapViewer - LA_Sector_North.tga</div>
             <div class="title-bar-controls">
                 <button aria-label="Minimize"></button>
                 <button aria-label="Maximize"></button>
@@ -127,33 +124,21 @@
             </div>
         </div>
         <div class="window-body">
-            <div class="map-container">
-                <div class="map-overlay"></div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Map_of_Louisiana_NA.svg/800px-Map_of_Louisiana_NA.svg.png" class="louisiana-map">
-                <div class="map-label">Coordinates: 30.9843° N, 91.9623° W<br>IRONBARK RANGE AREA</div>
+            <div class="map-viewer">
+                <div class="vhs-overlay"></div>
+                <div class="map-ui">
+                    REC [●]<br>
+                    LOC: LOUISIANA PARISH<br>
+                    ELEV: 240ft<br>
+                    CONDITION: OVERCAST
+                </div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Map_of_Louisiana_NA.svg/1200px-Map_of_Louisiana_NA.svg.png" class="map-image">
             </div>
-        </div>
-    </div>
-
-    <div class="window" x-show="yxon6Open" x-draggable style="width: 600px; height: 350px; top: 40px; left: 40px;">
-        <div class="title-bar">
-            <div class="title-bar-text">MS-DOS Prompt - YXON6</div>
-            <div class="title-bar-controls">
-                <button aria-label="Close" @click="yxon6Open = false"></button>
-            </div>
-        </div>
-        <div class="window-body">
-            <iframe style="width:100%; height:100%; border:none;" srcdoc="
-                <body style='background:#000; color:#c0c0c0; font-family:monospace; padding:10px;'>
-                    <div>Microsoft(R) Windows 98 [YXON6 Edition]</div>
-                    <div style='margin-top:10px;'>C:\YXON6> <span style='border-right: 8px solid #c0c0c0;'>&nbsp;</span></div>
-                </body>
-            "></iframe>
         </div>
     </div>
 
     <div class="taskbar">
-        <button class="start-button" @click="startMenu = !startMenu">
+        <button class="start-button">
             <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
             Start
         </button>
