@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yxon6 OS - CST Edition</title>
+    <title>Start Page</title>
     <style>
         /* CORE DESKTOP STYLING */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -16,6 +16,9 @@
             width: 100vw;
             position: relative;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .icon {
@@ -39,18 +42,17 @@
         /* WINDOW STYLING */
         .window {
             position: absolute;
-            top: 15%;
-            left: 15%;
-            width: 70%;
-            height: 60%;
-            min-width: 300px;
-            min-height: 200px;
+            top: 50px;
+            left: 150px;
+            width: 700px;
+            height: 450px;
+            min-width: 350px;
+            min-height: 250px;
             background: #ece9d8;
             border: 3px solid #0054e3;
             border-radius: 8px 8px 0 0;
             display: none;
             flex-direction: column;
-            z-index: 100;
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
         }
 
@@ -64,6 +66,7 @@
             font-weight: bold;
             font-size: 13px;
             height: 30px;
+            cursor: move;
         }
 
         .close-btn {
@@ -81,8 +84,33 @@
             font-weight: bold;
         }
 
-        .window-body { flex-grow: 1; background: black; margin: 2px; position: relative; border: 1px solid #1a1a1a; }
-        iframe { width: 100%; height: 100%; border: none; }
+        .window-body { flex-grow: 1; background: white; margin: 2px; position: relative; border: 1px solid #7f9db9; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+
+        /* BROWSER SPECIFIC STYLES */
+        .browser-toolbar {
+            background: #ece9d8;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            border-bottom: 1px solid #7f9db9;
+        }
+        .browser-toolbar input {
+            flex-grow: 1;
+            padding: 3px 8px;
+            border: 1px solid #7f9db9;
+            font-size: 12px;
+            outline: none;
+        }
+        .browser-btn {
+            padding: 2px 8px;
+            background: #f0f0f0;
+            border: 1px solid #7f9db9;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .browser-btn:hover { background: #e0e0e0; }
 
         /* TASKBAR */
         .taskbar {
@@ -94,7 +122,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
+            z-index: 9999;
         }
 
         .system-tray {
@@ -111,19 +139,39 @@
 </head>
 <body>
 
-<div class="desktop">
-    <div class="icon" onclick="openOS()">
+<div class="desktop" id="desktop">
+    <div class="icon" onclick="openWindow('os-window')">
         <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" alt="Yxon6 OS">
         <span>Yxon6 OS</span>
     </div>
 
-    <div id="os-window" class="window">
-        <div class="window-header">
+    <div class="icon" onclick="openWindow('browser-window')">
+        <img src="https://win98icons.alexmeub.com/icons/png/world-0.png" alt="NetScape">
+        <span>NetScape</span>
+    </div>
+
+    <div id="os-window" class="window" onmousedown="bringToFront(this)">
+        <div class="window-header" id="os-window-header">
             <span>Yxon6 OS - Terminal Session</span>
-            <div class="close-btn" onclick="closeOS()">X</div>
+            <div class="close-btn" onclick="closeWindow('os-window')">X</div>
+        </div>
+        <div class="window-body" style="background: black;">
+            <iframe id="os-frame"></iframe>
+        </div>
+    </div>
+
+    <div id="browser-window" class="window" onmousedown="bringToFront(this)">
+        <div class="window-header" id="browser-window-header">
+            <span>NetScape Navigator</span>
+            <div class="close-btn" onclick="closeWindow('browser-window')">X</div>
+        </div>
+        <div class="browser-toolbar">
+            <button class="browser-btn" onclick="goHome()">Home</button>
+            <input type="text" id="browser-addr" placeholder="Enter URL or Search..." onkeydown="if(event.key==='Enter') loadUrl(this.value)">
+            <button class="browser-btn" onclick="loadUrl(document.getElementById('browser-addr').value)">Go</button>
         </div>
         <div class="window-body">
-            <iframe id="os-frame"></iframe>
+            <iframe id="browser-frame"></iframe>
         </div>
     </div>
 </div>
@@ -136,16 +184,17 @@
 </div>
 
 <script>
+    // --- TERMINAL LOGIC ---
     const osContent = `
     <html>
     <head>
         <style>
-            body { background: black; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; padding: 15px; }
+            body { background: black; color: #ff0000; font-family: 'Courier New', monospace; margin: 0; padding: 15px; overflow: hidden; }
             #logo { color: #ff0000; white-space: pre; font-size: 7px; line-height: 1.1; margin-bottom: 20px; }
-            .line { margin-bottom: 5px; word-break: break-all; }
-            .prompt { color: #fff; margin-right: 5px; }
-            input { background: transparent; border: none; color: #00ff00; font-family: inherit; font-size: 14px; outline: none; width: 70%; caret-color: white; }
-            a { color: #00ffff; text-decoration: none; border-bottom: 1px dashed; }
+            .line { margin-bottom: 5px; word-break: break-all; font-size: 14px; }
+            .prompt { color: #cc0000; margin-right: 5px; font-weight: bold; }
+            input { background: transparent; border: none; color: #ff0000; font-family: inherit; font-size: 14px; outline: none; width: 70%; caret-color: white; }
+            a { color: #ffffff; text-decoration: none; border-bottom: 1px dashed #ff0000; }
         </style>
     </head>
     <body onclick="document.getElementById('cmd').focus()">
@@ -159,13 +208,12 @@
         </div>
         <div id="out">
             <div class="line">YXON6 OS KERNEL LOADED...</div>
-            <div class="line">Clock synchronized to Central Standard Time (CST).</div>
+            <div class="line">MULTI-APP SUPPORT ENABLED.</div>
         </div>
         <div style="display:flex; align-items:center;">
             <span class="prompt">guest@yxon6:~$</span>
             <input type="text" id="cmd" autofocus autocomplete="off">
         </div>
-
         <script>
             const out = document.getElementById('out');
             const cmdInput = document.getElementById('cmd');
@@ -174,27 +222,17 @@
                 'truffled': 'https://truffled.lol/',
                 'nebula': 'https://math.school.dovereducation.org/'
             };
-
             cmdInput.addEventListener('keydown', (e) => {
                 if(e.key === 'Enter') {
                     const val = cmdInput.value;
                     const cmd = val.toLowerCase().trim();
-                    const div = document.createElement('div');
-                    div.className = 'line';
-                    div.innerHTML = '<span class="prompt">guest@yxon6:~$</span> ' + val;
-                    out.appendChild(div);
+                    out.innerHTML += '<div class="line"><span class="prompt">guest@yxon6:~$</span> ' + val + '</div>';
                     cmdInput.value = '';
-                    if(cmd === 'help') {
-                        out.innerHTML += '<div>Available: help, clear, proxylist, speedtest</div>';
-                    } else if(cmd === 'proxylist') {
-                        out.innerHTML += '<div>Directories: ' + Object.keys(sites).join(', ').toUpperCase() + '</div>';
-                    } else if(sites[cmd]) {
-                        out.innerHTML += '<div>> Opening: <a href="'+sites[cmd]+'" target="_blank">'+sites[cmd]+'</a></div>';
-                    } else if(cmd === 'clear') {
-                        out.innerHTML = '';
-                    } else if(cmd !== '') {
-                        out.innerHTML += '<div>Unknown command.</div>';
-                    }
+                    if(cmd === 'help') { out.innerHTML += '<div>Available: help, clear, proxylist, speedtest</div>'; }
+                    else if(cmd === 'proxylist') { out.innerHTML += '<div>Directories: ' + Object.keys(sites).join(', ').toUpperCase() + '</div>'; }
+                    else if(sites[cmd]) { out.innerHTML += '<div>> Opening: <a href="'+sites[cmd]+'" target="_blank">'+sites[cmd]+'</a></div>'; }
+                    else if(cmd === 'clear') { out.innerHTML = ''; }
+                    else if(cmd !== '') { out.innerHTML += '<div>Unknown command.</div>'; }
                     window.scrollTo(0, document.body.scrollHeight);
                 }
             });
@@ -202,32 +240,113 @@
     </body>
     </html>`;
 
-    function openOS() {
-        const win = document.getElementById('os-window');
-        const frame = document.getElementById('os-frame');
-        win.style.display = 'flex';
-        if(!frame.srcdoc) frame.srcdoc = osContent;
-    }
+    // --- BROWSER LOGIC ---
+    const homeHtml = `
+    <html>
+    <body style="font-family:sans-serif; text-align:center; padding-top:50px; background: #fff;">
+        <h1 style="color:#0054e3">NetScape Home</h1>
+        <p>Welcome to the Yxon6 OS Internal Web.</p>
+        <div style="margin-top:20px; padding:20px; border:1px solid #ccc; display:inline-block;">
+            <strong>Quick Links:</strong><br><br>
+            <a href="#" onclick="parent.loadUrl('https://www.google.com/search?q=yxon6')">Google Search</a><br>
+            <a href="#" onclick="parent.loadUrl('https://www.wikipedia.org')">Wikipedia</a>
+        </div>
+    </body>
+    </html>`;
 
-    function closeOS() {
-        document.getElementById('os-window').style.display = 'none';
-    }
-
-    // UPDATED CST CLOCK LOGIC
-    function updateClock() {
-        const options = {
-            timeZone: 'America/Chicago', // Central Standard Time (CST/CDT)
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        };
+    function loadUrl(url) {
+        const frame = document.getElementById('browser-frame');
+        const addr = document.getElementById('browser-addr');
         
-        const cstTime = new Date().toLocaleTimeString('en-US', options);
-        document.getElementById('clock').innerText = cstTime;
+        if (!url.startsWith('http')) {
+            url = 'https://www.bing.com/search?q=' + encodeURIComponent(url);
+        }
+        
+        addr.value = url;
+        frame.srcdoc = ""; // Clear srcdoc if it was home
+        frame.src = url;
+        
+        // Error handling for CORS blocks
+        setTimeout(() => {
+            try {
+                if (!frame.contentWindow.length && url.includes("google")) {
+                    console.log("CORS block detected");
+                }
+            } catch(e) {
+                frame.srcdoc = `
+                <body style="font-family:sans-serif; padding:40px; background:#f0f0f0;">
+                    <h2>Connection Error</h2>
+                    <p>Site <b>\${url}</b> refused to connect inside the OS frame for security reasons.</p>
+                    <p>Try searching via Bing or visit a frame-friendly site.</p>
+                </body>`;
+            }
+        }, 500);
     }
 
-    // Update every second
+    function goHome() {
+        document.getElementById('browser-addr').value = "";
+        document.getElementById('browser-frame').srcdoc = homeHtml;
+    }
+
+    // --- OS WINDOW MANAGEMENT ---
+    let topZ = 100;
+
+    function bringToFront(elm) {
+        topZ++;
+        elm.style.zIndex = topZ;
+    }
+
+    function openWindow(id) {
+        const win = document.getElementById(id);
+        win.style.display = 'flex';
+        bringToFront(win);
+        
+        if(id === 'os-window' && !document.getElementById('os-frame').srcdoc) {
+            document.getElementById('os-frame').srcdoc = osContent;
+        }
+        if(id === 'browser-window' && !document.getElementById('browser-frame').srcdoc) {
+            goHome();
+        }
+    }
+
+    function closeWindow(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    // --- DRAGGABLE LOGIC ---
+    dragElement(document.getElementById("os-window"));
+    dragElement(document.getElementById("browser-window"));
+
+    function dragElement(elmnt) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        const header = document.getElementById(elmnt.id + "-header");
+        
+        header.onmousedown = (e) => {
+            e.preventDefault();
+            bringToFront(elmnt);
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = () => {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            };
+            document.onmousemove = (e) => {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            };
+        };
+    }
+
+    // --- CST CLOCK ---
+    function updateClock() {
+        const options = { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', options);
+    }
     setInterval(updateClock, 1000);
     updateClock();
 </script>
