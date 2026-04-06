@@ -1,367 +1,373 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Globe, 
-  Shield, 
-  Terminal, 
-  Cpu, 
-  Database, 
-  Cloud, 
-  Lock, 
-  Settings, 
-  ExternalLink, 
-  ChevronRight, 
-  Menu, 
-  X,
-  Zap,
-  Activity,
-  Layers,
-  Fingerprint
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TermOS v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap');
 
-const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+        :root {
+            --term-green: #4af626;
+            --term-bg: #050505;
+            --term-dim: #1a1a1a;
+            --term-glow: 0 0 10px rgba(74, 246, 38, 0.3);
+        }
 
-  // The custom ASCII art provided by the user
-  const asciiArt = `
-                ''.'.. ^_ZoO(;(p#0-'                                .^,llIIlll!!i!IIIIlI;:,^^^''''''.'''.....                      .... ..?Jkw}>|doJ}"     ..  .'                               
-               .^`.'.^-Y&d/<?LMw|,'                                           ....''^;lI:,;i<>i->;"";;,`.'''..'``'.'......                        .''.   "}paL{;|doJ+^  .'''.                                
-                '..^;chav,~UWa\\:.`^                                            ... `;!i[xLphoooahaabOu{>;:'`'..'''. .....                            ..'.  ..rh*J!<c#Mf+,  ...                                
-               ''.!ndhc+iYodrl''''                                           .']rJZmLv/1[-~i!!l<-]}tYOwOn_".''....                               .'.   ...  ^>tpau__C&px~` ...                               
-               .`/a8Q_lfB%X< '   .'                                        ^^+uhW0\\i^'`,li!I:,:!IIl!;^"I-L*pt^^. .                                ...'..''.. ''^z*au^<O8k|l' ..                               
-         .    ^1w*Z{ItqaJ_^ .   ..                      ..        .'.  .'lfCZQu{;\`''.'":Illlll!lI;;l!l:^. l)UdUt<'  \`                               ...'''. ''...~U*wf+(0o0|I '...    ...                    
-     \`.^" ^. ~d8d)"[*M01'                              .       .'^. .^lfd&m]!:\`    ...`,;IIIIIllIIIlI;:" .\`]j{Yo#dC?"'^" '. .                               ...'`.'.-*%m[,1#8J+'...  .. .'                    
-      \`' .._Xhk\\i]U#pf! '                              .  .'.    . <vhpz|~''..       .\`^,:;IIIllIIllII_{-".lfpUjrvnOk0t~''\`'\`                               ...'''.'',(poJ->uh*z~,' ....                      
-     '  .:C#au,;UMar,.''                                      .^_OoY,;\`..          ..''^,:;IIIl;;I;II,]aqz_.:cv_ .:,]L&d+'\`                                   . .'\`.'^\\bMc<+cMWj>^  ....                    
-      .irhoY[>t#aui.'.'\`.                                  ..';}ChJ?''..  '         ....'^,;III!lI;IlI;;iO0JUzxCz[' \`^^izdX_^                               ...  ......"">u*hu+~Yom\\!^....                    
-      twh0>:fo&U~\`   .''                                    '?JhQi' .  '. .   ..    .....\`";IIIllIIl:,:,^"cOUtI"^'' '. .\`;voJ"                               .......... .'^IXokrl-CWw1I\`.                    
- . .. .'.^-Lh0):{q#O['                                          .:(dQ]\`        ..    . ...     .'^,:;!ll!>[zYr1+~cZ-\`......''.  ^}dm[".                                        ..}O*m{~\\bWC["'    .                
- \`\`. .^]JWk)l]Z%q|;,                                        . .l/au<' .  ....  ..     .       .'\`",:Illll,luO?-/Upp>^'..''..   .^+dQ}'                                    . ..''..,[qoO(lra#J<^   ....            
- ..  '!vkhuI?JMaf;'\`.                                          '}#z! ',l\`.''';,.. .       .     .'^^";;;;;!I,?m_,'. ,^'''.    .",^.ImL_^..                                     . ..'\`'jk#L>>nh*r<^. '..            
- ...!voac~lUakv!'..'\`                                         .+Xhi'\`;_p1:^;xc]'..'. .....       ..\`\`::;;IIIIl+Yv_. '    ....':UY?\`;(0LI'                                   .    ...' '!to*J]>v#br!\`   ...          
- ."faMC<lf*MU_    ^^                                           {Om;..\`imX1(mQn?:,I:;I,'...       ...'^":I!!lllI./z|\` .. '  .\`Ium\\. \`/ljdf;.                                 .....     ..":,Qadn;~O#w)l\`...          
- \`|qaL-:|woC_^ ..                                             .xan"  ."LkY_^zYcx(1[[|uI'.   ..  .....^",;IIIII;:,_jzI. .....';mwn)nmYzQq"..                                            .\`<U#qj<10oO(I.' ..      .
- .''. ."]Qow1\`+dMm)                                               .:cp+'  ."Lht ,djl ' .^-J{!\`\`;1>^.   ...'\`^":;;IIIlIIi}ok( '  ..I#n!!v#1ith|:'^                                         ...'\`.. _a&01>)*#Q{.''.      .
- [Xdkf<}CWbf! .                                               .}OQ.  .."Lp|.'........"]zvxrr<,'..     .''\^":;;IIII;,^-X).. \`'.,1Wf_{fXx~?*X!. \`.                                       . ...'''',)whC1inbaX+:' ..    
- ^fZdv'"YWor"..'                                                rZu.    "Lht '   .'    .^'^"...   ...  ..'\`",:;I;;II;:_>^. ^\`:(&u!_m<;"+mb_ .\`                                            . .'\`. ./oW0_<u%&r!' .    
- ..'IcZ|lroac~'  '\`.                                               UO(\`    "Zk\\ ..  ..       ..             ..'\`^,:;;I;;:,:^'.\`..;\\Mf+1C*tI>Co[' .                                       ...........lj*kji[h*t       
- .  ^uL1]Bk]\`. .'..'                                               0O]'   .;oJ]^ ...      ...'.             ....''\`",,:;:;;::,^\`.''^?Mr1X*d?'!X*-.'                                          .''..   . '.."+pkf:dh\\   ... 
- ^nL1]8b_. .                                                      .+wU>.\`. 'i*ni\`     .         .          .   ..'\\`\`^":;III;,^'^\`'^+*z1jbz]:ln#].                                                      '>wbt,k#t       
- ^nL1]8p+. .                                                      ^uqt'...!vW}.     ...   .    .          .    .\`\`\`\`^,:;;;;;:"'^\`.IZw\\[qJ_\`IrW[.                                                      '>wbt,k#t       
- ^nL1]8w~  .                                                      ^Jk/ .  .-kw~.                             ''''\`^^":::;;:,'.':xdwQamX1_nM}\`'.                                                      '>wbt,k#t       
- ^nL1]&O< ..                                                      \`jpf'.\`.Ir*-^    ...                     ...  ...'\\`\`'\`,:,:;;;l;^':Lk0Uxl !c&[..'                                                      '>wbt,k#t       
- ^nL1]&0> ..                                                      '[dU!. ^fk0" ..   .\`^:"":I;:^.            .''  .'"l>~<i!!lll,,I,`"^}00:."^~Ok-  .                                                      '>wbt,k#t       
- ^nL1]&O<                                                          \`OZ}''/wQ;...';_jUQQmwqphpO)^'.  .. .. . .. ."~fOkYCQQZpbpmQn~;l>{rYmb-,.-aY<. .                                                      '>wbt,k#t       
- ^nL1]&O<                                                           zZt,[w0} \`^1m&#mv)_~"...;vd0+'"^'\`"]<.  ..';tppx:,,"\`...;?rdhpd&am0mbZ~;fa{;'                                                      '>wbt,k#t       
- ^nL1]&O<                                                          .\\wZ}bx<''-Qpv>\`'..'.    ..>va}:l[(_u{\`\`.  ;/*rl      ....'\`\`>\\CkO]:;?M\\)Ld:.                                                         '>wbt,k#t       
- ^nL1]&O<                                                          ^<J@%C<.In#Q- .' '^'\`'. .. .<Cq+ivBhat  ''._dm_.   .    .'''')n\\ipd\\^!qLCOX^                                                          '>wbt,k#t       
- ^nL1]&O<                                                           ^j*#1,<zM\\l^'   .'\`''.    .;{M1?ncO{,.'..^}hn!. ....   ..''\`>udmjZbz<wa#m~"'..                                                       '>wbt,k#t       
- ^nL1]&O<                                                          '.xBM|!fpY^\`'   \`'       . ':+M}1v+^.  '  "|W|;. .     ''''\`I0U~''Y0(,Ohhz.'\`'..                                                      '>wbt,k#t       
- ^nL1]&O<                                                          '|ZMMX!|dO,      ....  ..  'lf*])J),..'.. ;f#{,... ''.'i1rL*mX1;"\\pr\`,w*hz,'^^\`...                                                    '>wbt,k#t       
- ^nL1]&O<                                                          .vQCbk_-Ck:   ..    ....    >Jdt}-.^.     ;t#);..'  '";<0mx]""\` :om}.:Okawr".''...                                                    '>wbt,k#t       
- ^nL1]&O<                                                          \`|qaL-:|woC_^    ..   ..   .',1kJ<..'..`";\`''_dkn?I\`^'.;(OaO)  \`''!oL?',pahO\\"'\`'...                                                    '>wbt,k#t       
- ^nL1]&O<                                                          \`^}0W*-]Lb:           .. ^\\QpQi'\`";1trUbzi.':inpaL~\` ':\\bq| .. 'i#Y~"{M&bn,^''\`'..                                                    '>wbt,k#t       
- ^nL1]&O<                                                           1ZM*M[-Yh~:\`.      .;!_/0amx+' \`'>Q8hpb*%0]. .\`;}Oawf<ifbm(\`''"~no)"~Ohbdkh_".'\`..                                                    '>wbt,k#t       
- ^nL{]&O<                                .  .''?(xXXYcj-.'.   .  '?w0(?az_~JbpQYUxzXXCqkZn[!'..   ,)k#1",-YoXl  \`' 'I_rmop*8*CLQwkp|;;/#{I^[oXi...  .''. I[/nvx\\1;\`. .                                  '>wbt,k#t       
- ^nL{]&O<                               .'..,_nkopCcvvQpaht>".   .. \`[dXI^tbC-,,_tvcJQO0X{,\`^.      \`\\k#z!...IOw|.  \`' '`' \`)vUYuu1l.'.^rqx:.\`1*/l`'''''.'?CkhkYQ0OaMpri\`.    ..                           '>wbt,k#t       
- ^nL{]&O<                                 .:vd0-:;"  .  :{bU-..  .'' \`rqJ""+uwwzcXUQZwqwwwL\\l'   ..'{Om~. ''.'{0Q;^'''.'.l{jxccuft|[-}|0wx"..1ZZ>\`....\`'Ir#n~,'...' \`l-cpX;'                                '>wbt,k#t       
- ^nL{]&O<                              ..':Qb\\  '. ~0r~,'^rkx'   ... '\\khI:^"]rYct['''   fpC\` ....'nbJ\`^'. .. rh/\`.. '^ubodYcvXOwdh*#hn<'.^?0q+".  '\`^!j#xI.. ^.  .:'1b&zl        .                        '>wbt,k#t       
- ^nL{]&O<                             .'.,d0}''''''"?)tj|,fmO},'.   ''"?Jkr!  '.  ..''.  \`\\mU:.   .rb0lj<\`';'.|wY" .\`ibw\\,.. '' \`'''...'..<OZ).    ..+Ypx^''   .''. _}th#?       .                        '>wbt,k#t       
- ^nL{]&O<                               .;\\w*U.l|_';.   Ird-<cWd~ .. '. ;p%w1  .... .... ^-Yo?,. .'cOf:1Lz/n^ (wJ"  <Q*-.'.'.  .   . \`\`.\`it*q{   .  "L#Q],  '\`.  ..  ;X@%Q+'...                            '>wbt,k#t       
- ^nL1]&O<                   '\`'.'''."<]<;,i\\wm\\..}vf^..'''+uj?-rZwY1i^..^/dhpbmM&du~"... ."(W\\I. .'?Um\\:YabC][Lb1^..?*v!   ''. \`>_[}]{xZ*WYi .\`>(Xk0|l' .....    .'.[Qa/;'' '...         .'              '>wbt,k#t       
- ^nL1]&O<                   .\`'  \`{QW&hM*aWk]," ^.I|C:. .\` '1Y\\:^~rZWbX[ .Cqt^ljwaq*O}'^..\`{#x!.   \`:(MMMwQh&*C1;..']*xI^:\`  +za8WoaWWmmkZ;.\`Irp*dr",'.'.   ... \`^'  'l|#MpOkWqCf: ... ....'               '>wbt,k#t       
- ^nL1]&O<                     :[Yk0r_.'.{j\`\`.  '' !1tC(I.. ^^I(x!..':)uQdl(mQ\`._LO:;/Zprl\`"}Z{:.   '...        .\`'.. -aJ<. \`izwL|<wL+..,cp+\`{Qpz\\I. .  ..   ..'if{:^. .'^,)xx/]|nQabf!..   ..              '>wbt,k#t       
- ^nL1]&O<                   '_Ukz!\`.. .I\\r^  '\`   "[Ovuz/  ''.'\`'.  '..^: \`uh\\'\`fbzI.:|kYi \`,\`.      .. ''.. ..      iJd?. ,0kf^  Xwj '/wC '",::  '^.     ... \`_Op1:.  ..        '":;[Ymv ....               '>wbt,k#t       
- ^nL1]&O<                   :QO1.^. .'.vjI'....... \`^"(vzt!. ..   ...\` '. '"'[0kI'+Ya~\`.\`?ac!.. .\`^' ..   ..    .    '\`"!<"\`I)*r!.. rmv  xZn' '..\`.''.'       .\`".   .     '''....  .\`"\\qmi^.                '>wbt,k#t       
- ^nL1]&O<                  ^Ybf'   ..  X\\ .'\`..^'.^".^:;~txczzXr_,   ..... .^1#(:']kZ<.-kXi   'v0/'i-l;/ci.icci..' nC|. ^\`iJo]''' JO(' cpn . .'. '. . '. ..  . '.  . .''  .'l)"...  .,1kul .                '>wbt,k#t       
- ^nL1]&O<                  "L01.  .....v/^.,!\\Qqpbkhh*wztt{>>-[tXYu|<lI;: ^'_kp+ lxd]'?*C~",;1b8C,0Wc)%&z_{&8cU*aiC&d_^~nOQh-..,Xbx,.^L0}'.''.    \`i<i!;.'' \`~YwahmJCUf?l.'^?0,.''    ~qO+.                '>wbt,k#t       
- ^nL1]&O<                   \`tkn^     . |t_iCpY{-~+i;;l~/JmqwOCJbpwmLt-(uru! InW[.\`>ac+_Cw?/mzUaWJ;a%WoaYhQc#0aMW&YZ##Y^Yomt#)"<Uo|:.'.CZ1 . '^";{vOwkmppr"'in#([?-?]}tChL><jv"''.'  '}Mv<'                '>wbt,k#t       
- ^nL1]&O<                    Jbn'..  . \`|pak+.''.....  .' '.'^' _vOhoL(~,"\`.:*X<.:Qm(ljM0mkQU*hYn&%8Wq<O&Wk~Q8B%dZh%8a*W*qML]{&f;...<pC<",l}Xk*kQtl. :|a#UjXh,  .\`  .."ObX(|\`..  ..[LZ!'                 '>wbt,k#t       
- ^nL1]&O<                   'InpX,'. '.\`fad~\`  . ..     ...'^' '\`.."I-|zpw/l.:d0[ '[pL_"J*#oW%W*kqMa*p)^YW*z"U#M**Woh*UkUxWC<(qmI'. ._qn;[mmv{+!^   ...''"[jcv{\`.   ...'^:Jhhq_^ '^.1Om_^''.               '>wbt,k#t       
- ^nL{]&O<                   .':|*ku]!ifk#X' .... .. '\`.      .\`  '' ..^" :\`.\`_W|"'..(qp_\`QCjbMo0ComrCQ,.tdd{'-0b)+wx-k]Qn|b,IXp]' ..\`jhx   ..'^. .\`'...''     .  ..      ,thW(I""IOaY+^.'. .               '>wb/,k#t       
- ^nL{]&O<                      \`l]xUQQu}l'.                                 ^_#rl. '.>va|}vdd&k|>zz|Jq-'-Q0^\`\`j0+\`zr(*vCQv[:Ydv\`'   "0q(                                 .">)XZqw0r];.                    '>wbt,k#t       
- ^nL{]&O<                    ...  .'\`^.       ..                            '!kQ? '\`^\`lf&{''\`.Qr_wXChat^+QZ^ \`f0?'rkoLl'?zCkb\\. . \`>xMf;.                                ...  \`'.\`,'    .                  '>wbt,k#t       
- ^nL{]&O<                      .      ..                                    ^nduI..',>/h#J-.'i(xrmZC0*abpwOJunvUUx_',vXf{/b0{\`   lxW|;.                                '..       .   ..                  '>wbt,k#t       
- ^nL{]&O<                       .     ..                                     .vpv '.1wd}~tZO, ''.;"\`^,,,^";'''\`^"\`."}w?. :bb\`\`  \`jdv,'..                     .....    ..  ...''...       .               '>wb/,k#t       
- ^nL{]&O<                                 ..                        .       ...lzw?".|d0]//na_^...  .'.\`'...'  ....'^!ZZwmYoX+\`"\`+CZ!\`..                    ..........'..   ....                        '>wb/,k#t       
- ^nL{]8O~                                                                      ''\\wY, ")*WZun0c<^\' . ...      ...   .!vQ]l|#k}^  '|wQ\`  ..            ........''''''''''..........                     .  .imd/,b#t ...  .
- ^nL{]8O<                                                                       \`[LhI'.!uM(>?(p-             '  ..  .icbCYmM["'  ' uqv   ...\`          .........'''''''''''................................  'imd/,b#t ... ..
- ^nL{]8O<                                                                 ..          ;f#{,'\`lphmCJpY-.`          ..  .'\`!tw}+~fWJ<..^\`L0{\`....\`          ..........''''''''''''........''''''''''''''''''''... 'iwd/,b#t ......
- ^nL{]8O<                                                                   .   .'."\`^{*vl ."[dL_\`>Zv;^'.      .       . +zm<;>rM_\`\`^^\br',^\`.           ........'''''''''''''..........''''''''''''''''''''....'iwd/,k#t ......
- ^nL{]8O<                                                                 .     '^I]vX]~qd-^^ 'vOL0Cv0q/,'...         .. .'<xpz0wpd;\`\`<JktI_dmu[I ''..         ........'''''''''''''''..........''''''''''''''''''''....'iwdt,b#f.......
- ^nC{]8m_'                                                                ... \`,!(JkoQ1;^-*O].. z*W*Jmk**v-,..       .  .,cww0l]Q%#?^-Lo!'''\`)mohO~I,\`....''.....'''''''''''''''....'''..'''''''''''''''''''''''..`+qdt,b#f.......
-.  ^nL1>L&pji'..'\`.                    ...  ..  ...  ..    ..   ''''l1nLbZc\\-:'.. '[mQ[. tp&@@#Cza0qY-.'  .' -|tn0aLuppjC%ai;udt^ .    ;-\\QbwYj]:'\`\`\`\`'.'\`^\`''.'\`\`\`'\`'.'...''\`''\`\`...........\`\`'''''''^'.Ijk*X+~h*t '''..'
-.. ^cwdzI}0Wk1\`'. .     ..               .....  ',"^'.    .'^. .'.'>fm#aC{\`...  ' .'.._Cp{\`ljwdM*hak:OkZ*Y<_rzabqwL"JkOCW@&LI,j0v"..... ..     irb&MZ(\`''''...'`^\`\`' .:\`.''.\`\`\`\`''\`'..........'''.'^^\`\`\` ,(mB8]"\@BU-^ ..'''
-... .:{Lam1_fw#Z1: ..'.  .               ..   ':[uQpw0Yxt)[~i<-1rJppQv/~\^.'.....'.....'.+Uo[,.^-Q#8Wa)Q/~Jm0m0f&[Itq,cba#Ukpf\`\\pcl.I"'...'...`..'.^_\zmd0c/-l"'\`''''''^..^"'..`^'.\`''''........'\`'\`\`\`'\`^\`\^)Oow1l/w#O[l^..\`\`\`\`\`
-    .''\^}h&0]lnk&Q- ..                  .. 'l(p#0-^'I[vOqkoW%%hY],\`^\`.    ..'. ..  ;f#O[_kO< .^?dB&oQ#x?MnCOY|&r{ca>X#%bl"\`,{MX~;(MptI   .\`^^,,\` ^^'.\`\`~rwWMb0Yc/cCma&&kp#L?;^  \`\`\`"'...........''\`^'.+qM#j,-d#m|'\`'...'''''
- ...... \`rdoC+-zkhc<,'...                .\`_Qdx]~?{)}+:..'^^\`.  ..  .'''..  ....:}XwOr<\`"]bL|i'"1Jh8hpb*&mpobc8OwaZ#%bCX,.;\\dJi  '+fQpJ/<".'^'.''.'^^'\`'.'">[\\xvcCqwr(fnXmkmXt1>"'............''''''~udhv~]UWpx>.'\`\`\`'''''''
-           lxkkz~?U8hri'"  \`^ .          '<c%mLQX}ll+jw[I\`   ..         '\`. ''>Y*mj<".   ':cwZz^ :_{;"|OQ&%B%#@%WJ;mp|''.1Y0Y:...'.."<|h#C]..'''..'''............f/I ." \`.\`:~(cw#rl\`:''\`\`'\`'''.\`..'"nbaYI_O*dcI^`''.....'.'''
-          . .<Ybwn]{mWpt,...''.         \`.;j&rI.... .'"Xj<.  ..    ..   :" .I?zdO1>,'   ...   ~u0bu?l,^'.\`lXUczOr1>,\`\`',<)wqX[. ... ....'.?cmw|<,'....'\`.......... vrI.'..'^'^\`.:Ybf\` .''..^^\`'\`''l/dML}i/hdX['''.''..........
-          . ..'!YhbY!/qWd1:''  ..  ..   ^\`.+d0+'.   ...''rx+^.    ...  . '!twdx!".  ..''.. ...'"ivqbZ(l'.^. .''...'I{LhhQ_I^..  .   . ..'.\`;+OkU-...''........... (x} \`^\`'..^\`.IwZ)\` .....'\`\`''.\\qoJ~>rhW0?"'\`\`''............
-           .' \`"|moO}-xp8C}: .'.       ....:(hU_.. .'. 'Ifn            l\\Lwci..'....       '  .   :}UOk*oa#oahbo**odpc]:\`  .. .   ... ..'''''.'[JpC?".. .........',']JZ?l,^ \`.:}Jo|,.\`'.'\`'..'"_m*w\\:rp#w1^''''\`\`''...........
-          .   . .',]b#Q1!uhoU_^.. ..    ....'+Qwj,      {x)\`.      ..,ubZ/l....'......    ' .. ...  ':!>>iii!lii!!l\` ..    ....  .'.. ..'''..' :[YaC]^\`...........-uX/jxcXvL0qqz+"'''....'\`'+cdh/<}ZWw/I''''''..\`\`'..........
-               ..     jdaYi?JWMx~"...    ....'..\\kd<\`    xt;.....   ',[Ootl'   ...    ....    .''.    .'   ' ''..  \`^ .'.    .'.   .'.. .......  ':<UpXl'...'...`!Cc_ .. iuMU/_:^...' ....';zdbO,<UWhrI...\`'..'...\`\`'.........
-                      'inMaU1[C8kt:'.'.  ...   .\`-wb?..""v) .  .. 'inwJ~,'....                             ..................':[Jo\\I'.'.''>cxi'.''_Cd|\`...'`''.'.'.ljdoY_iXkwx~\`.  .....................
-                       "Chkc"~CMb{l'.'...      ~wO<'\^:Yj<.   ...!Zpt'..   .                                ..........''......lvWv>'\`\`]XqpbX?"^'fmX. .'\`\`^''''.^(p8m+If&&c-,. ''......................
-                    ..   \`}Chwj~|w&O1:  .      .]aYi!/J);.. ....:Cm(.  ..  ..                             ............'........^(pXilU\\i\`'.![/uxzqd(^\`\`\`''''\`{0hO]!jd#L-;`....''\`....................
-                    ..''   .?hWp1;toMO).    .  '?pYOL|.   '\` .   "[Mu>\`      ..                            ........................^jOmX(i\` '"\`.'"''|wJ"''.'^\`._b&#/"[poqj.........''....................
-                    ....'''. \`)qkU}?ckoXl\`.    '<X8k|'' ''...  :)Wxi'..                                   ................''...... td#L,.'.. '^'  .fbc"'''''-Xhaf>[CWdri.\`'.   '..'.....................
-                               \`j*#0~~YBoc~   ...lh%x   \`'    ,+t&}.                                       ...................      'x%*:''..`.'^' [0Q^. .'"xaan"lO%h/I'.' \`.    .........................
-                                .iYkkc?-0hmt,....\`1OQj1}][[[})uZd\\; ..                                    ...................     .'<rp&Jt)]-_~<_}OC['\`'ifd#U?>n*dx~"'....   ...........................
-                                  .!JhpuI|O*k\\:.'. i)nXmppqwwc1>". ..                                     ....          .....    .'.."!l(Ca&oahh*of<,. \`/q#ZiijbWc-:''  .'. .............................
-                                  ..'[Lhw)-tq&L}:.\`..'. '. . ''.                                          ....          .....     ....'.\`\`..\`. '\`'..,[OaO|I\\p#m)"'.. .. .'..........                    
-                               .  .'..',-b*Z|;na#C?\` ... \`' ..                                             ...          .....        .'''..'. \`''^\`.?Lo*\\!]w8Z(;"'..'\`..'' ..........                    `;
+        body {
+            background-color: var(--term-bg);
+            color: var(--term-green);
+            font-family: 'Fira Code', monospace;
+            overflow: hidden;
+            touch-action: manipulation;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-  useEffect(() => {
-    // Simulate loading process
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 4500); // Slightly longer to appreciate the art
-    return () => clearTimeout(timer);
-  }, []);
+        /* CRT Screen Effect */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 999;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-black flex items-center justify-center overflow-hidden">
-        <div className="w-full h-full flex flex-col items-center justify-center p-4">
-          <div className="relative group">
-            {/* Ambient pulse behind the art */}
-            <div className="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full animate-pulse"></div>
+        .terminal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: var(--term-green);
+            box-shadow: var(--term-glow);
+        }
+
+        .app-window {
+            transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.2s ease;
+            transform: scale(0.95) translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            background: rgba(5, 5, 5, 0.98);
+        }
+
+        .app-window.active {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .blink { animation: blink 1.2s step-end infinite; }
+        @keyframes blink { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0; } 
+        }
+
+        .cmd-line {
+            display: flex;
+            align-items: center;
+            background: transparent;
+            padding-bottom: 20px;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--term-green);
+            flex-grow: 1;
+            font-family: inherit;
+            font-size: 16px; /* Prevents iOS auto-zoom */
+            caret-color: transparent;
+        }
+
+        .stock-card {
+            border: 1px solid #4af62633;
+            background: rgba(26, 26, 26, 0.5);
+            transition: all 0.2s;
+        }
+        .stock-card:active {
+            background: #4af62611;
+        }
+
+        .news-item {
+            border-bottom: 1px solid #4af62622;
+        }
+    </style>
+</head>
+<body class="crt p-4 sm:p-6">
+
+    <!-- System Header -->
+    <header class="flex justify-between items-center text-[10px] uppercase tracking-widest mb-4 opacity-80">
+        <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1"><i class="fa-solid fa-microchip"></i> TermOS v2.0.1</span>
+            <span id="status-tag" class="hidden sm:inline border border-green-500 px-1 text-[8px]">ENCRYPTED</span>
+        </div>
+        <div id="clock" class="font-bold">00:00:00</div>
+    </header>
+
+    <!-- Main Terminal View -->
+    <main id="terminal-container" class="flex-grow overflow-y-auto terminal-scroll mb-24">
+        <div id="output">
+            <div class="mb-6">
+                <pre class="text-[8px] leading-[1] sm:text-xs text-green-500 mb-4 opacity-90">
+████████╗███████╗██████╗ ███╗   ███╗ ██████╗ ███████╗
+╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██╔═══██╗██╔════╝
+   ██║   █████╗  ██████╔╝██╔████╔██║██║   ██║███████╗
+   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║   ██║╚════██║
+   ██║   ███████╗██║  ██║██║ ╚═╝ ██║╚██████╔╝███████║
+   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝ v2</pre>
+                <p class="text-xs text-white/60">KERNEL INITIALIZED. INPUT AUTHENTICATED.</p>
+                <p class="text-xs text-white/40">READY FOR COMMANDS OR HOTBAR INTERACTION.</p>
+            </div>
+        </div>
+        <div class="cmd-line" id="prompt-container">
+            <span class="mr-2 text-white/50">root@termos:~$</span>
+            <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false" enterkeyhint="go">
+            <span class="blink w-2 h-5 bg-green-500 inline-block ml-1"></span>
+        </div>
+    </main>
+
+    <!-- Mobile-Optimized Hotbar -->
+    <nav class="fixed bottom-0 left-0 right-0 p-4 bg-[#050505] border-t border-[#4af62633] flex justify-between items-center z-[100] pb-8 sm:pb-4">
+        <div class="flex gap-6 w-full justify-around">
+            <button onclick="toggleApp('news')" class="group flex flex-col items-center">
+                <i class="fa-solid fa-rss text-xl group-active:scale-90 transition-transform"></i>
+                <span class="text-[9px] mt-1 opacity-60">NEWS</span>
+            </button>
+            <button onclick="toggleApp('stocks')" class="group flex flex-col items-center">
+                <i class="fa-solid fa-chart-area text-xl group-active:scale-90 transition-transform"></i>
+                <span class="text-[9px] mt-1 opacity-60">STOCKS</span>
+            </button>
+            <button onclick="clearTerminal()" class="group flex flex-col items-center">
+                <i class="fa-solid fa-terminal text-xl group-active:scale-90 transition-transform"></i>
+                <span class="text-[9px] mt-1 opacity-60">CLEAR</span>
+            </button>
+            <button onclick="executeCommand('system')" class="group flex flex-col items-center">
+                <i class="fa-solid fa-server text-xl group-active:scale-90 transition-transform"></i>
+                <span class="text-[9px] mt-1 opacity-60">SYS</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- NEWS APPLICATION -->
+    <section id="app-news" class="app-window fixed inset-0 flex flex-col p-6 overflow-hidden">
+        <div class="flex justify-between items-center border-b border-green-500 pb-3 mb-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-newspaper animate-pulse"></i>
+                <h2 class="text-lg font-bold tracking-tighter">GLOBAL_INTEL_STREAM</h2>
+            </div>
+            <button onclick="toggleApp('news')" class="text-red-500 text-sm font-bold bg-red-500/10 px-2 py-1 rounded">CLOSE [X]</button>
+        </div>
+        <div id="news-content" class="overflow-y-auto flex-grow terminal-scroll space-y-4 pr-2">
+            <div class="flex flex-col items-center justify-center h-full opacity-50">
+                <i class="fa-solid fa-circle-notch animate-spin text-2xl mb-2"></i>
+                <p>Establishing uplink...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STOCKS APPLICATION -->
+    <section id="app-stocks" class="app-window fixed inset-0 flex flex-col p-6 overflow-hidden">
+        <div class="flex justify-between items-center border-b border-green-500 pb-3 mb-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-bolt"></i>
+                <h2 class="text-lg font-bold tracking-tighter">MARKET_PULSE_v4</h2>
+            </div>
+            <button onclick="toggleApp('stocks')" class="text-red-500 text-sm font-bold bg-red-500/10 px-2 py-1 rounded">CLOSE [X]</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 overflow-y-auto pr-2" id="stocks-content">
+            <!-- Dynamic Content -->
+        </div>
+        <div class="mt-4 pt-4 border-t border-green-900 flex justify-between items-center text-[10px] opacity-40">
+            <span>SOURCE: NASDAQ_RECAP_API</span>
+            <span id="stock-update-time">SYNCING...</span>
+        </div>
+    </section>
+
+    <script>
+        const input = document.getElementById('command-input');
+        const output = document.getElementById('output');
+        const terminalContainer = document.getElementById('terminal-container');
+        const STOCKS_TO_WATCH = ['AAPL', 'TSLA', 'NVDA', 'BTC-USD', 'AMZN', 'MSFT', 'GOOGL', 'SPY'];
+        
+        // --- Core Terminal Logic ---
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = input.value.trim().toLowerCase();
+                if (cmd) executeCommand(cmd);
+                input.value = '';
+                window.scrollTo(0, 0); // Fix iPad scroll jump
+            }
+        });
+
+        // Ensure input is focused on click
+        document.body.addEventListener('click', (e) => {
+            const isWindowActive = document.querySelector('.app-window.active');
+            if (!isWindowActive && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'I') {
+                input.focus();
+            }
+        });
+
+        function printToTerminal(text, type = 'default') {
+            const div = document.createElement('div');
+            div.className = `mb-3 leading-relaxed ${type === 'error' ? 'text-red-500' : 'text-green-400'}`;
+            div.innerHTML = `<span class="opacity-40 text-white mr-2">#</span> ${text}`;
+            output.appendChild(div);
+            terminalContainer.scrollTop = terminalContainer.scrollHeight;
+        }
+
+        function executeCommand(cmd) {
+            printToTerminal(`<span class="text-white font-bold">${cmd}</span>`);
+
+            switch(cmd) {
+                case 'help':
+                    printToTerminal('COMMANDS: <br>• NEWS - Global headlines<br>• STOCKS - Market data<br>• SYSTEM - HW Specs<br>• DATE - Sync clock<br>• CLEAR - Wipe screen');
+                    break;
+                case 'news':
+                    toggleApp('news');
+                    break;
+                case 'stocks':
+                    toggleApp('stocks');
+                    break;
+                case 'clear':
+                    clearTerminal();
+                    break;
+                case 'system':
+                    printToTerminal(`OS: TermOS v2.0.1<br>ARCH: iPadOS-Generic<br>ENGINE: HTML5-WebKit<br>NET: Connected (SSL)`);
+                    break;
+                case 'date':
+                    printToTerminal(new Date().toLocaleString());
+                    break;
+                default:
+                    printToTerminal(`ERROR: Unknown command '${cmd}'. Type 'HELP' for instructions.`, 'error');
+            }
+        }
+
+        function clearTerminal() {
+            output.innerHTML = '';
+            printToTerminal('Terminal session reset.');
+        }
+
+        // --- App UI Toggles ---
+        function toggleApp(appId) {
+            const app = document.getElementById(`app-${appId}`);
+            const isActive = app.classList.contains('active');
             
-            <pre className="relative text-[6px] md:text-[8px] lg:text-[10px] leading-[1] font-mono text-blue-400 opacity-90 select-none whitespace-pre overflow-hidden">
-              {asciiArt}
-            </pre>
-          </div>
-          
-          <div className="mt-8 flex flex-col items-center space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-              <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-              <div className="h-1 w-1 bg-blue-500 rounded-full animate-bounce"></div>
-            </div>
-            <p className="text-blue-500/60 font-mono text-xs uppercase tracking-[0.3em] animate-pulse">
-              Initializing Core Modules
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const NavItem = ({ id, icon: Icon, label }) => (
-    <button
-      onClick={() => setActiveTab(id)}
-      className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 w-full ${
-        activeTab === id 
-          ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
-          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
-      }`}
-    >
-      <Icon size={20} />
-      <span className="font-medium">{label}</span>
-    </button>
-  );
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row font-sans">
-      {/* Mobile Header */}
-      <header className="lg:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800">
-        <div className="flex items-center space-x-2">
-          <div className="bg-blue-600 p-2 rounded-lg">
-            <Shield className="text-white" size={20} />
-          </div>
-          <span className="font-bold text-xl tracking-tight">Sentinel<span className="text-blue-500">OS</span></span>
-        </div>
-        <button 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="p-2 text-slate-400"
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </header>
-
-      {/* Sidebar Navigation */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 border-r border-slate-800 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
-        ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="p-8 hidden lg:flex items-center space-x-3">
-          <div className="bg-blue-600 p-2.5 rounded-xl">
-            <Shield className="text-white" size={24} />
-          </div>
-          <span className="font-bold text-2xl tracking-tight">Sentinel<span className="text-blue-500">OS</span></span>
-        </div>
-
-        <nav className="px-4 py-4 space-y-2">
-          <NavItem id="overview" icon={Activity} label="System Overview" />
-          <NavItem id="network" icon={Globe} label="Network Traffic" />
-          <NavItem id="security" icon={Lock} label="Threat Vault" />
-          <NavItem id="terminal" icon={Terminal} label="System Shell" />
-          <NavItem id="nodes" icon={Layers} label="Node Clusters" />
-          <NavItem id="config" icon={Settings} label="Global Config" />
-        </nav>
-
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
-            <div className="flex items-center space-x-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                <Fingerprint className="text-blue-400" size={20} />
-              </div>
-              <div>
-                <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">User Level</p>
-                <p className="text-sm font-bold">Administrator</p>
-              </div>
-            </div>
-            <button className="w-full py-2 bg-slate-700 hover:bg-slate-600 transition-colors rounded-lg text-sm font-medium">
-              Access Logs
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">System Dashboard</h1>
-            <p className="text-slate-400">Monitoring 12 active clusters across global nodes.</p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-              <input 
-                type="text" 
-                placeholder="Search resources..."
-                className="bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 transition-all"
-              />
-            </div>
-            <button className="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/10">
-              <Zap size={20} />
-            </button>
-          </div>
-        </header>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {[
-            { label: 'CPU Usage', val: '42%', icon: Cpu, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-            { label: 'Network Load', val: '1.2 GB/s', icon: Globe, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-            { label: 'Cloud Storage', val: '86%', icon: Cloud, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-            { label: 'DB Health', val: 'Optimal', icon: Database, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-3xl hover:border-slate-700 transition-all group">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`${stat.bg} p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300`}>
-                  <stat.icon className={stat.color} size={24} />
-                </div>
-                <div className="flex items-center text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
-                  +12.5%
-                </div>
-              </div>
-              <p className="text-slate-400 text-sm font-medium mb-1">{stat.label}</p>
-              <h3 className="text-2xl font-bold text-white">{stat.val}</h3>
-            </div>
-          ))}
-        </div>
-
-        {/* Middle Section */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
-          <div className="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-8">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-bold">Network Activity</h3>
-              <div className="flex space-x-2">
-                {['1h', '24h', '7d', '30d'].map(t => (
-                  <button key={t} className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${t === '24h' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'}`}>
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
+            // Hide all
+            document.querySelectorAll('.app-window').forEach(el => el.classList.remove('active'));
             
-            {/* Visual placeholder for a chart */}
-            <div className="h-64 w-full flex items-end justify-between space-x-2">
-              {[40, 70, 45, 90, 65, 85, 30, 55, 75, 40, 80, 60, 45, 95, 70].map((h, i) => (
-                <div 
-                  key={i} 
-                  className="flex-1 bg-gradient-to-t from-blue-600/20 to-blue-500 rounded-t-md hover:to-blue-400 transition-all duration-300 cursor-pointer relative group"
-                  style={{ height: `${h}%` }}
-                >
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    {h} ms
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-between mt-4 text-xs text-slate-500 font-mono">
-              <span>00:00</span>
-              <span>06:00</span>
-              <span>12:00</span>
-              <span>18:00</span>
-              <span>23:59</span>
-            </div>
-          </div>
+            if (!isActive) {
+                app.classList.add('active');
+                if (appId === 'news') fetchNews();
+                if (appId === 'stocks') fetchStocks();
+            }
+        }
 
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-            <h3 className="text-xl font-bold mb-6">Threat Intelligence</h3>
-            <div className="space-y-6">
-              {[
-                { title: 'DDoS Attack Mitigated', time: '2m ago', level: 'High', color: 'bg-red-500' },
-                { title: 'Brute Force Attempt', time: '14m ago', level: 'Medium', color: 'bg-amber-500' },
-                { title: 'Firewall Rule Updated', time: '1h ago', level: 'Info', color: 'bg-blue-500' },
-                { title: 'New Node Authorized', time: '3h ago', level: 'Success', color: 'bg-emerald-500' },
-              ].map((log, i) => (
-                <div key={i} className="flex items-start space-x-4 group cursor-pointer">
-                  <div className={`mt-1.5 h-2 w-2 rounded-full ${log.color} ring-4 ring-slate-800 shadow-[0_0_10px_rgba(0,0,0,0.5)]`}></div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="text-sm font-bold group-hover:text-blue-400 transition-colors">{log.title}</h4>
-                      <span className="text-[10px] text-slate-500">{log.time}</span>
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed">Source IP: 192.168.1.{(i+1)*23} via proxy.encrypted.net</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button className="w-full mt-8 py-3 bg-slate-800 hover:bg-slate-700 transition-all rounded-xl text-sm font-bold flex items-center justify-center space-x-2">
-              <span>View Security Audit</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        // --- Live News Logic ---
+        async function fetchNews() {
+            const container = document.getElementById('news-content');
+            try {
+                // Fetching from a reliable open API proxy
+                const response = await fetch('https://ok.surf/api/v1/cors/news-feed');
+                const data = await response.json();
+                
+                container.innerHTML = '';
+                const newsItems = data.Business || data.World || data.Technology || [];
 
-        {/* Footer info */}
-        <footer className="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-slate-800 pt-8 pb-4">
-          <div className="flex items-center space-x-6 mb-4 md:mb-0">
-            <div className="flex items-center space-x-2 text-xs font-mono text-slate-500">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>All Systems Operational</span>
-            </div>
-            <div className="text-xs font-mono text-slate-500">
-              v4.2.0-STABLE
-            </div>
-          </div>
-          <div className="flex items-center space-x-6 text-slate-400 text-sm">
-            <a href="#" className="hover:text-white transition-colors flex items-center space-x-1">
-              <span>Docs</span>
-              <ExternalLink size={14} />
-            </a>
-            <a href="#" className="hover:text-white transition-colors">API</a>
-            <a href="#" className="hover:text-white transition-colors">Support</a>
-          </div>
-        </footer>
-      </main>
+                if (newsItems.length === 0) throw new Error();
 
-      {/* Mobile Menu Backdrop */}
-      {isMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setIsMenuOpen(false)}
-        ></div>
-      )}
-    </div>
-  );
-};
+                newsItems.slice(0, 20).forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = "news-item group py-3 px-2 active:bg-green-500/10 cursor-pointer";
+                    div.onclick = () => window.open(item.link, '_blank');
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start gap-4">
+                            <h3 class="text-sm font-medium leading-snug group-hover:underline">${item.title}</h3>
+                            <span class="text-[8px] bg-green-900/30 px-1 border border-green-500/20">${item.source}</span>
+                        </div>
+                        <p class="text-[10px] text-white/40 mt-1">${new Date().toLocaleTimeString()} • Click to read more</p>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (e) {
+                container.innerHTML = `
+                    <div class="text-red-500 p-4 border border-red-900 bg-red-900/10">
+                        [!] UPLINK ERROR: Could not sync with News Satellite.<br>
+                        Check connection or try terminal command: NEWS
+                    </div>`;
+            }
+        }
 
-export default App;
+        // --- Real-time Stocks Logic ---
+        async function fetchStocks() {
+            const container = document.getElementById('stocks-content');
+            const timeTag = document.getElementById('stock-update-time');
+            container.innerHTML = '';
+            timeTag.innerText = "UPDATING...";
+
+            // Create placeholders
+            STOCKS_TO_WATCH.forEach(symbol => {
+                const card = document.createElement('div');
+                card.id = `stock-${symbol}`;
+                card.className = "stock-card p-4 flex flex-col justify-between h-24";
+                card.innerHTML = `<span class="text-xs opacity-50 font-bold">${symbol}</span><div class="animate-pulse h-4 w-1/2 bg-green-900/30"></div>`;
+                container.appendChild(card);
+            });
+
+            // Fetch real data (using a public Yahoo Finance mirror or similar)
+            for (const symbol of STOCKS_TO_WATCH) {
+                try {
+                    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=1d`);
+                    const data = await res.json();
+                    const meta = data.chart.result[0].meta;
+                    const price = meta.regularMarketPrice;
+                    const prev = meta.previousClose;
+                    const change = price - prev;
+                    const pct = (change / prev) * 100;
+                    const isUp = change >= 0;
+
+                    const card = document.getElementById(`stock-${symbol}`);
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-white">${symbol}</span>
+                            <span class="text-[10px] ${isUp ? 'text-green-400' : 'text-red-500'} font-bold">
+                                ${isUp ? '▲' : '▼'} ${Math.abs(pct).toFixed(2)}%
+                            </span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="text-xl font-bold ${isUp ? 'text-green-400' : 'text-red-500'}">$${price.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+                            <div class="text-[8px] opacity-40 uppercase tracking-widest">${isUp ? '+' : ''}${change.toFixed(2)} USD</div>
+                        </div>
+                    `;
+                } catch (err) {
+                    const card = document.getElementById(`stock-${symbol}`);
+                    card.innerHTML = `<span class="text-xs font-bold">${symbol}</span><span class="text-[10px] opacity-30">OFFLINE</span>`;
+                }
+            }
+            timeTag.innerText = "LAST_SYNC: " + new Date().toLocaleTimeString();
+        }
+
+        // --- System Clock ---
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB');
+        }, 1000);
+
+        // Fix viewport height for mobile browsers (addressing the address bar issue)
+        const setVh = () => {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        window.addEventListener('resize', setVh);
+        setVh();
+
+    </script>
+</body>
+</html>
