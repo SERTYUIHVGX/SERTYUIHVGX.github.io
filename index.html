@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>yxon6ProxyPanel | CLI</title>
+    <title>Start Page</title>
     <style>
         :root {
             --bg-color: #000000;
@@ -51,12 +51,19 @@
             z-index: 2;
         }
 
+        .header-ascii {
+            font-size: 12px;
+            line-height: 1.2;
+            margin: 0 0 20px 0;
+            white-space: pre;
+            color: var(--text-color);
+        }
+
         .command-line {
             display: flex;
             align-items: center;
-            border-top: 1px solid var(--text-color); /* Straight divider */
             padding-top: 10px;
-            margin-top: 40px; 
+            margin-top: 40px; /* 40px gap under the last line */
             position: relative;
             z-index: 2;
         }
@@ -97,7 +104,6 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
-            cursor: move;
             user-select: none;
         }
 
@@ -108,7 +114,6 @@
             line-height: 1.1;
             white-space: pre;
             color: var(--text-color);
-            overflow: visible;
         }
 
         .t-btn { cursor: pointer; font-weight: bold; padding: 0 2px; }
@@ -126,14 +131,14 @@
 <canvas id="matrixCanvas"></canvas>
 
 <div id="settingsModal">
-    <div class="modal-header" id="modalHeader">
+    <div class="modal-header">
         <span>Yxon_OS://SYSTEM_CONFIG_V2</span>
         <span class="close-btn" onclick="closeSettings()">[CLOSE_X]</span>
     </div>
     <div class="ascii-settings">__________________________________________________________________________________________
 |                                                                |                        |
 |                             .,,.'.                             |  Theme:                |
-|                        _p)^'.`''{dl                            |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
+|                        _p)^'.`''{dl                             |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
 |                     0w^     ''''':.0ooj                        |  <span class="t-btn" onclick="setTheme('RED')">[RED]</span>                 |
 |                  .#;         ''''.X0r  ;k                      |  <span class="t-btn" onclick="setTheme('BLUE')">[BLUE]</span>                |
 |                 _)           .`'q-M.    #                      |  <span class="t-btn" onclick="setTheme('GREEN')">[GREEN]</span>               |
@@ -149,7 +154,7 @@
 |                 "&#MWWI. x^  p.  X*pfvY                        |                        |
 |                     YZZOf" m'O[J';X .888.                      |  BACKGROUND_EFFECT:    |
 |                      f^&`>i  .  . i{ XUw                       |  <span class="t-btn" onclick="toggleMatrix(false)">[DEFAULT]</span>             |
-|                      @b.Y.,"^: !  I jI k*                      |  <span class="t-btn" onclick="toggleMatrix(true)">[MATRIX]</span>              |
+|                      @b.Y.,"^: !  I jI k* |  <span class="t-btn" onclick="toggleMatrix(true)">[MATRIX]</span>              |
 |                      -"/i#8pt@M#0%mBcY1M .                     |                        |
 |                      Lq`f&L\^O;p,iJ0?l }~                      |                        |
 |                      p "W1^rQ8aQxY z}Z :Y                      |                        |
@@ -163,8 +168,21 @@
 </div>
 
 <div id="output">
-    <div class="system-msg">yxon6ProxyPanel v2.5.0 [Alignment Patch Applied]</div>
-    <div class="system-msg">Type "settings" or "speedtest".</div>
+<pre class="header-ascii">
+8888888b.                                     8888888b.                             888 
+888   Y88b                                    888   Y88b                            888 
+888    888                                    888    888                            888 
+888   d88P 888d888 .d88b.  888   888 888   888 888   d88P 8888b.  88888b.   .d88b.  888 
+8888888P"  888P"  d88""88b `Y8bd8P' 888   888 8888888P"     "88b 888 "88b d8P  Y8b 888 
+888        888    888   888   X88K    888   888 888        .d888888 888  888 88888888 888 
+888        888    Y88..88P .d8""8b. Y88b 888 888        888  888 888  888 Y8b.     888 
+888        888     "Y88P"  888  888  "Y88888 888        "Y888888 888  888  "Y8888  888 
+                                         888                                            
+                                    Y8b d88P                                            
+                                     "Y88P"                                             
+</pre>
+    <div class="system-msg">yxon6ProxyPanel v2.7.0</div>
+    <div class="system-msg">type "help" for info</div>
     <br>
 </div>
 
@@ -190,6 +208,7 @@
     const fontSize = 16;
     let fps = 0, frameCount = 0, lastTime = performance.now();
 
+    // System Metrics logic
     function updateFPS() {
         frameCount++;
         let now = performance.now();
@@ -244,7 +263,10 @@
             
             if (cmd === 'SETTINGS') modal.style.display = 'block';
             else if (cmd === 'SPEEDTEST') runSpeedTest();
-            else if (cmd === 'CLEAR') output.innerHTML = '';
+            else if (cmd === 'HELP') {
+                printLine('Available commands: HELP, SETTINGS, SPEEDTEST, CLEAR');
+            }
+            else if (cmd === 'CLEAR') output.innerHTML = '<br>';
             else if (val !== "") printLine(`<span class="error-msg">Unknown command: ${val}</span>`);
             
             input.value = '';
@@ -259,6 +281,7 @@
         const s = (Math.random() * 300 + 100).toFixed(1);
         printLine(`<span class="success-msg">------------------------------------</span>`);
         printLine(` -> PING: ${p}ms | SPEED: ${s}Mbps | FPS: ${fps}`);
+        printLine(` -> PORTAL: <a href="https://speedtest.cl" target="_blank" class="link-item">speedtest.cl</a>`);
         printLine(`<span class="success-msg">------------------------------------</span>`);
         window.scrollTo(0, document.body.scrollHeight);
     }
