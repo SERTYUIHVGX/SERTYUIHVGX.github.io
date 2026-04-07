@@ -3,230 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 11 Cloud OS - Full Edition</title>
+    <title>Windows 11 Live OS - Precision Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
             --win-glass: rgba(255, 255, 255, 0.1); 
             --win-border: rgba(255, 255, 255, 0.2);
-            --taskbar-bg: rgba(28, 28, 28, 0.75);
+            --taskbar-bg: rgba(28, 28, 28, 0.85);
             --accent: #0078d4;
-            --font-color: white;
-            --panel-bg: rgba(20, 20, 20, 0.6);
+            --panel-bg: rgba(20, 20, 20, 0.7);
         }
         
-        .light-mode {
-            --win-glass: rgba(255, 255, 255, 0.6);
-            --win-border: rgba(0, 0, 0, 0.1);
-            --panel-bg: rgba(240, 240, 240, 0.9);
-            --font-color: #333;
-        }
-
-        * { box-sizing: border-box; font-family: 'Segoe UI Variable', sans-serif; transition: background 0.3s, color 0.3s; }
-        
+        * { box-sizing: border-box; font-family: 'Segoe UI Variable', sans-serif; }
         body { 
             margin: 0; height: 100vh; 
-            background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070') center/cover; 
-            overflow: hidden; color: var(--font-color); 
+            background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070') center/cover no-repeat; 
+            overflow: hidden; color: white; transition: background 0.5s ease;
         }
 
-        /* Desktop */
-        #desktop { height: calc(100% - 60px); padding: 30px; display: grid; grid-template-columns: repeat(auto-fill, 100px); gap: 15px; }
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 10px; border-radius: 6px; text-align: center; }
-        .icon:hover { background: rgba(255,255,255,0.1); }
-        .icon img { width: 44px; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-        .icon span { font-size: 11px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); color: white; }
+        /* --- PRECISION DESKTOP ICONS --- */
+        #desktop { 
+            height: calc(100% - 60px); 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            flex-wrap: wrap; 
+            align-content: flex-start; 
+            gap: 10px; 
+        }
 
-        /* Window Style */
+        .icon { 
+            display: inline-flex; /* Shrink-wrap to content */
+            flex-direction: column; 
+            align-items: center; 
+            cursor: pointer; 
+            padding: 8px; /* Tight padding around icon/text */
+            border-radius: 4px; 
+            text-align: center; 
+            width: 85px; /* Fixed width for alignment, height is dynamic */
+            transition: background 0.1s;
+            border: 1px solid transparent;
+        }
+
+        .icon:hover { 
+            background: rgba(255, 255, 255, 0.15); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .icon img { 
+            width: 42px; 
+            height: 42px; 
+            margin-bottom: 4px; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); 
+            pointer-events: none; /* Mouse clicks pass to container */
+        }
+
+        .icon span { 
+            font-size: 12px; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8); 
+            word-wrap: break-word;
+            max-width: 100%;
+            pointer-events: none;
+        }
+
+        /* --- WINDOWS SYSTEM --- */
         .window { 
             position: absolute; background: var(--win-glass); backdrop-filter: blur(30px);
             border-radius: 12px; border: 1px solid var(--win-border); display: none; 
-            flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 10;
+            flex-direction: column; box-shadow: 0 25px 60px rgba(0,0,0,0.6); z-index: 10;
         }
-        .win-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: move; font-size: 13px; font-weight: 600; }
-        .win-body { flex: 1; background: var(--panel-bg); overflow: hidden; display: flex; flex-direction: column; color: var(--font-color); }
+        .win-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: move; font-weight: 600; font-size: 13px; background: rgba(0,0,0,0.1); border-radius: 12px 12px 0 0; }
+        .win-body { flex: 1; background: var(--panel-bg); overflow: hidden; display: flex; flex-direction: column; border-radius: 0 0 12px 12px; }
 
-        /* SETTINGS APP */
-        .settings-content { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; }
-        .setting-item input[type="text"] { background: rgba(0,0,0,0.2); border: 1px solid var(--win-border); color: var(--font-color); padding: 5px; border-radius: 4px; }
-        .btn { background: var(--accent); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        /* LIVE NEWS */
+        #news-grid { padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .news-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 13px; }
+        .news-item:hover { background: rgba(255,255,255,0.12); color: var(--accent); }
 
-        /* LIVE NEWS & CHAT (Consistent Styles) */
-        #news-grid { padding: 15px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .news-card { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--win-border); overflow: hidden; cursor: pointer; }
-        #chat-flow { flex: 1; overflow-y: auto; padding: 15px; font-size: 13px; }
-        #chat-in { background: rgba(255,255,255,0.1); border: 1px solid var(--win-border); padding: 12px; margin: 15px; color: var(--font-color); border-radius: 8px; outline: none; }
+        /* GLOBAL CHAT */
+        #chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .chat-bubble { padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.08); font-size: 13px; border: 1px solid rgba(255,255,255,0.05); }
+        .chat-bubble b { color: var(--accent); display: block; font-size: 10px; text-transform: uppercase; margin-bottom: 2px; }
+        #chat-input { background: rgba(0,0,0,0.3); border: 1px solid var(--win-border); padding: 12px; margin: 15px; color: white; border-radius: 8px; outline: none; }
 
-        /* Taskbar */
+        /* TASKBAR */
         #taskbar { 
             position: fixed; bottom: 0; width: 100%; height: 48px; 
-            background: var(--taskbar-bg); backdrop-filter: blur(20px);
-            display: flex; justify-content: center; align-items: center; gap: 12px; z-index: 1000;
+            background: var(--taskbar-bg); backdrop-filter: blur(25px);
+            display: flex; justify-content: center; align-items: center; gap: 10px; z-index: 1000;
         }
-        .task-icon { width: 32px; cursor: pointer; transition: 0.2s; }
-        .task-icon:hover { transform: translateY(-4px); }
+        .task-icon { width: 32px; height: 32px; cursor: pointer; transition: transform 0.2s; }
+        .task-icon:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
 
 <div id="desktop">
-    <div class="icon" onclick="openWin('win-chat')"><img src="https://img.icons8.com/color/96/speech-bubble.png"><span>Chat</span></div>
     <div class="icon" onclick="openWin('win-news')"><img src="https://img.icons8.com/color/96/news.png"><span>News</span></div>
-    <div class="icon" onclick="openWin('win-settings')"><img src="https://img.icons8.com/color/96/settings.png"><span>Settings</span></div>
-    <div class="icon" onclick="openWin('win-term')"><img src="https://img.icons8.com/color/96/console.png"><span>Terminal</span></div>
     <div class="icon" onclick="openWin('win-stocks')"><img src="https://img.icons8.com/color/96/stocks.png"><span>Market</span></div>
+    <div class="icon" onclick="openWin('win-chat')"><img src="https://img.icons8.com/color/96/speech-bubble.png"><span>Chat</span></div>
+    <div class="icon" onclick="openWin('win-settings')"><img src="https://img.icons8.com/color/96/settings.png"><span>Settings</span></div>
 </div>
 
-<div id="win-settings" class="window" style="width: 400px; height: 450px; top: 100px; left: 100px;">
-    <div class="win-header"><span>Settings</span><span onclick="closeWin('win-settings')" style="cursor:pointer">✕</span></div>
-    <div class="win-body">
-        <div class="settings-content">
-            <div class="setting-item">
-                <span>Display Name</span>
-                <input type="text" id="set-name" placeholder="Username...">
-            </div>
-            <div class="setting-item">
-                <span>Wallpaper URL</span>
-                <input type="text" id="set-bg" placeholder="Image link...">
-            </div>
-            <div class="setting-item">
-                <span>Appearance</span>
-                <button class="btn" onclick="toggleDarkMode()">Toggle Theme</button>
-            </div>
-            <button class="btn" onclick="saveSettings()" style="width: 100%; margin-top: 10px;">Apply Changes</button>
+<div id="win-news" class="window" style="width: 420px; height: 500px; top: 40px; left: 150px;">
+    <div class="win-header"><span>Live Headlines</span><span onclick="closeWin('win-news')" style="cursor:pointer">✕</span></div>
+    <div class="win-body"><div id="news-grid">Loading live feeds...</div></div>
+</div>
+
+<div id="win-stocks" class="window" style="width: 380px; height: 480px; top: 80px; right: 80px;">
+    <div class="win-header"><span>Live Market</span><span onclick="closeWin('win-stocks')" style="cursor:pointer">✕</span></div>
+    <div class="win-body" style="overflow-y:auto; padding:15px;">
+        <div style="margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between;"><b>Bitcoin</b><span id="btc-price">$--</span></div>
+            <canvas id="btcChart" height="100"></canvas>
+        </div>
+        <div>
+            <div style="display:flex; justify-content:space-between;"><b>Ethereum</b><span id="eth-price">$--</span></div>
+            <canvas id="ethChart" height="100"></canvas>
         </div>
     </div>
 </div>
 
-<div id="win-news" class="window" style="width: 500px; height: 550px; top: 50px; left: 450px;">
-    <div class="win-header"><span>Microsoft News</span><span onclick="closeWin('win-news')" style="cursor:pointer">✕</span></div>
-    <div class="win-body"><div id="news-grid">Loading live headlines...</div></div>
-</div>
-
-<div id="win-chat" class="window" style="width: 380px; height: 480px; top: 200px; left: 60px;">
+<div id="win-chat" class="window" style="width: 350px; height: 450px; bottom: 70px; left: 30px;">
     <div class="win-header"><span>Global Chat</span><span onclick="closeWin('win-chat')" style="cursor:pointer">✕</span></div>
     <div class="win-body">
-        <div id="chat-flow"></div>
-        <input type="text" id="chat-in" placeholder="Say something...">
+        <div id="chat-messages"></div>
+        <input type="text" id="chat-input" placeholder="Type a message...">
     </div>
 </div>
 
-<div id="win-stocks" class="window" style="width: 320px; height: 380px; top: 40px; right: 40px;">
-    <div class="win-header"><span>Market Visualizer</span><span onclick="closeWin('win-stocks')" style="cursor:pointer">✕</span></div>
-    <div class="win-body" style="padding:15px;">
-        BTC: <span id="p-btc">$...</span><canvas id="c-btc" height="80"></canvas>
+<div id="win-settings" class="window" style="width: 320px; height: 280px; top: 200px; left: 40%;">
+    <div class="win-header"><span>Settings</span><span onclick="closeWin('win-settings')" style="cursor:pointer">✕</span></div>
+    <div class="win-body" style="padding:20px; gap:10px; display:flex; flex-direction:column;">
+        <label style="font-size:12px; opacity:0.8;">Background Image:</label>
+        <input type="file" id="bg-input" accept="image/*" style="display:none">
+        <button onclick="document.getElementById('bg-input').click()" style="background:var(--accent); border:none; color:white; padding:10px; border-radius:6px; cursor:pointer;">Upload from Library</button>
+        <label style="font-size:12px; opacity:0.8; margin-top:10px;">Display Name:</label>
+        <input type="text" id="user-name-input" style="background:rgba(0,0,0,0.5); border:1px solid #444; color:white; padding:8px; border-radius:4px;">
+        <button onclick="saveProfile()" style="background:#444; border:none; color:white; padding:8px; border-radius:6px; cursor:pointer;">Save Profile</button>
     </div>
 </div>
 
 <div id="taskbar">
-    <img src="https://img.icons8.com/color/48/speech-bubble.png" class="task-icon" onclick="openWin('win-chat')">
     <img src="https://img.icons8.com/color/48/news.png" class="task-icon" onclick="openWin('win-news')">
+    <img src="https://img.icons8.com/color/48/stocks.png" class="task-icon" onclick="openWin('win-stocks')">
+    <img src="https://img.icons8.com/color/48/speech-bubble.png" class="task-icon" onclick="openWin('win-chat')">
     <img src="https://img.icons8.com/color/48/settings.png" class="task-icon" onclick="openWin('win-settings')">
-    <img src="https://img.icons8.com/color/48/console.png" class="task-icon" onclick="openWin('win-term')">
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
 <script>
-    // --- FIREBASE CONFIG ---
+    // --- FIREBASE (Replace with your actual keys to enable real-time sync) ---
     const firebaseConfig = { apiKey: "AI...", databaseURL: "https://..." };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- SYSTEM STATE ---
-    let myName = localStorage.getItem('os_name') || "User" + Math.floor(Math.random()*999);
-    document.getElementById('set-name').value = myName;
+    let myName = localStorage.getItem('os_user') || "User_" + Math.floor(Math.random()*999);
+    document.getElementById('user-name-input').value = myName;
 
-    // --- SETTINGS LOGIC ---
-    function saveSettings() {
-        const newName = document.getElementById('set-name').value;
-        const newBg = document.getElementById('set-bg').value;
-        
-        if (newName) {
-            myName = newName;
-            localStorage.setItem('os_name', newName);
-        }
-        if (newBg) {
-            document.body.style.background = `url('${newBg}') center/cover`;
-        }
-        alert("Settings saved!");
-    }
-
-    function toggleDarkMode() {
-        document.body.classList.toggle('light-mode');
-    }
-
-    // --- WINDOW CONTROLS ---
+    // --- WINDOW MGMT ---
     function openWin(id) { 
-        const w = document.getElementById(id);
-        w.style.display = 'flex';
-        document.querySelectorAll('.window').forEach(win => win.style.zIndex = 10);
-        w.style.zIndex = 100;
-        if(id === 'win-news') fetchLiveNews();
+        document.getElementById(id).style.display = 'flex'; 
+        if(id === 'win-news') loadNews();
     }
     function closeWin(id) { document.getElementById(id).style.display = 'none'; }
 
-    let activeWin = null, oX, oY;
-    document.querySelectorAll('.win-header').forEach(h => {
-        h.onmousedown = (e) => {
-            activeWin = h.parentElement;
-            oX = e.clientX - activeWin.offsetLeft; oY = e.clientY - activeWin.offsetTop;
-            document.querySelectorAll('.window').forEach(win => win.style.zIndex = 10);
-            activeWin.style.zIndex = 100;
-        };
-    });
-    window.onmousemove = (e) => { if(activeWin) { activeWin.style.left = (e.clientX-oX)+'px'; activeWin.style.top = (e.clientY-oY)+'px'; } };
-    window.onmouseup = () => activeWin = null;
+    // --- PHOTO LIBRARY BACKGROUND ---
+    document.getElementById('bg-input').onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                document.body.style.backgroundImage = `url('${ev.target.result}')`;
+                localStorage.setItem('os_custom_bg', ev.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    if(localStorage.getItem('os_custom_bg')) document.body.style.backgroundImage = `url('${localStorage.getItem('os_custom_bg')}')`;
 
     // --- LIVE NEWS ---
-    async function fetchLiveNews() {
+    async function loadNews() {
         const grid = document.getElementById('news-grid');
         try {
-            const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=top+stories&hl=en-US&gl=US&ceid=US:en`);
+            const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en');
             const data = await res.json();
             grid.innerHTML = '';
-            data.items.slice(0, 8).forEach(item => {
-                grid.innerHTML += `
-                    <div class="news-card" onclick="window.open('${item.link}', '_blank')">
-                        <div style="padding:10px;">
-                            <h4 style="margin:0; font-size:12px;">${item.title.substring(0,60)}...</h4>
-                            <p style="font-size:10px; opacity:0.6; margin-top:5px;">${item.pubDate.split(' ')[0]}</p>
-                        </div>
-                    </div>`;
+            data.items.slice(0, 10).forEach(item => {
+                grid.innerHTML += `<div class="news-item" onclick="window.open('${item.link}')">${item.title}</div>`;
             });
-        } catch (e) { grid.innerHTML = "Offline."; }
+        } catch(e) { grid.innerHTML = "News currently unavailable."; }
     }
 
-    // --- CHAT ---
-    db.ref('global_chat').limitToLast(20).on('value', snap => {
-        const flow = document.getElementById('chat-flow'); flow.innerHTML = '';
+    // --- GLOBAL CHAT ---
+    db.ref('global_v3').limitToLast(40).on('value', snap => {
+        const box = document.getElementById('chat-messages');
+        box.innerHTML = '';
         snap.forEach(m => {
-            flow.innerHTML += `<div style="margin-bottom:8px; padding:8px; background:rgba(255,255,255,0.05); border-radius:5px;"><b style="color:var(--accent); font-size:11px;">${m.val().u}</b><br>${m.val().t}</div>`;
+            box.innerHTML += `<div class="chat-bubble"><b>${m.val().u}</b>${m.val().t}</div>`;
         });
-        flow.scrollTop = flow.scrollHeight;
+        box.scrollTop = box.scrollHeight;
     });
 
-    document.getElementById('chat-in').onkeypress = (e) => {
+    document.getElementById('chat-input').onkeypress = (e) => {
         if(e.key === 'Enter' && e.target.value) {
-            db.ref('global_chat').push({ u: myName, t: e.target.value });
+            db.ref('global_v3').push({ u: myName, t: e.target.value });
             e.target.value = '';
         }
     };
+    function saveProfile() {
+        myName = document.getElementById('user-name-input').value;
+        localStorage.setItem('os_user', myName);
+        alert("Profile Updated");
+    }
 
-    // --- MARKET ---
-    const btcC = new Chart(document.getElementById('c-btc'), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: 'gold', tension: 0.4, pointRadius: 0 }] }, options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } } });
-    async function updateMarket() {
+    // --- LIVE MARKET ---
+    const charts = {};
+    const setupChart = (id, color) => new Chart(document.getElementById(id), {
+        type: 'line',
+        data: { labels: [], datasets: [{ data: [], borderColor: color, tension: 0.4, pointRadius: 0 }] },
+        options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+    });
+    charts.btc = setupChart('btcChart', '#f39c12');
+    charts.eth = setupChart('ethChart', '#3498db');
+
+    async function syncMarket() {
         try {
-            const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+            const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd');
             const d = await r.json();
-            document.getElementById('p-btc').innerText = `$${d.bitcoin.usd.toLocaleString()}`;
-            if(btcC.data.labels.length > 10) { btcC.data.labels.shift(); btcC.data.datasets[0].data.shift(); }
-            btcC.data.labels.push(""); btcC.data.datasets[0].data.push(d.bitcoin.usd); btcC.update();
+            updateChart('btc', d.bitcoin.usd);
+            updateChart('eth', d.ethereum.usd);
         } catch(e){}
     }
-    setInterval(updateMarket, 10000); updateMarket();
+    function updateChart(key, price) {
+        document.getElementById(`${key}-price`).innerText = `$${price.toLocaleString()}`;
+        const c = charts[key];
+        if(c.data.labels.length > 15) { c.data.labels.shift(); c.data.datasets[0].data.shift(); }
+        c.data.labels.push(""); c.data.datasets[0].data.push(price); c.update();
+    }
+    setInterval(syncMarket, 10000); syncMarket();
+
+    // --- DRAG LOGIC ---
+    let dragObj = null, offX, offY;
+    document.querySelectorAll('.win-header').forEach(h => {
+        h.onmousedown = (e) => {
+            dragObj = h.parentElement;
+            offX = e.clientX - dragObj.offsetLeft; offY = e.clientY - dragObj.offsetTop;
+            document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
+            dragObj.style.zIndex = 100;
+        };
+    });
+    window.onmousemove = (e) => { if(dragObj) { dragObj.style.left = (e.clientX-offX)+'px'; dragObj.style.top = (e.clientY-offY)+'px'; } };
+    window.onmouseup = () => dragObj = null;
 </script>
 </body>
 </html>
