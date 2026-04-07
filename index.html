@@ -3,168 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pattern 222 - Blue Gem Directory</title>
+    <title>YXON6 TOOL // TERMINAL</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
         :root {
-            /* Case Hardened Palette */
-            --gunmetal-gray: #0f1115;
-            --steel-dark: #1a1d23;
-            --blue-gem-light: #48c6ef; /* Bright azure highlight */
-            --blue-gem-deep: #206abf;  /* Deep ocean blue */
-            --gold-accent: #c5a059;    /* Tiny hints of "gold" from the case hardened mix */
-            --text-color: #d1d5db;
+            --term-bg: #050505;
+            --term-blue: #00d4ff;
+            --term-dim: rgba(0, 212, 255, 0.05);
+            --term-border: #1a1a1a;
+            --glow: 0 0 15px rgba(0, 212, 255, 0.3);
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--gunmetal-gray);
-            color: var(--text-color);
+            background-color: var(--term-bg);
+            color: var(--term-blue);
+            font-family: 'JetBrains Mono', monospace;
             margin: 0;
-            padding: 40px 20px;
-            background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f1115 100%);
+            padding: 20px;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), var(--term-bg);
+            background-size: 100% 4px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        h1 {
+        /* CUSTOM ASCII HEADER */
+        .ascii-container {
+            width: 100%;
+            overflow-x: auto;
             text-align: center;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, var(--blue-gem-light) 0%, var(--blue-gem-deep) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            padding: 40px 0;
+        }
+
+        .ascii-art {
+            display: inline-block;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 10px;
+            line-height: 1.1;
+            text-shadow: var(--glow);
+            color: var(--term-blue);
+        }
+
+        .status-bar {
+            border: 1px solid var(--term-blue);
+            padding: 10px 20px;
             margin-bottom: 50px;
-            filter: drop-shadow(0 0 10px rgba(72, 198, 239, 0.3));
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: var(--term-dim);
         }
 
         .category-section {
-            margin-bottom: 60px;
+            margin-bottom: 50px;
         }
 
-        .category-title {
+        .category-header {
+            font-weight: bold;
             font-size: 1rem;
-            color: var(--gold-accent);
-            text-transform: uppercase;
-            letter-spacing: 4px;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .category-header::before {
+            content: ">> ";
+            color: #fff;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
         }
 
         .link-card {
-            background: var(--steel-dark);
-            border-radius: 4px; /* Sharper edges like a blade */
-            padding: 2px; /* For the gradient border effect */
+            border: 1px solid var(--term-border);
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
             position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            /* This creates the "Blue Gem" metallic finish */
-            background: linear-gradient(145deg, 
-                var(--blue-gem-deep) 0%, 
-                #1e3a8a 30%, 
-                var(--steel-dark) 70%
-            );
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .link-card:hover {
-            transform: scale(1.03);
-            background: linear-gradient(145deg, 
-                var(--blue-gem-light) 0%, 
-                var(--blue-gem-deep) 40%, 
-                var(--steel-dark) 100%
-            );
-        }
-
-        .card-content {
-            background: rgba(15, 17, 21, 0.85);
-            padding: 20px;
-            height: 100%;
-            border-radius: 3px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            backdrop-filter: blur(5px);
+            border-color: var(--term-blue);
+            box-shadow: var(--glow);
+            transform: translateX(5px);
+            background: var(--term-dim);
         }
 
         .link-url {
-            color: #fff;
+            color: var(--term-blue);
             text-decoration: none;
-            font-weight: 700;
+            font-size: 0.85rem;
             word-break: break-all;
-            font-size: 0.95rem;
-            transition: color 0.2s;
         }
 
         .link-card:hover .link-url {
-            color: var(--blue-gem-light);
+            color: #fff;
         }
 
-        /* Subtle "Pattern" Overlay */
-        .link-card::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/brushed-alum.png');
-            opacity: 0.1;
-            pointer-events: none;
+        .node-tag {
+            font-size: 0.6rem;
+            color: #444;
+            display: block;
+            margin-top: 8px;
         }
 
+        footer {
+            margin-top: 80px;
+            padding: 40px;
+            text-align: center;
+            font-size: 0.7rem;
+            opacity: 0.3;
+            border-top: 1px solid #111;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 650px) {
+            .ascii-art { font-size: 5px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Blue Gem // Pattern 222</h1>
+    <div class="ascii-container">
+        <pre class="ascii-art">
+                                    .d8888b.        .d88888b.   .d8888b.  
+                                   d88P  Y88b      d88P" "Y88b d88P  Y88b 
+                                   888             888     888 Y88b.      
+888  888 888  888  .d88b.  88888b.  888d888b.       888     888  "Y888b.   
+888  888 `Y8bd8P' d88""88b 888 "88b 888P "Y88b      888     888     "Y88b. 
+888  888   X88K   888  888 888  888 888    888      888     888       "888 
+Y88b 888 .d8""8b. Y88..88P 888  888 Y88b  d88P      Y88b. .d88P Y88b  d88P 
+ "Y88888 888  888  "Y88P"   888  888  "Y8888P"        "Y88888P"   "Y8888P"  
+     888                                                                  
+Y8b d88P                                                                  
+ "Y88P"                                                                   
+        </pre>
+    </div>
 
+    <div class="status-bar">
+        <span>System: Online</span>
+        <span>User: YXON6_ADMIN</span>
+        <span>Access: Level_0</span>
+    </div>
+
+    <!-- AWP -->
     <div class="category-section">
-        <div class="category-title">AWP Network</div>
+        <div class="category-header">AWP_MODULE</div>
         <div class="grid">
-            <div class="link-card">
-                <div class="card-content">
-                    <a href="https://lessons.axsetubal.pt/" class="link-url">lessons.axsetubal.pt</a>
-                </div>
-            </div>
-            <div class="link-card">
-                <div class="card-content">
-                    <a href="https://useawp.developer.li//" class="link-url">useawp.developer.li</a>
-                </div>
-            </div>
-            <div class="link-card">
-                <div class="card-content">
-                    <a href="https://api.incatel.cl/" class="link-url">api.incatel.cl</a>
-                </div>
-            </div>
+            <div class="link-card"><a href="https://lessons.axsetubal.pt/" class="link-url">lessons.axsetubal.pt</a><span class="node-tag">LOCAL_HOST</span></div>
+            <div class="link-card"><a href="https://useawp.developer.li//" class="link-url">useawp.developer.li</a><span class="node-tag">REMOTE_NODE</span></div>
+            <div class="link-card"><a href="https://api.incatel.cl/" class="link-url">api.incatel.cl</a><span class="node-tag">API_ENDPOINT</span></div>
         </div>
     </div>
 
+    <!-- TRUFFLED -->
     <div class="category-section">
-        <div class="category-title">Truffled</div>
+        <div class="category-header">TRUFFLED_NET</div>
         <div class="grid">
-            <div class="link-card">
-                <div class="card-content">
-                    <a href="https://edu.sciencecomputers.lat/" class="link-url">edu.sciencecomputers.lat</a>
-                </div>
-            </div>
-            <div class="link-card">
-                <div class="card-content">
-                    <a href="https://truffled.lol/" class="link-url">truffled.lol</a>
-                </div>
-            </div>
+            <div class="link-card"><a href="https://edu.sciencecomputers.lat/" class="link-url">edu.sciencecomputers.lat</a><span class="node-tag">EDU_NODE</span></div>
+            <div class="link-card"><a href="https://truffled.lol/" class="link-url">truffled.lol</a><span class="node-tag">HUB_NODE</span></div>
+            <div class="link-card"><a href="https://ee.rxtech.cl/" class="link-url">ee.rxtech.cl</a><span class="node-tag">SYSTEM_CORE</span></div>
         </div>
     </div>
 
+    <!-- SPLASH -->
+    <div class="category-section">
+        <div class="category-header">SPLASH_UI</div>
+        <div class="grid">
+            <div class="link-card"><a href="https://splashstudy.b-cdn.net/" class="link-url">splashstudy.b-cdn.net</a><span class="node-tag">CDN_DIST</span></div>
+            <div class="link-card"><a href="https://splsh.paladinmining.net/" class="link-url">splsh.paladinmining.net</a><span class="node-tag">SECURE_NODE</span></div>
+        </div>
+    </div>
+
+    <!-- BOREDOM -->
+    <div class="category-section">
+        <div class="category-header">BOREDOM_LABS</div>
+        <div class="grid">
+            <div class="link-card"><a href="https://pn.boredom.apertura.com/" class="link-url">pn.boredom.apertura.com</a><span class="node-tag">DEV_SERVER</span></div>
+            <div class="link-card"><a href="https://wispserver.dev/" class="link-url">wispserver.dev</a><span class="node-tag">REMOTE_CLI</span></div>
+        </div>
+    </div>
+
+    <footer>
+        END OF TRANSMISSION // YXON6_TOOL_V1
+    </footer>
 </div>
 
 </body>
