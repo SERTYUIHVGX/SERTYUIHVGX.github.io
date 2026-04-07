@@ -25,6 +25,14 @@
             transition: color 0.2s ease;
         }
 
+        #matrixCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            display: none;
+        }
+
         body::after {
             content: "";
             position: absolute;
@@ -39,10 +47,12 @@
         #output {
             flex-grow: 1;
             overflow-y: auto;
-            margin-bottom: 10px;
+            margin-bottom: 40px; /* 40px gap under the last line */
             white-space: pre-wrap;
             word-wrap: break-word;
             scrollbar-width: none;
+            position: relative;
+            z-index: 2;
         }
 
         #output::-webkit-scrollbar { display: none; }
@@ -52,6 +62,9 @@
             align-items: center;
             border-top: 1px solid var(--text-color);
             padding-top: 10px;
+            position: relative;
+            z-index: 2;
+            background: var(--bg-color);
         }
 
         .prompt {
@@ -73,8 +86,7 @@
         #settingsModal {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background-color: #000;
             border: 2px solid var(--text-color);
@@ -90,57 +102,43 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
-            color: var(--text-color);
             cursor: move;
             user-select: none;
         }
 
-        .close-btn {
-            cursor: pointer;
-            color: #ff0000;
-            font-weight: bold;
-        }
+        .close-btn { cursor: pointer; color: #ff0000; font-weight: bold; }
 
         .ascii-settings {
             font-size: 11px;
             line-height: 1.2;
             white-space: pre;
             color: var(--text-color);
-            display: inline-block;
         }
 
-        .t-btn {
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .t-btn:hover {
-            background-color: var(--text-color);
-            color: #000;
-        }
+        .t-btn { cursor: pointer; font-weight: bold; }
+        .t-btn:hover { background-color: var(--text-color); color: #000; }
 
         .system-msg { opacity: 0.6; }
         .success-msg { font-weight: bold; }
         .error-msg { color: #ff0000; }
         .link-item { display: block; margin: 5px 0; color: inherit; text-decoration: none; opacity: 0.8; }
         .link-item:hover { opacity: 1; text-decoration: underline; }
-
-        .network-name {
-            display: inline-block;
-            width: 150px;
-        }
+        .network-name { display: inline-block; width: 150px; }
     </style>
 </head>
 <body>
 
+<canvas id="matrixCanvas"></canvas>
+
 <div id="settingsModal">
     <div class="modal-header" id="modalHeader">
-        <span>Yxon_OS://SYSTEM_CONFIG (DRAG_MOVE)</span>
+        <span>Yxon_OS://SYSTEM_CONFIG</span>
         <span class="close-btn" onclick="closeSettings()">[CLOSE_X]</span>
     </div>
     <div class="ascii-settings">__________________________________________________________________________________________
 |                                                                |                        |
 |                             .,,.'.                             |  Theme:                |
-|                        _p)^'.`''{dl                            |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
+|                        _p)^'.`''{dl                             |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
 |                     0w^     ''''':.0ooj                        |  <span class="t-btn" onclick="setTheme('RED')">[RED]</span>                 |
 |                  .#;         ''''.X0r  ;k                      |  <span class="t-btn" onclick="setTheme('BLUE')">[BLUE]</span>                |
 |                 _)           .`'q-M.    #                      |  <span class="t-btn" onclick="setTheme('GREEN')">[GREEN]</span>               |
@@ -148,30 +146,22 @@
 |                :j  0   ^vZ`.   .'`.h .J,k++.                   |  <span class="t-btn" onclick="setTheme('ORANGE')">[ORANGE]</span>              |
 |                [i  n           ..... JlWIv                     |  <span class="t-btn" onclick="setTheme('PINK')">[PINK]</span>                |
 |                d  C              .''. t}m;v                    |                        |
-|                f:`L  .,+&lt;       ^\|}.`'h &gt;j                    |  STATUS:               |
-|                &lt;zn h:    q`1x  &amp;     )d'@Q                     |  Terminal - [√]        |
-|                 B^k      `&gt;~  `+     Q,O#Z                     |  Commands - [√]        |
-|                _q~W      j&gt;   'O  ~&amp;'.c;#o                     |  Yxon OS  - [√]        |
-|                 B,  ik/' Q-q_ ^mva :*.mt&lt;                      |  Proxies  - [√]        |
-|                 "&amp;#MWWI. x^  p.  X*pfvY                        |                        |
-|                    YZZOf" m'O[J';X .888.                       |  Background:           |
-|                     f^&amp;`&gt;i  .  . i{ XUw                        |  [BLACK]                |
-|                     @b.Y.,"^: !  I jI k* |                        |
-|                     -"/i#8pt@M#0%mBcY1M .                      |                        |
-|                     Lq`f&amp;L\^O;p,iJ0?l }~                       |                        |
-|                     p "W1^rQ8aQxY z}Z :Y                       |                        |
-|                     &lt;1I#X[       "Yw~ Q                        |                        |
-|                     .O f{u       X Q`.O                        |                        |
-|                     ')] BWQQ    0Y)@.d                         |                        |
-|                      lt LBmLcc:^WYi#.                          |                        |
-|                         *!'Q@B%h _Z                            |                        |
-|                            c%%%%B&amp;`                            |                        |
+|                f:`L  .,+<       ^\|}.`'h >j                    |  STATUS:               |
+|                <zn h:    q`1x  &     )d'@Q                     |  Terminal - [√]        |
+|                 B^k      `>~  `+     Q,O#Z                     |  Commands - [√]        |
+|                _q~W      j>   'O  ~&'.c;#o                     |  Yxon OS  - [√]        |
+|                 B,   ik/' Q-q_ ^mva :*.mt<                     |  Proxies  - [√]        |
+|                 "&#MWWI. x^  p.  X*pfvY                        |                        |
+|                     YZZOf" m'O[J';X .888.                      |  BACKGROUND_EFFECT:    |
+|                      f^&`>i  .  . i{ XUw                       |  <span class="t-btn" onclick="toggleMatrix(false)">[DEFAULT]</span>             |
+|                      @b.Y.,"^: !  I jI k* |                    |  <span class="t-btn" onclick="toggleMatrix(true)">[MATRIX]</span>              |
+|                      -"/i#8pt@M#0%mBcY1M .                     |                        |
 |________________________________________________________________|________________________|</div>
 </div>
 
 <div id="output">
-    <div class="system-msg">yxon6ProxyPanel v2.0.0 [Initialized]</div>
-    <div class="system-msg">Type "proxylist" to begin or "help" for commands.</div>
+    <div class="system-msg">yxon6ProxyPanel v2.2.0 [Speedtest Integrated]</div>
+    <div class="system-msg">Type "speedtest" to check network latency.</div>
     <br>
 </div>
 
@@ -182,75 +172,86 @@
 
 <script>
     const themes = {
-        'DEFAULT': '#ffffff',
-        'RED':     '#ff0000',
-        'BLUE':    '#00ccff',
-        'GREEN':   '#39ff14',
-        'PURPLE':  '#bc13fe',
-        'ORANGE':  '#ffae42',
-        'PINK':    '#ff69b4'
+        'DEFAULT': '#ffffff', 'RED': '#ff0000', 'BLUE': '#00ccff',
+        'GREEN': '#39ff14', 'PURPLE': '#bc13fe', 'ORANGE': '#ffae42', 'PINK': '#ff69b4'
     };
 
     const proxyData = {
-        "AWP": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
-        "TRUFFLED": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+        "AWP": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li/"],
         "VOID": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
-        "QUASAR": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
-        "VAPOUR": ["https://watervapor.space/", "https://education-live.com/"],
-        "BOREDOM": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
-        "KOOPBIN": ["https://koopbin.site/", "https://learnster.online/"],
-        "NEBULA": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
-        "AFILITE": ["https://readinghelpforelementary.online/"],
-        "SPLASH": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+        "SPLASH": ["https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/"]
     };
 
     const input = document.getElementById('input');
     const output = document.getElementById('output');
     const modal = document.getElementById('settingsModal');
-    const header = document.getElementById('modalHeader');
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
 
-    let isDragging = false;
-    let offsetX, offsetY;
+    let matrixInterval = null;
+    let drops = [];
+    const fontSize = 16;
 
-    header.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        const rect = modal.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-        modal.style.transform = 'none';
-        modal.style.top = rect.top + 'px';
-        modal.style.left = rect.left + 'px';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        modal.style.left = (e.clientX - offsetX) + 'px';
-        modal.style.top = (e.clientY - offsetY) + 'px';
-    });
-
-    document.addEventListener('mouseup', () => isDragging = false);
-    document.addEventListener('click', () => input.focus());
-
-    function closeSettings() {
-        modal.style.display = 'none';
-        input.focus();
+    function initMatrix() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const columns = canvas.width / fontSize;
+        drops = Array(Math.floor(columns)).fill(1);
     }
 
-    function setTheme(themeName) {
-        const color = themes[themeName];
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+        ctx.font = fontSize + "px Courier New";
+
+        drops.forEach((y, i) => {
+            const text = Math.floor(Math.random() * 2);
+            ctx.fillText(text, i * fontSize, y * fontSize);
+            if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        });
+    }
+
+    function toggleMatrix(enable) {
+        if (enable) {
+            canvas.style.display = 'block';
+            initMatrix();
+            if (!matrixInterval) matrixInterval = setInterval(drawMatrix, 35);
+        } else {
+            canvas.style.display = 'none';
+            clearInterval(matrixInterval);
+            matrixInterval = null;
+        }
+    }
+
+    function setTheme(name) {
+        const color = themes[name];
         document.documentElement.style.setProperty('--text-color', color);
-        modal.style.boxShadow = `0 0 30px ${color}44`; 
-        printLine(`<span class="system-msg">UI characters updated to: ${themeName}</span>`);
+        modal.style.boxShadow = `0 0 30px ${color}44`;
     }
 
-    input.addEventListener('keydown', function(e) {
+    input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            const rawValue = this.value.trim();
-            const cmd = rawValue.toUpperCase();
-            printLine(`<span class="prompt">yxon6@proxy:~$</span> ${rawValue}`);
-            processCommand(cmd);
-            this.value = '';
-            window.scrollTo(0, document.body.scrollHeight);
+            const val = input.value.trim();
+            const cmd = val.toUpperCase();
+            printLine(`<span class="prompt">yxon6@proxy:~$</span> ${val}`);
+            
+            if (cmd === 'SETTINGS') {
+                modal.style.display = 'block';
+            } else if (cmd === 'SPEEDTEST') {
+                printLine(`<span class="system-msg">Testing connection speed...</span>`);
+                printLine(` -> <a href="https://speedtest.cl" target="_blank" class="link-item">https://speedtest.cl</a>`);
+            } else if (cmd === 'CLEAR') {
+                output.innerHTML = '';
+            } else if (proxyData[cmd]) {
+                proxyData[cmd].forEach(url => printLine(` -> <a href="${url}" target="_blank" class="link-item">${url}</a>`));
+            } else if (val !== "") {
+                printLine(`<span class="error-msg">Unknown command: ${val}</span>`);
+            }
+            
+            input.value = '';
+            output.scrollTop = output.scrollHeight;
         }
     });
 
@@ -261,37 +262,8 @@
         output.scrollTop = output.scrollHeight;
     }
 
-    function processCommand(cmd) {
-        if (cmd === 'SETTINGS') {
-            modal.style.display = 'block';
-        }
-        else if (cmd === 'PROXYLIST') {
-            printLine('<span class="success-msg">AVAILABLE NETWORKS:</span>');
-            const networks = Object.keys(proxyData);
-            let listHtml = "";
-            networks.forEach((n, i) => {
-                listHtml += `<span class="network-name">[${n}]</span> `;
-                if ((i + 1) % 3 === 0) listHtml += "&lt;br&gt;";
-            });
-            printLine(listHtml + '&lt;br&gt;&lt;span class="system-msg"&gt;Type network name to view links.&lt;/span&gt;');
-        } 
-        else if (cmd === 'HELP') {
-            printLine('Commands: PROXYLIST, SETTINGS, CLEAR, HELP');
-        }
-        else if (cmd === 'CLEAR') {
-            output.innerHTML = '';
-        }
-        else if (proxyData[cmd]) {
-            printLine(`&lt;span class="success-msg"&gt;FETCHING LINKS FOR ${cmd}...&lt;/span&gt;`);
-            proxyData[cmd].forEach(url =&gt; {
-                printLine(` -&gt; &lt;a href="${url}" target="_blank" class="link-item"&gt;${url}&lt;/a&gt;`);
-            });
-        } 
-        else if (cmd !== "") {
-            printLine(`&lt;span class="error-msg"&gt;Unknown command: ${cmd}&lt;/span&gt;`);
-        }
-    }
+    function closeSettings() { modal.style.display = 'none'; input.focus(); }
+    window.addEventListener('resize', () => { if (matrixInterval) initMatrix(); });
 </script>
-
 </body>
 </html>
