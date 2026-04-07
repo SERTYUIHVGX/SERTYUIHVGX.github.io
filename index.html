@@ -6,9 +6,9 @@
     <title>yxon6ProxyPanel | CLI</title>
     <style>
         :root {
-            --bg-color: #050505;
-            --text-color: #00ff41;
-            --accent-color: #008f11;
+            --bg-color: #000000;
+            --text-color: #ffffff; /* Default White */
+            --accent-color: #888888;
             --font-main: 'Courier New', Courier, monospace;
         }
 
@@ -23,6 +23,8 @@
             height: 100vh;
             box-sizing: border-box;
             overflow: hidden;
+            /* Smooth transition for all characters */
+            transition: color 0.2s ease, border-color 0.2s ease;
         }
 
         /* Scanline Overlay */
@@ -51,12 +53,12 @@
         .command-line {
             display: flex;
             align-items: center;
-            border-top: 1px solid var(--accent-color);
+            border-top: 1px solid var(--text-color); /* Linked to theme color */
             padding-top: 10px;
         }
 
         .prompt {
-            color: var(--accent-color);
+            color: var(--text-color); /* Linked to theme color */
             margin-right: 10px;
             font-weight: bold;
         }
@@ -64,14 +66,13 @@
         #input {
             background: transparent;
             border: none;
-            color: var(--text-color);
+            color: var(--text-color); /* Linked to theme color */
             font-family: var(--font-main);
             font-size: 1rem;
             flex-grow: 1;
             outline: none;
         }
 
-        /* Settings Modal Styling */
         #settingsModal {
             display: none;
             position: fixed;
@@ -79,21 +80,23 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: #000;
-            border: 2px solid var(--accent-color);
+            border: 2px solid var(--text-color);
             padding: 15px;
             z-index: 100;
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
             max-width: 95vw;
         }
 
         .modal-header {
-            border-bottom: 1px solid var(--accent-color);
+            border-bottom: 1px solid var(--text-color);
             padding-bottom: 5px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
-            color: var(--accent-color);
+            color: var(--text-color);
+            cursor: move;
+            user-select: none;
         }
 
         .close-btn {
@@ -106,40 +109,49 @@
             font-size: 10px;
             line-height: 1.1;
             white-space: pre;
-            color: var(--text-color);
+            color: var(--text-color); /* Ensures characters in skull change color */
         }
 
-        .system-msg { color: #888; }
-        .success-msg { color: #ffff00; font-weight: bold; }
+        .t-btn {
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .t-btn:hover {
+            background-color: var(--text-color);
+            color: #000;
+        }
+
+        .system-msg { opacity: 0.6; } /* Slightly dimmed for hierarchy */
+        .success-msg { font-weight: bold; }
         .error-msg { color: #ff0000; }
-        .link-item { display: block; margin: 5px 0; color: #fff; text-decoration: none; }
-        .link-item:hover { color: var(--text-color); text-decoration: underline; }
+        .link-item { display: block; margin: 5px 0; color: inherit; text-decoration: none; opacity: 0.8; }
+        .link-item:hover { opacity: 1; text-decoration: underline; }
 
         .network-name {
             display: inline-block;
             width: 150px;
-            color: var(--text-color);
         }
     </style>
 </head>
 <body>
 
 <div id="settingsModal">
-    <div class="modal-header">
-        <span>Yxon_OS://SYSTEM_CONFIG</span>
+    <div class="modal-header" id="modalHeader">
+        <span>Yxon_OS://SYSTEM_CONFIG (DRAG_MOVE)</span>
         <span class="close-btn" onclick="closeSettings()">[CLOSE_X]</span>
     </div>
     <div class="ascii-settings">
  ______________________________________________________________________________________________
 |                                                                    |                        |
 |                             .,,.'.                                 |  Theme:                |
-|                        _p)^'.`''{dl                                |  [DEFAULT]             |
-|                     0w^     ''''':.0ooj                            |  [RED]                 |
-|                  .#;         ''''.X0r  ;k                          |  [BLUE]                |
-|                 _)           .`'q-M.    #                          |  [GREEN]               |
-|                 b `{h!'^      .^`[>   }/a.                         |  [PURPLE]              |
-|                :j  0   ^vZ`.   .'`.h .J,k++.                       |  [ORANGE]              |
-|                [i  n           ..... JlWIv                         |  [PINK]                |
+|                        _p)^'.`''{dl                                |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
+|                     0w^     ''''':.0ooj                            |  <span class="t-btn" onclick="setTheme('RED')">[RED]</span>                 |
+|                  .#;         ''''.X0r  ;k                          |  <span class="t-btn" onclick="setTheme('BLUE')">[BLUE]</span>                |
+|                 _)           .`'q-M.    #                          |  <span class="t-btn" onclick="setTheme('GREEN')">[GREEN]</span>               |
+|                 b `{h!'^      .^`[>   }/a.                         |  <span class="t-btn" onclick="setTheme('PURPLE')">[PURPLE]</span>              |
+|                :j  0   ^vZ`.   .'`.h .J,k++.                       |  <span class="t-btn" onclick="setTheme('ORANGE')">[ORANGE]</span>              |
+|                [i  n           ..... JlWIv                         |  <span class="t-btn" onclick="setTheme('PINK')">[PINK]</span>                |
 |                d  C              .''. t}m;v                        |                        |
 |                f:`L  .,+<       ^\|}.`'h >j                        |  STATUS:               |
 |                <zn h:    q`1x  &     )d'@Q                         |  Terminal - [√]        |
@@ -166,7 +178,6 @@
 <div id="output">
     <div class="system-msg">yxon6ProxyPanel v2.0.0 [Initialized]</div>
     <div class="system-msg">Type "proxylist" to begin or "help" for commands.</div>
-    <div class="system-msg">New command available: "settings"</div>
     <br>
 </div>
 
@@ -176,6 +187,16 @@
 </div>
 
 <script>
+    const themes = {
+        'DEFAULT': '#ffffff',
+        'RED':     '#ff0000',
+        'BLUE':    '#00ccff',
+        'GREEN':   '#39ff14',
+        'PURPLE':  '#bc13fe',
+        'ORANGE':  '#ffae42',
+        'PINK':    '#ff69b4'
+    };
+
     const proxyData = {
         "AWP": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
         "TRUFFLED": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
@@ -192,8 +213,29 @@
     const input = document.getElementById('input');
     const output = document.getElementById('output');
     const modal = document.getElementById('settingsModal');
+    const header = document.getElementById('modalHeader');
 
-    // Keep input focused
+    // Draggable Logic
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        const rect = modal.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        modal.style.transform = 'none';
+        modal.style.top = rect.top + 'px';
+        modal.style.left = rect.left + 'px';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        modal.style.left = (e.clientX - offsetX) + 'px';
+        modal.style.top = (e.clientY - offsetY) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => isDragging = false);
     document.addEventListener('click', () => input.focus());
 
     function closeSettings() {
@@ -201,14 +243,25 @@
         input.focus();
     }
 
+    function setTheme(themeName) {
+        const color = themes[themeName];
+        const root = document.documentElement;
+        
+        // Update the global text variable
+        root.style.setProperty('--text-color', color);
+        
+        // Update modal shadow to match the character color
+        modal.style.boxShadow = `0 0 30px ${color}44`; 
+        
+        printLine(`<span class="system-msg">UI characters updated to: ${themeName}</span>`);
+    }
+
     input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             const rawValue = this.value.trim();
             const cmd = rawValue.toUpperCase();
-            
             printLine(`<span class="prompt">yxon6@proxy:~$</span> ${rawValue}`);
             processCommand(cmd);
-            
             this.value = '';
             window.scrollTo(0, document.body.scrollHeight);
         }
@@ -224,7 +277,6 @@
     function processCommand(cmd) {
         if (cmd === 'SETTINGS') {
             modal.style.display = 'block';
-            printLine('<span class="success-msg">EXECUTING: UI_SETTINGS_LOADER...</span>');
         }
         else if (cmd === 'PROXYLIST') {
             printLine('<span class="success-msg">AVAILABLE NETWORKS:</span>');
