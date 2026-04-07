@@ -3,139 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YXON6 TOOL // TERMINAL</title>
+    <title>YXON6_OS // TERMINAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
             --term-bg: #050505;
             --term-blue: #00d4ff;
-            --term-dim: rgba(0, 212, 255, 0.05);
-            --term-border: #1a1a1a;
-            --glow: 0 0 15px rgba(0, 212, 255, 0.3);
+            --term-dim: rgba(0, 212, 255, 0.1);
+            --glow: 0 0 10px rgba(0, 212, 255, 0.4);
         }
 
-        body {
+        body, html {
             background-color: var(--term-bg);
             color: var(--term-blue);
             font-family: 'JetBrains Mono', monospace;
             margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Scanline Overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #terminal {
             padding: 20px;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), var(--term-bg);
-            background-size: 100% 4px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        /* CUSTOM ASCII HEADER */
-        .ascii-container {
-            width: 100%;
-            overflow-x: auto;
-            text-align: center;
-            padding: 40px 0;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .ascii-art {
-            display: inline-block;
             white-space: pre;
-            font-family: monospace;
-            font-size: 10px;
+            font-size: 8px;
             line-height: 1.1;
-            text-shadow: var(--glow);
-            color: var(--term-blue);
-        }
-
-        .status-bar {
-            border: 1px solid var(--term-blue);
-            padding: 10px 20px;
-            margin-bottom: 50px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: var(--term-dim);
-        }
-
-        .category-section {
-            margin-bottom: 50px;
-        }
-
-        .category-header {
-            font-weight: bold;
-            font-size: 1rem;
             margin-bottom: 20px;
+            text-shadow: var(--glow);
+        }
+
+        .output-line {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .command-row {
             display: flex;
             align-items: center;
+            margin-top: 10px;
         }
 
-        .category-header::before {
-            content: ">> ";
+        .prompt {
             color: #fff;
+            margin-right: 10px;
+            white-space: nowrap;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-        }
-
-        .link-card {
-            border: 1px solid var(--term-border);
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .link-card:hover {
-            border-color: var(--term-blue);
-            box-shadow: var(--glow);
-            transform: translateX(5px);
-            background: var(--term-dim);
-        }
-
-        .link-url {
+        #cmd-input {
+            background: transparent;
+            border: none;
             color: var(--term-blue);
-            text-decoration: none;
-            font-size: 0.85rem;
-            word-break: break-all;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            outline: none;
+            width: 100%;
+            text-shadow: var(--glow);
         }
 
-        .link-card:hover .link-url {
+        .blue-text { color: var(--term-blue); font-weight: bold; }
+        .white-text { color: #fff; }
+        .dim-text { opacity: 0.5; font-size: 0.8rem; }
+        
+        .url-link {
             color: #fff;
+            text-decoration: none;
+            background: var(--term-dim);
+            padding: 2px 5px;
+            border-radius: 3px;
         }
+        .url-link:hover { background: var(--term-blue); color: #000; }
 
-        .node-tag {
-            font-size: 0.6rem;
-            color: #444;
-            display: block;
-            margin-top: 8px;
-        }
-
-        footer {
-            margin-top: 80px;
-            padding: 40px;
-            text-align: center;
-            font-size: 0.7rem;
-            opacity: 0.3;
-            border-top: 1px solid #111;
-        }
-
-        /* Mobile optimization */
-        @media (max-width: 650px) {
-            .ascii-art { font-size: 5px; }
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="ascii-container">
-        <pre class="ascii-art">
+<div id="terminal">
+    <pre class="ascii-art">
                                     .d8888b.        .d88888b.   .d8888b.  
                                    d88P  Y88b      d88P" "Y88b d88P  Y88b 
                                    888             888     888 Y88b.      
@@ -147,57 +112,82 @@ Y88b 888 .d8""8b. Y88..88P 888  888 Y88b  d88P      Y88b. .d88P Y88b  d88P
      888                                                                  
 Y8b d88P                                                                  
  "Y88P"                                                                   
-        </pre>
+    </pre>
+    <div id="output">
+        <div class="output-line">SYSTEM READY... TYPE <span class="white-text">'help'</span> TO BEGIN.</div>
     </div>
-
-    <div class="status-bar">
-        <span>System: Online</span>
-        <span>User: YXON6_ADMIN</span>
-        <span>Access: Level_0</span>
+    <div class="command-row">
+        <span class="prompt">root@yxon6:~#</span>
+        <input type="text" id="cmd-input" autofocus spellcheck="false">
     </div>
-
-    <!-- AWP -->
-    <div class="category-section">
-        <div class="category-header">AWP_MODULE</div>
-        <div class="grid">
-            <div class="link-card"><a href="https://lessons.axsetubal.pt/" class="link-url">lessons.axsetubal.pt</a><span class="node-tag">LOCAL_HOST</span></div>
-            <div class="link-card"><a href="https://useawp.developer.li//" class="link-url">useawp.developer.li</a><span class="node-tag">REMOTE_NODE</span></div>
-            <div class="link-card"><a href="https://api.incatel.cl/" class="link-url">api.incatel.cl</a><span class="node-tag">API_ENDPOINT</span></div>
-        </div>
-    </div>
-
-    <!-- TRUFFLED -->
-    <div class="category-section">
-        <div class="category-header">TRUFFLED_NET</div>
-        <div class="grid">
-            <div class="link-card"><a href="https://edu.sciencecomputers.lat/" class="link-url">edu.sciencecomputers.lat</a><span class="node-tag">EDU_NODE</span></div>
-            <div class="link-card"><a href="https://truffled.lol/" class="link-url">truffled.lol</a><span class="node-tag">HUB_NODE</span></div>
-            <div class="link-card"><a href="https://ee.rxtech.cl/" class="link-url">ee.rxtech.cl</a><span class="node-tag">SYSTEM_CORE</span></div>
-        </div>
-    </div>
-
-    <!-- SPLASH -->
-    <div class="category-section">
-        <div class="category-header">SPLASH_UI</div>
-        <div class="grid">
-            <div class="link-card"><a href="https://splashstudy.b-cdn.net/" class="link-url">splashstudy.b-cdn.net</a><span class="node-tag">CDN_DIST</span></div>
-            <div class="link-card"><a href="https://splsh.paladinmining.net/" class="link-url">splsh.paladinmining.net</a><span class="node-tag">SECURE_NODE</span></div>
-        </div>
-    </div>
-
-    <!-- BOREDOM -->
-    <div class="category-section">
-        <div class="category-header">BOREDOM_LABS</div>
-        <div class="grid">
-            <div class="link-card"><a href="https://pn.boredom.apertura.com/" class="link-url">pn.boredom.apertura.com</a><span class="node-tag">DEV_SERVER</span></div>
-            <div class="link-card"><a href="https://wispserver.dev/" class="link-url">wispserver.dev</a><span class="node-tag">REMOTE_CLI</span></div>
-        </div>
-    </div>
-
-    <footer>
-        END OF TRANSMISSION // YXON6_TOOL_V1
-    </footer>
 </div>
+
+<script>
+    const input = document.getElementById('cmd-input');
+    const output = document.getElementById('output');
+    const term = document.getElementById('terminal');
+
+    const database = {
+        "awp": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+        "truffled": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+        "void": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+        "quasar": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+        "vapour": ["https://watervapor.space/", "https://education-live.com/"],
+        "boredom": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+        "koopbin": ["https://koopbin.site/", "https://learnster.online/"],
+        "nebula": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+        "afilite": ["https://readinghelpforelementary.online/"],
+        "splash": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+    };
+
+    function writeLine(text, type = "") {
+        const line = document.createElement('div');
+        line.className = 'output-line ' + type;
+        line.innerHTML = text;
+        output.appendChild(line);
+        term.scrollTop = term.scrollHeight;
+    }
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const cmd = input.value.toLowerCase().trim();
+            writeLine(`<span class="prompt">root@yxon6:~#</span> ${input.value}`);
+            input.value = '';
+
+            processCommand(cmd);
+        }
+    });
+
+    function processCommand(cmd) {
+        if (cmd === 'help') {
+            writeLine("AVAILABLE COMMANDS:");
+            writeLine("- proxylist : Show all available proxy groups");
+            writeLine("- clear     : Wipe the terminal");
+            writeLine("- [name]    : Type a proxy group name to show URLs");
+        } 
+        else if (cmd === 'proxylist') {
+            writeLine("MOUNTING PROXY DATABASE...");
+            const groups = Object.keys(database).join(" | ").toUpperCase();
+            writeLine(`<span class="white-text">${groups}</span>`);
+            writeLine("<span class="dim-text">TYPE A GROUP NAME TO EXPAND</span>");
+        } 
+        else if (cmd === 'clear') {
+            output.innerHTML = '';
+        } 
+        else if (database[cmd]) {
+            writeLine(`FETCHING NODES FOR: ${cmd.toUpperCase()}...`);
+            database[cmd].forEach(url => {
+                writeLine(`> <a href="${url}" target="_blank" class="url-link">${url}</a>`);
+            });
+        } 
+        else if (cmd !== "") {
+            writeLine(`COMMAND NOT FOUND: ${cmd}`, "dim-text");
+        }
+    }
+
+    // Keep focus on input
+    document.addEventListener('click', () => input.focus());
+</script>
 
 </body>
 </html>
