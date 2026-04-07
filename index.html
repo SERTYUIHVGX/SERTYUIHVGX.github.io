@@ -1,77 +1,258 @@
-user@linux:~/networks$ cat site_manifest.txt
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yxon6ProxyPanel | CLI</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #00ff41;
+            --accent-color: #008f11;
+            --font-main: 'Courier New', Courier, monospace;
+        }
 
-              ...                      
-             .:::.                     
-            .:::::.          AWP: [Online]
-           .::..:::.         TRUFFLED: [Online]
-          .::.  .:::.        VOID: [Online]
-         .::.    .:::.       
-        .::.      .:::.      
-       .::::::::::::::::.    
-      .::::::::::::::::::.   
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
 
-----------------------------------------------------------------------
-[ NETWORK NODES ]
-----------------------------------------------------------------------
+        /* Scanline Overlay */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
 
-# AWP (Advanced Web Protocol)
-# --------------------------------------------------
-[+] https://lessons.axsetubal.pt/
-[+] https://useawp.developer.li/
-[+] https://api.incatel.cl/
-[+] https://useawp.7s.com.tr/
+        #output {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            scrollbar-width: none;
+        }
 
-# TRUFFLED
-# --------------------------------------------------
-[+] https://edu.sciencecomputers.lat/
-[+] https://truffled.lol/
-[+] https://ee.rxtech.cl/
-[+] https://infoo.infotechnology.com/
+        #output::-webkit-scrollbar { display: none; }
 
-# VOID NETWORK
-# --------------------------------------------------
-[+] https://awesome.martinwguy.net/?/
-[+] https://strange.martinwguy.net/?/
+        .command-line {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid var(--accent-color);
+            padding-top: 10px;
+        }
 
-# QUASAR
-# --------------------------------------------------
-[+] https://epic.tomaszu.com/
-[+] https://eglobaleducation.com/
+        .prompt {
+            color: var(--accent-color);
+            margin-right: 10px;
+            font-weight: bold;
+        }
 
-# VAPOUR
-# --------------------------------------------------
-[+] https://watervapor.space/
-[+] https://education-live.com/
+        #input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            flex-grow: 1;
+            outline: none;
+        }
 
-# BOREDOM
-# --------------------------------------------------
-[+] https://pn.boredom.apertura.com/
-[+] https://doxwind.xyz/
-[+] https://wispserver.dev/
+        /* Settings Modal Styling */
+        #settingsModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #000;
+            border: 2px solid var(--accent-color);
+            padding: 15px;
+            z-index: 100;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+            max-width: 95vw;
+        }
 
-# KOOPBIN
-# --------------------------------------------------
-[+] https://koopbin.site/
-[+] https://learnster.online/
+        .modal-header {
+            border-bottom: 1px solid var(--accent-color);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+        }
 
-# NEBULA
-# --------------------------------------------------
-[+] https://math.school.dovereducation.org/
-[+] http://clever.com.elmhoneyheath.recepist.com/
+        .close-btn {
+            cursor: pointer;
+            color: #ff0000;
+            font-weight: bold;
+        }
 
-# AFILITE
-# --------------------------------------------------
-[+] https://readinghelpforelementary.online/
+        .ascii-settings {
+            font-size: 10px;
+            line-height: 1.1;
+            white-space: pre;
+            color: var(--text-color);
+        }
 
-# SPLASH
-# --------------------------------------------------
-[+] https://cullinary-schools.ks11.ru/
-[+] https://darkn.ks11.ru/
-[+] https://splashstudy.b-cdn.net/
-[+] https://94a80745.splashcli.pages.dev/
-[+] https://splsh.paladinmining.net/
+        .system-msg { color: #888; }
+        .success-msg { color: #ffff00; font-weight: bold; }
+        .error-msg { color: #ff0000; }
+        .link-item { display: block; margin: 5px 0; color: #fff; text-decoration: none; }
+        .link-item:hover { color: var(--text-color); text-decoration: underline; }
 
-----------------------------------------------------------------------
-[ END OF MANIFEST ]
-----------------------------------------------------------------------
-user@linux:~/networks$ _
+        .network-name {
+            display: inline-block;
+            width: 150px;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+
+<div id="settingsModal">
+    <div class="modal-header">
+        <span>Yxon_OS://SYSTEM_CONFIG</span>
+        <span class="close-btn" onclick="closeSettings()">[CLOSE_X]</span>
+    </div>
+    <div class="ascii-settings">
+ ______________________________________________________________________________________________
+|                                                                    |                        |
+|                             .,,.'.                                 |  Theme:                |
+|                        _p)^'.`''{dl                                |  [DEFAULT]             |
+|                     0w^     ''''':.0ooj                            |  [RED]                 |
+|                  .#;         ''''.X0r  ;k                          |  [BLUE]                |
+|                 _)           .`'q-M.    #                          |  [GREEN]               |
+|                 b `{h!'^      .^`[>   }/a.                         |  [PURPLE]              |
+|                :j  0   ^vZ`.   .'`.h .J,k++.                       |  [ORANGE]              |
+|                [i  n           ..... JlWIv                         |  [PINK]                |
+|                d  C              .''. t}m;v                        |                        |
+|                f:`L  .,+<       ^\|}.`'h >j                        |  STATUS:               |
+|                <zn h:    q`1x  &     )d'@Q                         |  Terminal - [√]        |
+|                 B^k      `>~  `+     Q,O#Z                         |  Commands - [√]        |
+|                _q~W      j>   'O  ~&'.c;#o                         |  Yxon OS  - [√]        |
+|                 B,  ik/' Q-q_ ^mva :*.mt<                          |  Proxies  - [√]        |
+|                 "&#MWWI. x^  p.  X*pfvY                            |                        |
+|                    YZZOf" m'O[J';X .888.                           |  Background_color:     |
+|                     f^&`>i  .  . i{ XUw                            |  Black                 |
+|                     @b.Y.,"^: !  I jI k* |                        |
+|                     -"/i#8pt@M#0%mBcY1M .                          |                        |
+|                     Lq`f&L\^O;p,iJ0?l }~                           |                        |
+|                     p "W1^rQ8aQxY z}Z :Y                           |                        |
+|                     <1I#X[       "Yw~ Q                            |                        |
+|                     .O f{u       X Q`.O                            |                        |
+|                     ')] BWQQ    0Y)@.d                             |                        |
+|                      lt LBmLcc:^WYi#.                              |                        |
+|                         *!'Q@B%h _Z                                |                        |
+|                            c%%%%B&`                                |                        |
+|____________________________________________________________________|________________________|
+    </div>
+</div>
+
+<div id="output">
+    <div class="system-msg">yxon6ProxyPanel v2.0.0 [Initialized]</div>
+    <div class="system-msg">Type "proxylist" to begin or "help" for commands.</div>
+    <div class="system-msg">New command available: "settings"</div>
+    <br>
+</div>
+
+<div class="command-line">
+    <span class="prompt">yxon6@proxy:~$</span>
+    <input type="text" id="input" autofocus spellcheck="false" autocomplete="off">
+</div>
+
+<script>
+    const proxyData = {
+        "AWP": ["https://lessons.axsetubal.pt/", "https://useawp.developer.li//", "https://api.incatel.cl/", "https://useawp.7s.com.tr/"],
+        "TRUFFLED": ["https://edu.sciencecomputers.lat/", "https://truffled.lol/", "https://ee.rxtech.cl/", "https://infoo.infotechnology.com/"],
+        "VOID": ["https://awesome.martinwguy.net/?/", "https://strange.martinwguy.net/?/"],
+        "QUASAR": ["https://epic.tomaszu.com/", "https://eglobaleducation.com/"],
+        "VAPOUR": ["https://watervapor.space/", "https://education-live.com/"],
+        "BOREDOM": ["https://pn.boredom.apertura.com/", "https://doxwind.xyz/", "https://wispserver.dev/"],
+        "KOOPBIN": ["https://koopbin.site/", "https://learnster.online/"],
+        "NEBULA": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
+        "AFILITE": ["https://readinghelpforelementary.online/"],
+        "SPLASH": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/", "https://94a80745.splashcli.pages.dev/", "https://splsh.paladinmining.net/"]
+    };
+
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const modal = document.getElementById('settingsModal');
+
+    // Keep input focused
+    document.addEventListener('click', () => input.focus());
+
+    function closeSettings() {
+        modal.style.display = 'none';
+        input.focus();
+    }
+
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const rawValue = this.value.trim();
+            const cmd = rawValue.toUpperCase();
+            
+            printLine(`<span class="prompt">yxon6@proxy:~$</span> ${rawValue}`);
+            processCommand(cmd);
+            
+            this.value = '';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+    });
+
+    function printLine(html) {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        output.appendChild(div);
+        output.scrollTop = output.scrollHeight;
+    }
+
+    function processCommand(cmd) {
+        if (cmd === 'SETTINGS') {
+            modal.style.display = 'block';
+            printLine('<span class="success-msg">EXECUTING: UI_SETTINGS_LOADER...</span>');
+        }
+        else if (cmd === 'PROXYLIST') {
+            printLine('<span class="success-msg">AVAILABLE NETWORKS:</span>');
+            const networks = Object.keys(proxyData);
+            let listHtml = "";
+            networks.forEach((n, i) => {
+                listHtml += `<span class="network-name">[${n}]</span> `;
+                if ((i + 1) % 3 === 0) listHtml += "<br>";
+            });
+            printLine(listHtml + '<br><span class="system-msg">Type network name to view links.</span>');
+        } 
+        else if (cmd === 'HELP') {
+            printLine('Commands: PROXYLIST, SETTINGS, CLEAR, HELP');
+        }
+        else if (cmd === 'CLEAR') {
+            output.innerHTML = '';
+        }
+        else if (proxyData[cmd]) {
+            printLine(`<span class="success-msg">FETCHING LINKS FOR ${cmd}...</span>`);
+            proxyData[cmd].forEach(url => {
+                printLine(` -> <a href="${url}" target="_blank" class="link-item">${url}</a>`);
+            });
+        } 
+        else if (cmd !== "") {
+            printLine(`<span class="error-msg">Unknown command: ${cmd}</span>`);
+        }
+    }
+</script>
+
+</body>
+</html>
