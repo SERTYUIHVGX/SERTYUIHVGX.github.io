@@ -17,7 +17,6 @@
             font-family: var(--font-main);
             margin: 0;
             padding: 20px;
-            /* Layout Fix: Use flexbox to keep input at bottom */
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -34,7 +33,6 @@
             display: none;
         }
 
-        /* Scanline Overlay */
         body::after {
             content: "";
             position: absolute;
@@ -46,7 +44,6 @@
             z-index: 10;
         }
 
-        /* Scrollable Log Area */
         #output {
             flex-grow: 1;
             overflow-y: auto;
@@ -59,7 +56,6 @@
             scrollbar-color: var(--text-color) transparent;
         }
 
-        /* Hide scrollbars for Chrome/Safari */
         #output::-webkit-scrollbar { width: 5px; }
         #output::-webkit-scrollbar-thumb { background: var(--text-color); }
 
@@ -71,7 +67,6 @@
             color: var(--text-color);
         }
 
-        /* Fixed Command Bar */
         .command-line {
             display: flex;
             align-items: center;
@@ -147,13 +142,13 @@
 |                                                                |                        |
 |                            .,,.'.                              |  Theme:                |
 |                       _p)^'.`''{dl                             |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>           |
-|                    0w^     ''''':.0ooj                         |  <span class="t-btn" onclick="setTheme('RED')">[RED]</span>                 |
+|                    0w^     '''':.0ooj                          |  <span class="t-btn" onclick="setTheme('RED')">[RED]</span>                 |
 |                  .#;         ''''.X0r  ;k                      |  <span class="t-btn" onclick="setTheme('BLUE')">[BLUE]</span>                |
 |                 _)           .`'q-M.    #                      |  <span class="t-btn" onclick="setTheme('GREEN')">[GREEN]</span>               |
 |                 b `{h!'^      .^`[>   }/a.                     |  <span class="t-btn" onclick="setTheme('PURPLE')">[PURPLE]</span>              |
 |                :j  0   ^vZ`.   .'`.h .J,k++.                   |  <span class="t-btn" onclick="setTheme('ORANGE')">[ORANGE]</span>              |
 |                [i  n           ..... JlWIv                     |  <span class="t-btn" onclick="setTheme('PINK')">[PINK]</span>                |
-|                d  C              .''. t}m;v                    |                        |
+|                d  C               .''. t}m;v                   |                        |
 |                f:`L  .,+<       ^\|}.`'h >j                    |  STATUS:                |
 |                <zn h:    q`1x  &     )d'@Q                     |  Terminal - [√]         |
 |                 B^k      `>~  `+     Q,O#Z                     |  Commands - [√]         |
@@ -162,7 +157,7 @@
 |                 "&#MWWI. x^  p.  X*pfvY                        |                        |
 |                       YZZOf" m'O[J';X .888.                    |  BACKGROUND_EFFECT:     |
 |                       f^&`>i  .  . i{ XUw                      |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
-|                       @b.Y.,"^: !  I jI k*                     |  <span class="t-btn" onclick="setTheme('MATRIX')">[MATRIX]</span>              |
+|                       @b.Y.,"^: !  I jI k* |  <span class="t-btn" onclick="setTheme('MATRIX')">[MATRIX]</span>               |
 |                       -"/i#8pt@M#0%mBcY1M .                    |                        |
 |                       Lq`f&L\^O;p,iJ0?l }~                     |                        |
 |                       p "W1^rQ8aQxY z}Z :Y                     |                        |
@@ -177,17 +172,17 @@
 
 <div id="output">
 <pre class="header-ascii" id="mainHeader">
-8888888b.                                       8888888b.                                888 
-888   Y88b                                      888   Y88b                               888 
-888    888                                      888    888                               888 
-888   d88P 888d888 .d88b.  888   888  888  888  888   d88P 8888b.    88888b.   .d88b.    888 
-8888888P"  888P"  d88""88b `Y8bd8P'  888   888  8888888P"     "88b    888 "88b d8P   Y8b 888 
-888        888    888   888   X88K   888  888   888        .d888888  888   888 88888888  888 
-888        888    Y88..88P .d8""8b.  Y88b 888   888        888   888 888   888 Y8b.      888 
-888        888     "Y88P"  888   888  "Y88888   888        "Y888888  888   888  "Y8888   888 
-                                           888                                            
-                                      Y8b d88P                                            
-                                       "Y88P"                                             
+8888888b.                                        8888888b.                                888 
+888   Y88b                                       888   Y88b                               888 
+888    888                                       888    888                               888 
+888   d88P 888d888 .d88b.  888   888  888  888   888   d88P 8888b.    88888b.   .d88b.    888 
+8888888P"  888P"  d88""88b `Y8bd8P'  888   888   8888888P"     "88b    888 "88b d8P  Y8b 888 
+888        888    888   888   X88K   888  888    888         .d888888  888   888 88888888  888 
+888        888    Y88..88P .d8""8b.  Y88b 888    888         888   888 888   888 Y8b.      888 
+888        888     "Y88P"  888   888  "Y88888    888         "Y888888  888   888  "Y8888   888 
+                                          888                                               
+                                    Y8b d88P                                               
+                                    "Y88P"                                                
 </pre>
     <div id="log">
         <div class="system-msg">yxon6ProxyPanel v2.9.0</div>
@@ -217,7 +212,8 @@
         "KOOPBIN": ["https://koopbin.site/", "https://learnster.online/"],
         "NEBULA": ["https://math.school.dovereducation.org/", "http://clever.com.elmhoneyheath.recepist.com/"],
         "AFILITE": ["https://readinghelpforelementary.online/"],
-        "SPLASH": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/"]
+        "SPLASH": ["https://cullinary-schools.ks11.ru/", "https://darkn.ks11.ru/", "https://splashstudy.b-cdn.net/"],
+        "GAMES": ["https://www.calculators.org/games/uno/", "https://block-blasts.github.io/", "https://poorbunny.io/"]
     };
 
     const input = document.getElementById('input');
@@ -290,10 +286,11 @@
             if (cmd === 'SETTINGS') modal.style.display = 'block';
             else if (cmd === 'SPEEDTEST') runSpeedTest();
             else if (cmd === 'PROXYLIST') showProxyCategories();
+            else if (cmd === 'GAMES') showCategoryLinks('GAMES');
             else if (proxyData[cmd]) showCategoryLinks(cmd);
             else if (cmd === 'HELP') {
-                printLine('Available: HELP, SETTINGS, SPEEDTEST, PROXYLIST, CLEAR');
-                printLine('Usage: Type network name (e.g. AWP) to see links.');
+                printLine('Available: HELP, SETTINGS, SPEEDTEST, PROXYLIST, GAMES, CLEAR');
+                printLine('Usage: Type network name or "GAMES" to see links.');
             }
             else if (cmd === 'CLEAR') log.innerHTML = '<br>';
             else if (val !== "") printLine(`<span class="error-msg">Unknown command: ${val}</span>`);
@@ -317,7 +314,7 @@
     function showProxyCategories() {
         printLine(`<span class="success-msg">--- PROXY NETWORKS ---</span>`);
         Object.keys(proxyData).forEach(key => {
-            printLine(`<div class="proxy-entry" onclick="executeCommand('${key}')">> ${key}</div>`);
+            if(key !== "GAMES") printLine(`<div class="proxy-entry" onclick="executeCommand('${key}')">> ${key}</div>`);
         });
         printLine(`<br><span class="system-msg">Click a network above or type its name.</span>`);
     }
@@ -329,12 +326,10 @@
         });
     }
 
-    // Helper for clickable entries
     function executeCommand(cmd) {
         input.value = cmd;
         const e = new KeyboardEvent('keydown', {key: 'Enter'});
         input.dispatchEvent(e);
-        // Manual trigger since dispatchEvent doesn't always fire logic in all browsers
         input.focus();
     }
 
@@ -348,7 +343,6 @@
 
     function closeSettings() { modal.style.display = 'none'; input.focus(); }
     
-    // Auto-focus logic
     document.addEventListener('click', () => input.focus());
     window.addEventListener('resize', () => { if (matrixInterval) initMatrix(); });
 </script>
