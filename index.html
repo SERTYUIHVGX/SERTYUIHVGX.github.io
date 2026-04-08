@@ -155,15 +155,15 @@
 |                _q~W      j>   'O  ~&'.c;#o                     |  Yxon OS  - [√]        |
 |                 B,   ik/' Q-q_ ^mva :*.mt<                     |  Proxies  - [√]        |
 |                 "&#MWWI. x^  p.  X*pfvY                        |                        |
-|                       YZZOf" m'O[J';X .888.                    |  BACKGROUND_EFFECT:    |
-|                       f^&`>i  .  . i{ XUw                      |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
-|                       @b.Y.,"^: !  I jI k*                     |  <span class="t-btn" onclick="setTheme('MATRIX')">[MATRIX]</span>               |
-|                       -"/i#8pt@M#0%mBcY1M .                    |                        |
-|                       Lq`f&L\^O;p,iJ0?l }~                     |                        |
-|                       p "W1^rQ8aQxY z}Z :Y                     |                        |
-|                       <1I#X[       "Yw~ Q                      |                        |
-|                       .O f{u       X Q`.O                      |                        |
-|                       ')] BWQQ    0Y)@.d                       |                        |
+|                        YZZOf" m'O[J';X .888.                   |  BACKGROUND_EFFECT:    |
+|                        f^&`>i  .  . i{ XUw                     |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
+|                        @b.Y.,"^: !  I jI k* |  <span class="t-btn" onclick="setTheme('MATRIX')">[MATRIX]</span>               |
+|                        -"/i#8pt@M#0%mBcY1M .                   |                        |
+|                        Lq`f&L\^O;p,iJ0?l }~                    |                        |
+|                        p "W1^rQ8aQxY z}Z :Y                    |                        |
+|                        <1I#X[       "Yw~ Q                     |                        |
+|                        .O f{u       X Q`.O                     |                        |
+|                        ')] BWQQ    0Y)@.d                      |                        |
 |                         lt LBmLcc:^WYi#.                       |                        |
 |                           *!'Q@B%h _Z                          |                        |
 |                             c%%%%B&`                           |                        |
@@ -172,15 +172,15 @@
 
 <div id="output">
 <pre class="header-ascii" id="mainHeader">
-8888888b.                                        8888888b.                                   888 
-888   Y88b                                       888   Y88b                                  888 
-888    888                                       888    888                                  888 
-888   d88P 888d888 .d88b.  888   888  888  888   888   d88P  8888b.    88888b.   .d8888b.    888 
+8888888b.                                         8888888b.                                    888 
+888   Y88b                                        888   Y88b                                   888 
+888    888                                        888    888                                   888 
+888   d88P 888d888 .d88b.  888   888  888   888   888   d88P  8888b.    88888b.   .d8888b.    888 
 8888888P"  888P"  d88""88b `Y8bd8P'  888   888   8888888P"     "88b    888 "88b d8P   YZ8b   888 
-888        888    888   888   X88K   888  888    888        .d888888  888.  888 88888888Y'   888 
-888        888    Y88..88P .d8""8b.  Y88b 888    888        888   888 888   888  "YZ8b. vzv  888 
+888        888    888   888   X88K   888   888    888        .d888888  888.  888 88888888Y'   888 
+888        888    Y88..88P .d8""8b.  Y88b 888    888        888   888 888   888  "YZ8b. vzv   888 
 888        888     "Y88P"  888   888  "Y88888    888        "Y888888  888   888   "Y8888Y'   888 
-                                           888                                                
+                                           888                                                 
                                      Y8b d88P                                                 
                                       "Y88P"                                                  
 </pre>
@@ -198,24 +198,22 @@
 
 <script>
     // --- AUTHENTICATION SYSTEM ---
-    const REQUIRED_PASS = "change_this_to_your_password"; // Set your password here
-    const SOURCE_URL = "https://yxon6.nekoweb.org";
+    const REQUIRED_PASS = "saV-K-qA-M0sc-ze-K-W3d-t-0p-RRyp-70-H"; 
 
     function validateAccess() {
-        const userPass = prompt("RESTRICTED ACCESS: Enter System Password\nGet the password at: " + SOURCE_URL);
+        const userPass = prompt("RESTRICTED ACCESS: Enter System Password");
         
         if (userPass === REQUIRED_PASS) {
             alert("ACCESS GRANTED.");
         } else {
-            alert("WRONG PASSWORD. Redirecting to source...");
-            window.location.href = SOURCE_URL;
+            alert("WRONG PASSWORD. Access Denied.");
+            window.location.reload();
         }
     }
 
     // Initialize password check immediately
     validateAccess();
 
-    // --- REMAINDER OF YOUR CODE ---
     const themes = {
         'DEFAULT': '#ffffff', 'RED': '#ff0000', 'BLUE': '#00ccff',
         'GREEN': '#39ff14', 'PURPLE': '#bc13fe', 'ORANGE': '#ffae42', 'PINK': '#ff69b4'
