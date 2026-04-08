@@ -125,7 +125,8 @@
         .link-item { display: block; margin: 5px 0; color: inherit; text-decoration: none; opacity: 0.8; }
         .link-item:hover { opacity: 1; text-decoration: underline; }
         
-        .proxy-entry { font-size: 0.9rem; margin: 2px 0; }
+        .proxy-entry { font-size: 0.9rem; margin: 2px 0; cursor: pointer; }
+        .proxy-entry:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -142,49 +143,49 @@
 |                             .,,.'.                             |  Theme:                |
 |                        _p)^'.`''{dl                             |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
 |                     0w^     ''''':.0ooj                        |  <span class="t-btn" onclick="setTheme('RED')">[RED]</span>                 |
-|                  .#;         ''''.X0r  ;k                      |  <span class="t-btn" onclick="setTheme('BLUE')">[BLUE]</span>                |
-|                 _)           .`'q-M.    #                      |  <span class="t-btn" onclick="setTheme('GREEN')">[GREEN]</span>               |
-|                 b `{h!'^      .^`[>   }/a.                     |  <span class="t-btn" onclick="setTheme('PURPLE')">[PURPLE]</span>              |
-|                :j  0   ^vZ`.   .'`.h .J,k++.                   |  <span class="t-btn" onclick="setTheme('ORANGE')">[ORANGE]</span>              |
-|                [i  n           ..... JlWIv                     |  <span class="t-btn" onclick="setTheme('PINK')">[PINK]</span>                |
-|                d  C              .''. t}m;v                    |                        |
-|                f:`L  .,+<       ^\|}.`'h >j                    |  STATUS:               |
-|                <zn h:    q`1x  &     )d'@Q                     |  Terminal - [√]        |
-|                 B^k      `>~  `+     Q,O#Z                     |  Commands - [√]        |
-|                _q~W      j>   'O  ~&'.c;#o                     |  Yxon OS  - [√]        |
-|                 B,   ik/' Q-q_ ^mva :*.mt<                     |  Proxies  - [√]        |
-|                 "&#MWWI. x^  p.  X*pfvY                        |                        |
-|                     YZZOf" m'O[J';X .888.                      |  BACKGROUND_EFFECT:    |
-|                      f^&`>i  .  . i{ XUw                       |  <span class="t-btn" onclick="toggleMatrix(false)">[DEFAULT]</span>             |
-|                      @b.Y.,"^: !  I jI k*                      |  <span class="t-btn" onclick="toggleMatrix(true)">[MATRIX]</span>              |
-|                      -"/i#8pt@M#0%mBcY1M .                     |                        |
-|                      Lq`f&L\^O;p,iJ0?l }~                      |                        |
-|                      p "W1^rQ8aQxY z}Z :Y                      |                        |
-|                      <1I#X[       "Yw~ Q                       |                        |
-|                      .O f{u       X Q`.O                       |                        |
-|                      ')] BWQQ    0Y)@.d                        |                        |
-|                       lt LBmLcc:^WYi#.                         |                        |
-|                         *!'Q@B%h _Z                            |                        |
-|                            c%%%%B&`                            |                        |
+|                   .#;         ''''.X0r  ;k                     |  <span class="t-btn" onclick="setTheme('BLUE')">[BLUE]</span>                |
+|                  _)           .`'q-M.    #                     |  <span class="t-btn" onclick="setTheme('GREEN')">[GREEN]</span>               |
+|                  b `{h!'^      .^`[>   }/a.                    |  <span class="t-btn" onclick="setTheme('PURPLE')">[PURPLE]</span>              |
+|                 :j  0   ^vZ`.   .'`.h .J,k++.                  |  <span class="t-btn" onclick="setTheme('ORANGE')">[ORANGE]</span>              |
+|                 [i  n           ..... JlWIv                    |  <span class="t-btn" onclick="setTheme('PINK')">[PINK]</span>                |
+|                 d  C              .''. t}m;v                   |                        |
+|                 f:`L  .,+<       ^\|}.`'h >j                   |  STATUS:               |
+|                 <zn h:    q`1x  &     )d'@Q                    |  Terminal - [√]        |
+|                  B^k      `>~  `+     Q,O#Z                    |  Commands - [√]        |
+|                 _q~W      j>   'O  ~&'.c;#o                    |  Yxon OS  - [√]        |
+|                  B,   ik/' Q-q_ ^mva :*.mt<                    |  Proxies  - [√]        |
+|                  "&#MWWI. x^  p.  X*pfvY                       |                        |
+|                       YZZOf" m'O[J';X .888.                    |  BACKGROUND_EFFECT:    |
+|                       f^&`>i  .  . i{ XUw                      |  <span class="t-btn" onclick="setTheme('DEFAULT')">[DEFAULT]</span>             |
+|                       @b.Y.,"^: !  I jI k*                     |  <span class="t-btn" onclick="setTheme('MATRIX')">[MATRIX]</span>              |
+|                       -"/i#8pt@M#0%mBcY1M .                    |                        |
+|                       Lq`f&L\^O;p,iJ0?l }~                     |                        |
+|                       p "W1^rQ8aQxY z}Z :Y                     |                        |
+|                       <1I#X[       "Yw~ Q                      |                        |
+|                       .O f{u       X Q`.O                      |                        |
+|                       ')] BWQQ    0Y)@.d                       |                        |
+|                         lt LBmLcc:^WYi#.                       |                        |
+|                          *!'Q@B%h _Z                           |                        |
+|                             c%%%%B&`                           |                        |
 |________________________________________________________________|________________________|</div>
 </div>
 
 <div id="output">
 <pre class="header-ascii" id="mainHeader">
-8888888b.                                     8888888b.                             888 
-888   Y88b                                    888   Y88b                            888 
-888    888                                    888    888                            888 
-888   d88P 888d888 .d88b.  888   888 888  888 888   d88P 8888b.  88888b.   .d88b.  888 
+8888888b.                                      8888888b.                             888 
+888   Y88b                                     888   Y88b                            888 
+888    888                                     888    888                            888 
+888   d88P 888d888 .d88b.  888   888 888   888 888   d88P 8888b.  88888b.   .d88b.  888 
 8888888P"  888P"  d88""88b `Y8bd8P' 888   888 8888888P"     "88b 888 "88b d8P  Y8b 888 
-888        888    888   888   X88K  888  888  888        .d888888 888  888 88888888 888 
-888        888    Y88..88P .d8""8b. Y88b 888 888        888  888 888  888 Y8b.     888 
-888        888     "Y88P"  888  888  "Y88888 888        "Y888888 888  888  "Y8888  888 
-                                         888                                            
-                                    Y8b d88P                                            
-                                     "Y88P"                                             
+888        888    888   888  X88K   888   888  888        .d888888 888   888 88888888 888 
+888        888    Y88..88P .d8""8b. Y88b 888   888        888   888 888   888 Y8b.     888 
+888        888     "Y88P"  888   888  "Y88888  888        "Y888888 888   888  "Y8888  888 
+                                          888                                            
+                                     Y8b d88P                                            
+                                      "Y88P"                                             
 </pre>
     <div id="log">
-        <div class="system-msg">yxon6ProxyPanel v2.8.0</div>
+        <div class="system-msg">yxon6ProxyPanel v2.9.0</div>
         <div class="system-msg">type "help" for info</div>
         <br>
     </div>
@@ -199,6 +200,57 @@
     const themes = {
         'DEFAULT': '#ffffff', 'RED': '#ff0000', 'BLUE': '#00ccff',
         'GREEN': '#39ff14', 'PURPLE': '#bc13fe', 'ORANGE': '#ffae42', 'PINK': '#ff69b4'
+    };
+
+    // Proxy Database
+    const proxyData = {
+        "AWP": [
+            "https://lessons.axsetubal.pt/",
+            "https://useawp.developer.li//",
+            "https://api.incatel.cl/",
+            "https://useawp.7s.com.tr/"
+        ],
+        "TRUFFLED": [
+            "https://edu.sciencecomputers.lat/",
+            "https://truffled.lol/",
+            "https://ee.rxtech.cl/",
+            "https://infoo.infotechnology.com/"
+        ],
+        "VOID": [
+            "https://awesome.martinwguy.net/?/",
+            "https://strange.martinwguy.net/?/"
+        ],
+        "QUASAR": [
+            "https://epic.tomaszu.com/",
+            "https://eglobaleducation.com/"
+        ],
+        "VAPOUR": [
+            "https://watervapor.space/",
+            "https://education-live.com/"
+        ],
+        "BOREDOM": [
+            "https://pn.boredom.apertura.com/",
+            "https://doxwind.xyz/",
+            "https://wispserver.dev/"
+        ],
+        "KOOPBIN": [
+            "https://koopbin.site/",
+            "https://learnster.online/"
+        ],
+        "NEBULA": [
+            "https://math.school.dovereducation.org/",
+            "http://clever.com.elmhoneyheath.recepist.com/"
+        ],
+        "AFILITE": [
+            "https://readinghelpforelementary.online/"
+        ],
+        "SPLASH": [
+            "https://cullinary-schools.ks11.ru/",
+            "https://darkn.ks11.ru/",
+            "https://splashstudy.b-cdn.net/",
+            "https://94a80745.splashcli.pages.dev/",
+            "https://splsh.paladinmining.net/"
+        ]
     };
 
     const input = document.getElementById('input');
@@ -253,6 +305,11 @@
     }
 
     function setTheme(name) {
+        if(name === 'MATRIX') {
+            toggleMatrix(true);
+            return;
+        }
+        toggleMatrix(false);
         const color = themes[name];
         document.documentElement.style.setProperty('--text-color', color);
         modal.style.boxShadow = `0 0 30px ${color}44`;
@@ -266,9 +323,11 @@
             
             if (cmd === 'SETTINGS') modal.style.display = 'block';
             else if (cmd === 'SPEEDTEST') runSpeedTest();
-            else if (cmd === 'PROXIES') showProxies();
+            else if (cmd === 'PROXYLIST') showProxyCategories();
+            else if (proxyData[cmd]) showCategoryLinks(cmd);
             else if (cmd === 'HELP') {
-                printLine('Available commands: HELP, SETTINGS, SPEEDTEST, PROXIES, CLEAR');
+                printLine('Available commands: HELP, SETTINGS, SPEEDTEST, PROXYLIST, CLEAR');
+                printLine('Or type a proxy name (e.g., AWP, SPLASH) to see links.');
             }
             else if (cmd === 'CLEAR') log.innerHTML = '<br>';
             else if (val !== "") printLine(`<span class="error-msg">Unknown command: ${val}</span>`);
@@ -278,16 +337,21 @@
         }
     });
 
-    function showProxies() {
-        printLine(`<span class="success-msg">--- ACTIVE PROXY LIST ---</span>`);
-        const list = [
-            "192.168.1.101:8080 [US-WEST]",
-            "45.33.21.14:3128   [EU-GER]",
-            "103.24.11.5:80     [ASIA-SG]",
-            "212.44.15.90:1080  [US-EAST]"
-        ];
-        list.forEach(p => printLine(`<div class="proxy-entry">${p}</div>`));
-        printLine(`<span class="success-msg">--------------------------</span>`);
+    function showProxyCategories() {
+        printLine(`<span class="success-msg">--- PROXY NETWORKS ---</span>`);
+        printLine(`<div class="system-msg">Type the name of a network to view available links.</div><br>`);
+        Object.keys(proxyData).forEach(key => {
+            printLine(`<div class="proxy-entry">> ${key}</div>`);
+        });
+        printLine(`<br><span class="success-msg">-----------------------</span>`);
+    }
+
+    function showCategoryLinks(category) {
+        printLine(`<span class="success-msg">--- ${category} LINKS ---</span>`);
+        proxyData[category].forEach(url => {
+            printLine(`<a href="${url}" target="_blank" class="link-item">${url}</a>`);
+        });
+        printLine(`<span class="success-msg">---------------------------</span>`);
     }
 
     async function runSpeedTest() {
