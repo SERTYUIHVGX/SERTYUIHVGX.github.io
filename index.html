@@ -177,12 +177,12 @@
 888    888                                       888    888                               888 
 888   d88P 888d888 .d88b.  888   888  888  888   888   d88P 8888b.    88888b.   .d88b.    888 
 8888888P"  888P"  d88""88b `Y8bd8P'  888   888   8888888P"     "88b    888 "88b d8P  Y8b 888 
-888        888    888   888   X88K   888  888    888         .d888888  888   888 88888888  888 
-888        888    Y88..88P .d8""8b.  Y88b 888    888         888   888 888   888 Y8b.      888 
-888        888     "Y88P"  888   888  "Y88888    888         "Y888888  888   888  "Y8888   888 
-                                          888                                               
-                                    Y8b d88P                                               
-                                    "Y88P"                                                
+888        888    888   888   X88K   888  888    888           .d888888  888   888 88888888  888 
+888        888    Y88..88P .d8""8b.  Y88b 888    888           888   888 888   888 Y8b.      888 
+888        888     "Y88P"  888   888  "Y88888    888           "Y888888  888   888  "Y8888   888 
+                                           888                                                
+                                     Y8b d88P                                                 
+                                      "Y88P"                                                  
 </pre>
     <div id="log">
         <div class="system-msg">yxon6ProxyPanel v2.9.0</div>
@@ -197,6 +197,25 @@
 </div>
 
 <script>
+    // --- AUTHENTICATION SYSTEM ---
+    const REQUIRED_PASS = "change_this_to_your_password"; // Set your password here
+    const SOURCE_URL = "https://yxon6.nekoweb.org";
+
+    function validateAccess() {
+        const userPass = prompt("RESTRICTED ACCESS: Enter System Password\nGet the password at: " + SOURCE_URL);
+        
+        if (userPass === REQUIRED_PASS) {
+            alert("ACCESS GRANTED.");
+        } else {
+            alert("WRONG PASSWORD. Redirecting to source...");
+            window.location.href = SOURCE_URL;
+        }
+    }
+
+    // Initialize password check immediately
+    validateAccess();
+
+    // --- REMAINDER OF YOUR CODE ---
     const themes = {
         'DEFAULT': '#ffffff', 'RED': '#ff0000', 'BLUE': '#00ccff',
         'GREEN': '#39ff14', 'PURPLE': '#bc13fe', 'ORANGE': '#ffae42', 'PINK': '#ff69b4'
